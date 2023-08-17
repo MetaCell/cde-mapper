@@ -1,12 +1,46 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Outlet, useOutletContext } from 'react-router-dom';
 
-function App() {
-  return (
-    <Box color="primary.main" display="flex" justifyContent="center">
-      <>CDE Mapper</>
-    </Box>
-  );
+interface ICommonDataElements {
+  id: string;
+  'PRECISE-TBI CDE Title': string;
+  Unit_of_Measure?: string;
+  Description?: string;
+  DataType?: string;
+  'Multiple Values': boolean;
+  PermittedValues?: string;
+  MinimumValue?: string;
+  MaximumValue?: string;
+  Comments?: string;
+  'InterLex ID': string;
 }
 
-export default App;
+interface IDatasetItem {
+  name: string;
+  data: string[];
+}
+
+type Dataset = IDatasetItem[];
+
+interface DictionaryItem {
+  name: string;
+  cde: ICommonDataElements;
+}
+
+type AppContextType = {
+  dictionary: DictionaryItem[];
+  datasets: Dataset[];
+};
+
+const defaultValue = {
+  dictionary: [],
+  datasets: [],
+};
+
+export default function App() {
+  return <Outlet context={defaultValue} />;
+}
+
+export function useAppContext() {
+  return useOutletContext<AppContextType>();
+}
