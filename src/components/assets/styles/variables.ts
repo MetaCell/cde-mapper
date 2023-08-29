@@ -14,8 +14,8 @@ const primary = {
   A400: '#4b9de5',
   A700: '#286ec0',
   main: '#19418F',
-  light: '#8AABEA',
-  dark: '#02060D',
+  light: '#5F8CE3',
+  // dark: '#02060D',
   contrastText: '#fff',
 };
 
@@ -65,7 +65,7 @@ const vars = {
   primaryBg: '#f1f1f1',
   textWhite: '#FFFFFF',
   textBlack: '#000',
-  palettes: {
+  palette: {
     primary,
     grey,
     success,

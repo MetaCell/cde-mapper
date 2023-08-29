@@ -1,8 +1,9 @@
-import { createTheme } from '@mui/material/styles';
+import { ThemeOptions, createTheme } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
 import vars from './components/assets/styles/variables';
 
-const { palettes, fontFamily } = vars;
+const { palette, fontFamily } = vars;
+
 // A custom theme for this app
 const theme = createTheme({
   components: {
@@ -14,6 +15,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '0.5rem',
+          textTransform: 'none',
+          fontWeight: 600,
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: `
       `,
@@ -21,16 +31,20 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      ...palettes.primary,
+      ...palette.primary,
     },
     error: {
       main: red.A400,
     },
     grey: {
-      ...palettes.grey,
+      ...palette.grey,
     },
     success: {
-      ...palettes.success,
+      ...palette.success,
+    },
+    secondary: {
+      ...palette.grey,
+      main: palette.grey[500],
     },
   },
   typography: {
