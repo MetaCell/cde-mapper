@@ -17,6 +17,7 @@ import StyledInput from '../components/controls/forms/StyledInput';
 import vars from '../components/assets/styles/variables';
 import StyledIconButton from '../components/controls/forms/StyledIconButton';
 import { PageDescription } from '../components/primitives/details/pageDescription';
+import DatasetTable from '../components/controls/table/table';
 
 const { palette } = vars;
 type MapperParams = {
@@ -46,13 +47,14 @@ export default function Mapper() {
             sub="Connect column headers from datasets to Common Data Elements (CDEs)."
           />
         </Box>
-        <>
+        <Box mb={2}>
           <StyledInput
             fullWidth
             startAdornment={<MagnifyingGlassIcon fill={palette.grey[400]} />}
             placeholder="Search column headers or mapped CDEs..."
           />
-        </>
+        </Box>
+        <DatasetTable />
       </Box>
     </MainLayout>
   );
