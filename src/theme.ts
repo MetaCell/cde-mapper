@@ -53,7 +53,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiTableCell-root': {
-            fontWeight: 600,
+            fontWeight: 500,
             lineHeight: '1.125rem',
             padding: '0.75em 1.5em',
           },

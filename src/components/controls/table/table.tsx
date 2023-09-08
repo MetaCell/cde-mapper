@@ -5,27 +5,29 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { Tooltip } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
+const TRUNCATE_LENGTH = 17;
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+const useStyles = makeStyles(() => ({
+  ellipsis: {
+    minWidth: '10rem',
+    maxWidth: '10rem',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+}));
 
-export default function DatasetTable() {
+export default function DatasetTable({
+  dataset,
+}: {
+  dataset: Array<Record<string, unknown>>;
+}) {
+  const classes = useStyles();
+  const keys = Object.keys(dataset[0]);
+
   return (
     <TableContainer>
       <Table
@@ -34,25 +36,36 @@ export default function DatasetTable() {
         stickyHeader={true}>
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell>Calories</TableCell>
-            <TableCell>Fat&nbsp;(g)</TableCell>
-            <TableCell>Carbs&nbsp;(g)</TableCell>
-            <TableCell>Protein&nbsp;(g)</TableCell>
+            {keys.map((key, index) => {
+              const isTruncated = key.length > TRUNCATE_LENGTH;
+              return (
+                <Tooltip
+                  key={`${key}_${index}`}
+                  title={isTruncated ? key : ''}
+                  arrow>
+                  <TableCell
+                    key={`${key}_${index}`}
+                    className={classes.ellipsis}>
+                    {key}
+                  </TableCell>
+                </Tooltip>
+              );
+            })}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.calories}</TableCell>
-              <TableCell>{row.fat}</TableCell>
-              <TableCell>{row.carbs}</TableCell>
-              <TableCell>{row.protein}</TableCell>
-            </TableRow>
-          ))}
+          {dataset.map((data, index) => {
+            const rowItems = Object.values(data);
+            return (
+              <TableRow key={`${rowItems[0]}_${index}`}>
+                {rowItems.map(item => (
+                  <TableCell key={`${item}_${index}`}>
+                    {item as string}
+                  </TableCell>
+                ))}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>
