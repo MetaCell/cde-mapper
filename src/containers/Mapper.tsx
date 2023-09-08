@@ -1,9 +1,11 @@
 import {
   Box,
+  Button,
   FormControl,
   IconButton,
   Input,
   InputBase,
+  Stack,
   Typography,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -47,6 +49,17 @@ export default function Mapper() {
   const { dictionary, datasets, rawDataset } = useAppContext();
   const navigate = useNavigate();
 
+  const footerNode = (
+    <Stack direction="row-reverse">
+      <Box>
+        <Button color="secondary">Cancel</Button>{' '}
+        <Button disableRipple variant="contained">
+          Submit mapping
+        </Button>
+      </Box>
+    </Stack>
+  );
+
   const datasetPreview = (
     <Accordion>
       <AccordionSummary className={classes.summary}>
@@ -68,7 +81,7 @@ export default function Mapper() {
           <ArrowLeftIcon />
         </StyledIconButton>
       }
-      footerNode={<Box>footer</Box>}
+      footerNode={footerNode}
       footerTopElement={datasetPreview}>
       <Box sx={{ position: 'relative', minHeight: '100%' }}>
         <Box m={4.5} position="relative">
