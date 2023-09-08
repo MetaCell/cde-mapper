@@ -26,7 +26,7 @@ type MapperParams = {
 
 export default function Mapper() {
   const { id } = useParams<MapperParams>();
-  const { dictionary } = useAppContext();
+  const { dictionary, datasets, rawDataset } = useAppContext();
   const navigate = useNavigate();
 
   console.log(dictionary, '==> dictionary');
@@ -54,7 +54,7 @@ export default function Mapper() {
             placeholder="Search column headers or mapped CDEs..."
           />
         </Box>
-        <DatasetTable />
+        <DatasetTable dataset={rawDataset} />
       </Box>
     </MainLayout>
   );

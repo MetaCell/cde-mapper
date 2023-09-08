@@ -33,6 +33,7 @@ interface DictionaryItem {
 type AppContextType = {
   dictionary: DictionaryItem[];
   datasets: Dataset[];
+  rawDataset: Array<Record<string, unknown>>;
 };
 
 function characterMatchesKey(data: ICommonDataElements, key: string) {
@@ -124,6 +125,7 @@ export default function App({
   const defaultValue = {
     dictionary: dictionaryData,
     dataset: datasetData,
+    rawDataset: convertCSVDatasetToData(dataset),
   };
 
   console.log(convertCSVDictionaryToData(datasetDictionary), 'dictionary');
