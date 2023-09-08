@@ -18,13 +18,31 @@ import vars from '../components/assets/styles/variables';
 import StyledIconButton from '../components/controls/forms/StyledIconButton';
 import { PageDescription } from '../components/primitives/details/pageDescription';
 import DatasetTable from '../components/controls/table/table';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+} from '../components/controls/accordion/accordion';
+import { makeStyles } from '@mui/styles';
 
 const { palette } = vars;
 type MapperParams = {
   id: string;
 };
 
+const useStyles = makeStyles(theme => ({
+  summary: {
+    '& .MuiTypography-root': {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+      lineHeight: '1.25rem',
+      color: theme.palette.grey[500],
+    },
+  },
+}));
+
 export default function Mapper() {
+  const classes = useStyles();
   const { id } = useParams<MapperParams>();
   const { dictionary, datasets, rawDataset } = useAppContext();
   const navigate = useNavigate();
@@ -54,7 +72,14 @@ export default function Mapper() {
             placeholder="Search column headers or mapped CDEs..."
           />
         </Box>
-        <DatasetTable dataset={rawDataset} />
+        <Accordion>
+          <AccordionSummary className={classes.summary}>
+            <Typography>Preview</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <DatasetTable dataset={rawDataset} />
+          </AccordionDetails>
+        </Accordion>
       </Box>
     </MainLayout>
   );
