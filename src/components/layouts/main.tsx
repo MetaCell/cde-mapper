@@ -1,20 +1,13 @@
-import {
-  Box,
-  Divider,
-  IconButton,
-  Stack,
-  Theme,
-  Typography,
-} from '@mui/material';
+import { Box, Divider, Stack, Theme, Typography } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 import { makeStyles } from '@mui/styles';
 import vars from '../assets/styles/variables';
-import { XIcon } from '../assets/icons/icons';
 
 interface IMainProps {
   title: string;
   headerLeftNode?: React.ReactNode;
   footerNode?: React.ReactNode;
+  footerTopElement?: React.ReactNode;
 }
 
 const { textWhite } = vars;
@@ -41,13 +34,17 @@ const useStyles = makeStyles((theme: Theme) => ({
       lineHeight: '1.25rem',
     },
   },
-  footer: {
+  footerContainer: {
     position: 'fixed',
     bottom: 0,
     width: '100%',
-    padding: '0.75rem 1.5rem',
-    backgroundColor: textWhite,
-    borderTop: `1px solid ${theme.palette.grey[100]}`,
+
+    '& .footer': {
+      width: '100%',
+      padding: '0.75rem 1.5rem',
+      backgroundColor: textWhite,
+      borderTop: `1px solid ${theme.palette.grey[100]}`,
+    },
   },
 }));
 
@@ -56,6 +53,7 @@ export const MainLayout = ({
   children,
   headerLeftNode,
   footerNode,
+  footerTopElement,
 }: PropsWithChildren<IMainProps>) => {
   const classes = useStyles();
   return (
@@ -65,9 +63,16 @@ export const MainLayout = ({
         {headerLeftNode && <Divider />}
         <Typography>{title}</Typography>
       </Stack>
-      {children}
+      <Box sx={{ position: 'relative', minHeight: 'calc(100vh - 104px)' }}>
+        {children}
+      </Box>
 
-      {footerNode ? <Box className={classes.footer}>{footerNode} </Box> : null}
+      {footerNode || footerTopElement ? (
+        <Box className={classes.footerContainer}>
+          {footerTopElement ? footerTopElement : null}
+          {footerNode ? <Box className="footer">{footerNode} </Box> : null}
+        </Box>
+      ) : null}
     </Box>
   );
 };

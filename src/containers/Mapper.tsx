@@ -47,7 +47,18 @@ export default function Mapper() {
   const { dictionary, datasets, rawDataset } = useAppContext();
   const navigate = useNavigate();
 
-  console.log(dictionary, '==> dictionary');
+  const datasetPreview = (
+    <Accordion>
+      <AccordionSummary className={classes.summary}>
+        <Typography>Preview</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <DatasetTable dataset={rawDataset} />
+      </AccordionDetails>
+    </Accordion>
+  );
+
+  // console.log(dictionary, '==> dictionary');
 
   return (
     <MainLayout
@@ -57,29 +68,24 @@ export default function Mapper() {
           <ArrowLeftIcon />
         </StyledIconButton>
       }
-      footerNode={<Box>footer</Box>}>
-      <Box m={4.5}>
-        <Box>
-          <PageDescription
-            title="Map selected datasets"
-            sub="Connect column headers from datasets to Common Data Elements (CDEs)."
-          />
+      footerNode={<Box>footer</Box>}
+      footerTopElement={datasetPreview}>
+      <Box sx={{ position: 'relative', minHeight: '100%' }}>
+        <Box m={4.5} position="relative">
+          <Box>
+            <PageDescription
+              title="Map selected datasets"
+              sub="Connect column headers from datasets to Common Data Elements (CDEs)."
+            />
+          </Box>
+          <Box mb={2}>
+            <StyledInput
+              fullWidth
+              startAdornment={<MagnifyingGlassIcon fill={palette.grey[400]} />}
+              placeholder="Search column headers or mapped CDEs..."
+            />
+          </Box>
         </Box>
-        <Box mb={2}>
-          <StyledInput
-            fullWidth
-            startAdornment={<MagnifyingGlassIcon fill={palette.grey[400]} />}
-            placeholder="Search column headers or mapped CDEs..."
-          />
-        </Box>
-        <Accordion>
-          <AccordionSummary className={classes.summary}>
-            <Typography>Preview</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <DatasetTable dataset={rawDataset} />
-          </AccordionDetails>
-        </Accordion>
       </Box>
     </MainLayout>
   );
