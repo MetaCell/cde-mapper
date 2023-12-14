@@ -1,36 +1,129 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import {helloAnything} from "../lib/main.ts";
+import React, { useState } from 'react';
+import { Button, Box, Typography } from '@mui/material';
+import Dropzone from 'react-dropzone';
+import { init } from "../lib/main.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [cdeFile, setCdeFile] = useState<File | null>(null);
+    const [datasetFile, setDatasetFile] = useState<File | null>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-          {helloAnything('World')}
-      </p>
-    </>
-  )
+    const onCdeFileDrop = (acceptedFiles: File[]) => {
+        setCdeFile(acceptedFiles[0]);
+    };
+
+    const onDatasetFileDrop = (acceptedFiles: File[]) => {
+        setDatasetFile(acceptedFiles[0]);
+    };
+
+    const handleRemoveCdeFile = () => {
+        setCdeFile(null);
+    };
+
+    const handleRemoveDatasetFile = () => {
+        setDatasetFile(null);
+    };
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        if (cdeFile && datasetFile) {
+            init({
+                cdeFileMapping: cdeFile,
+                datasetSample: datasetFile,
+                callback: (data: any) => console.log(data),
+                repositories: [],
+                config: { width: '60%', height: '80%' },
+                labName: 'Test'
+            });
+        }
+    };
+
+    return (
+        <div className="form-container">
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <Typography variant="h6">Upload CSV Files</Typography>
+                <Dropzone onDrop={onCdeFileDrop}>
+                    {({ getRootProps, getInputProps }) => (
+                        <section>
+                            <div
+                                {...getRootProps({
+                                    sx: {
+                                        border: '2px dashed grey',
+                                        borderRadius: '4px',
+                                        padding: '20px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        marginBottom: '10px',
+                                    }
+                                })}
+                            >
+                                <input {...getInputProps()} />
+                                {cdeFile ? (
+                                    <Box sx={{ marginTop: '10px' }}>
+                                        <Typography>{cdeFile.name}</Typography>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            sx={{ marginTop: '5px' }}
+                                            onClick={handleRemoveCdeFile}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <p>Drag 'n' drop CDE file here, or click to select file</p>
+                                )}
+                            </div>
+                        </section>
+                    )}
+                </Dropzone>
+                <Dropzone onDrop={onDatasetFileDrop}>
+                    {({ getRootProps, getInputProps }) => (
+                        <section>
+                            <div
+                                {...getRootProps({
+                                    sx: {
+                                        border: '2px dashed grey',
+                                        borderRadius: '4px',
+                                        padding: '20px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        marginBottom: '10px',
+                                    }
+                                })}
+                            >
+                                <input {...getInputProps()} />
+                                {datasetFile ? (
+                                    <Box sx={{ marginTop: '10px' }}>
+                                        <Typography>{datasetFile.name}</Typography>
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            sx={{ marginTop: '5px' }}
+                                            onClick={handleRemoveDatasetFile}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <p>Drag 'n' drop Dataset file here, or click to select file</p>
+                                )}
+                            </div>
+                        </section>
+                    )}
+                </Dropzone>
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    disabled={!cdeFile || !datasetFile}
+                >
+                    Submit
+                </Button>
+            </Box>
+        </div>
+    );
 }
 
-export default App
+export default App;

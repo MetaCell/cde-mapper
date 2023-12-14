@@ -12,7 +12,7 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: resolve(__dirname, 'lib/main.ts'),
+            entry: resolve(__dirname, 'lib/main.tsx'),
             name: 'CdeSelector',
             fileName: 'cde-selector',
         }
