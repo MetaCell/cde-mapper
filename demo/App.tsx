@@ -71,7 +71,7 @@ function App() {
                                         </Button>
                                     </Box>
                                 ) : (
-                                    <p>Drag 'n' drop CDE file here, or click to select file</p>
+                                    <p>Click to select a Dictionary file</p>
                                 )}
                             </div>
                         </section>
@@ -106,7 +106,7 @@ function App() {
                                         </Button>
                                     </Box>
                                 ) : (
-                                    <p>Drag 'n' drop Dataset file here, or click to select file</p>
+                                    <p>Click to select a Dataset file</p>
                                 )}
                             </div>
                         </section>

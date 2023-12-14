@@ -1,10 +1,11 @@
-import {FC, useEffect} from 'react';
-import {Modal, Box, CircularProgress, Snackbar} from '@mui/material';
-import StepOne from "./StepOne.tsx";
-import {useCdeContext} from "../CdeContext.tsx";
-
+import { FC, useEffect } from 'react';
+import { Modal, Box, CircularProgress, Snackbar } from '@mui/material';
+import StepOne from "./steps/StepOne.tsx";
+import { useCdeContext } from "../CdeContext.tsx";
+import { useTheme } from '@mui/material/styles';
 
 const CdeModal: FC = () => {
+    const theme = useTheme();
     const { config, step, loadingMessage, errorMessage, setErrorMessage } = useCdeContext();
     const { width, height } = config;
 
@@ -18,9 +19,9 @@ const CdeModal: FC = () => {
     }, [errorMessage, setErrorMessage]);
 
     const renderStepComponent = () => {
-        switch(step) {
+        switch (step) {
             case 0:
-                return <StepOne />;
+                return <StepOne/>;
             // Add cases for other steps
             default:
                 return <div>Unknown step</div>;
@@ -29,7 +30,20 @@ const CdeModal: FC = () => {
 
     return (
         <Modal open={true} onClose={() => { /* handle close */ }}>
-            <Box style={{ width, height }}>
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: width,
+                    height: height,
+                    bgcolor: 'background.paper',
+                    boxShadow: theme.shadows[5],
+                    p: 4,
+                    outline: 'none'
+                }}
+            >
                 {loadingMessage && <CircularProgress />}
                 {!loadingMessage && renderStepComponent()}
                 <Snackbar
@@ -43,4 +57,3 @@ const CdeModal: FC = () => {
 };
 
 export default CdeModal;
-

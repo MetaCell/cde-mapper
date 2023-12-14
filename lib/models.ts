@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface CDE {
     VariableName: string;
     PreciseCDEAbbrev: string;
@@ -38,9 +36,4 @@ export interface InitParams {
 // Internal
 export interface DatasetCDEMapping {
     [key: string]: CDE; // Key is the column name from the dataset
-}
-
-
-export interface CdeContextProviderProps extends InitParams{
-    children: React.ReactNode
 }

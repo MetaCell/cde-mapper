@@ -1,5 +1,7 @@
-import {createContext, useContext, useState} from 'react';
-import {CdeContextProviderProps, Config, DatasetCDEMapping} from "./models.ts";
+import {createContext, PropsWithChildren, useContext, useState} from 'react';
+import {Config, DatasetCDEMapping, InitParams} from "./models.ts";
+import theme from "./theme.ts";
+import {ThemeProvider} from "@mui/material";
 
 export const CdeContext = createContext({
     mapping: {} as DatasetCDEMapping,
@@ -23,7 +25,7 @@ export const CdeContext = createContext({
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, config}: CdeContextProviderProps) => {
+export const CdeContextProvider = ({children, labName, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
     const [step, setStep] = useState<number>(0);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
@@ -44,8 +46,11 @@ export const CdeContextProvider = ({children, labName, config}: CdeContextProvid
     };
 
     return (
-        <CdeContext.Provider value={contextValue}>
-            {children}
-        </CdeContext.Provider>
+        <ThemeProvider theme={theme}>
+            <CdeContext.Provider value={contextValue}>
+                {children}
+            </CdeContext.Provider>
+        </ThemeProvider>
+
     );
 };
