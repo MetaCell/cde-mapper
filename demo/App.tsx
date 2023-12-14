@@ -30,10 +30,11 @@ function App() {
             init({
                 cdeFileMapping: cdeFile,
                 datasetSample: datasetFile,
+                labFileMapping: null,
                 callback: (data: any) => console.log(data),
                 repositories: [],
                 config: { width: '60%', height: '80%' },
-                labName: 'Test'
+                labName: 'TestLabName'
             });
         }
     };

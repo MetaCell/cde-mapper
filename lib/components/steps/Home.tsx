@@ -4,16 +4,17 @@ import X from '../../components/assets/svg/x.svg';
 import {ModalLayout} from "../layout/ModalLayout.tsx";
 import StyledIconButton from '../common/StyledIconButton.tsx';
 import {useCdeContext} from "../../CdeContext.tsx";
+import {STEPS} from "../../models.ts";
 
 
-function StepOne() {
-    const {setStep, labName} = useCdeContext();
+function Home() {
+    const {setStep, labName, handleClose} = useCdeContext();
 
     return (
         <ModalLayout
             title="Map selected datasets"
             headerLeftNode={
-                <StyledIconButton color="primary" size="small">
+                <StyledIconButton color="primary" size="small" onClick={handleClose}>
                     <img src={X} alt="X Icon" />
                 </StyledIconButton>
             }>
@@ -49,7 +50,7 @@ function StepOne() {
                             <Button
                                 disableRipple
                                 variant="contained"
-                                onClick={() => setStep(2)}>
+                                onClick={() => setStep(STEPS.REPOSITORY)}>
                                 Start mapping
                             </Button>
                         </Box>
@@ -58,7 +59,7 @@ function StepOne() {
                                 disableRipple
                                 color="secondary"
                                 variant="text"
-                                onClick={() => setStep(3)}>
+                                onClick={() => setStep(-1)}>
                                 No, create an empty template with CDEs instead{' '}
                             </Button>
                         </Box>
@@ -69,4 +70,4 @@ function StepOne() {
     );
 }
 
-export default StepOne;
+export default Home;

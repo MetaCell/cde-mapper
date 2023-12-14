@@ -1,5 +1,5 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
-import {Config, DatasetCDEMapping, InitParams} from "./models.ts";
+import {Config, DatasetCDEMapping, InitParams, STEPS} from "./models.ts";
 import theme from "./theme.ts";
 import {ThemeProvider} from "@mui/material";
 
@@ -20,16 +20,26 @@ export const CdeContext = createContext({
     config: {
         width: "100%",
         height: "100%",
-    } as Config
+    } as Config,
+    isOpen: true,
+    handleClose: () => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, config}: PropsWithChildren<InitParams>) => {
+export const CdeContextProvider = ({children, labName, callback, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
-    const [step, setStep] = useState<number>(0);
+    const [step, setStep] = useState<number>(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [isOpen, setIsOpen] = useState<boolean>(true)
+
+
+    const handleClose = () => {
+        callback(null);
+        setIsOpen(false)
+    };
+
 
     // Context value
     const contextValue = {
@@ -42,8 +52,11 @@ export const CdeContextProvider = ({children, labName, config}: PropsWithChildre
         errorMessage,
         setErrorMessage,
         mapping,
-        setMapping
+        setMapping,
+        isOpen,
+        handleClose
     };
+
 
     return (
         <ThemeProvider theme={theme}>

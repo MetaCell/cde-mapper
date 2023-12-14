@@ -25,8 +25,9 @@ export interface Config {
 
 export interface InitParams {
     cdeFileMapping: File;
+    labFileMapping: File | null;
     datasetSample: File;
-    callback: Function;
+    callback: (cdeFileMapping: File | null) => void;
     repositories: Repository[];
     config: Config;
     labName: string
@@ -36,4 +37,9 @@ export interface InitParams {
 // Internal
 export interface DatasetCDEMapping {
     [key: string]: CDE; // Key is the column name from the dataset
+}
+
+export enum STEPS {
+    HOME,
+    REPOSITORY
 }

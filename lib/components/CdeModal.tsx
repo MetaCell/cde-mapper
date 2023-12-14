@@ -1,13 +1,16 @@
-import { FC, useEffect } from 'react';
-import { Modal, Box, CircularProgress, Snackbar } from '@mui/material';
-import StepOne from "./steps/StepOne.tsx";
-import { useCdeContext } from "../CdeContext.tsx";
-import { useTheme } from '@mui/material/styles';
+import {FC, useEffect} from 'react';
+import {Modal, Box, CircularProgress, Snackbar} from '@mui/material';
+import Home from "./steps/Home.tsx";
+import {useCdeContext} from "../CdeContext.tsx";
+import {useTheme} from '@mui/material/styles';
+import {STEPS} from "../models.ts";
+import StepTwo from "./steps/StepTwo.tsx";
 
 const CdeModal: FC = () => {
     const theme = useTheme();
-    const { config, step, loadingMessage, errorMessage, setErrorMessage } = useCdeContext();
-    const { width, height } = config;
+    const {config, step, loadingMessage, errorMessage,
+        setErrorMessage, handleClose, isOpen} = useCdeContext();
+    const {width, height} = config;
 
     useEffect(() => {
         if (errorMessage) {
@@ -20,16 +23,19 @@ const CdeModal: FC = () => {
 
     const renderStepComponent = () => {
         switch (step) {
-            case 0:
-                return <StepOne/>;
+            case STEPS.HOME:
+                return <Home/>;
+            case STEPS.REPOSITORY:
+                return <StepTwo/>;
             // Add cases for other steps
             default:
                 return <div>Unknown step</div>;
         }
     };
 
+
     return (
-        <Modal open={true} onClose={() => { /* handle close */ }}>
+        <Modal open={isOpen} onClose={handleClose}>
             <Box
                 sx={{
                     position: 'absolute',
@@ -44,12 +50,12 @@ const CdeModal: FC = () => {
                     outline: 'none'
                 }}
             >
-                {loadingMessage && <CircularProgress />}
+                {loadingMessage && <CircularProgress/>}
                 {!loadingMessage && renderStepComponent()}
                 <Snackbar
                     open={!!errorMessage}
                     message={errorMessage}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
                 />
             </Box>
         </Modal>
