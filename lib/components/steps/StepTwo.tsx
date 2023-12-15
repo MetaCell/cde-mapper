@@ -6,7 +6,9 @@ import {useCdeContext} from "../../CdeContext.tsx";
 
 
 function StepOne() {
-    const {handleClose} = useCdeContext();
+    const {handleClose, mapping} = useCdeContext();
+
+    console.log(mapping)
 
     return (
         <ModalLayout

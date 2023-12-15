@@ -35,8 +35,25 @@ export interface InitParams {
 
 
 // Internal
+
+export enum CDEType {
+    CDE = 'CDE',
+    CustomDataDictionary = 'CustomDataDictionary'
+}
+
+export enum CDEStatus {
+    Mapped = 'mapped',
+    Unmapped = 'unmapped'
+}
+export interface DatasetCDEEntry {
+    type: CDEType;
+    status: CDEStatus;
+    // Include other optional string attributes as needed
+    [key: string]: string;
+}
+
 export interface DatasetCDEMapping {
-    [key: string]: CDE; // Key is the column name from the dataset
+    [variableName: string]: DatasetCDEEntry;// Key is the column name from the dataset
 }
 
 export enum STEPS {

@@ -4,30 +4,27 @@ import theme from "./theme.ts";
 import {ThemeProvider} from "@mui/material";
 
 export const CdeContext = createContext({
-    mapping: {} as DatasetCDEMapping,
-    setMapping: (_mapping: DatasetCDEMapping) => {
-    },
     labName: '',
-    step: 0,
-    setStep: (_step: number) => {
-    },
-    loadingMessage: null as string | null,
-    setLoadingMessage: (_loadingMessage: string | null) => {
-    },
-    errorMessage: null as string | null,
-    setErrorMessage: (_errorMessage: string | null) => {
-    },
     config: {
         width: "100%",
         height: "100%",
     } as Config,
+    cdeFileMapping: null as File | null,
+    mapping: {} as DatasetCDEMapping,
+    setMapping: (_mapping: DatasetCDEMapping) => {},
+    step: 0,
+    setStep: (_step: number) => {},
+    loadingMessage: null as string | null,
+    setLoadingMessage: (_loadingMessage: string | null) => {},
+    errorMessage: null as string | null,
+    setErrorMessage: (_errorMessage: string | null) => {},
     isOpen: true,
     handleClose: () => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, callback, config}: PropsWithChildren<InitParams>) => {
+export const CdeContextProvider = ({children, labName, callback, cdeFileMapping, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
     const [step, setStep] = useState<number>(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
@@ -45,6 +42,7 @@ export const CdeContextProvider = ({children, labName, callback, config}: PropsW
     const contextValue = {
         config,
         labName,
+        cdeFileMapping,
         step,
         setStep,
         loadingMessage,

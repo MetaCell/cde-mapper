@@ -5,17 +5,51 @@ import {ModalLayout} from "../layout/ModalLayout.tsx";
 import StyledIconButton from '../common/StyledIconButton.tsx';
 import {useCdeContext} from "../../CdeContext.tsx";
 import {STEPS} from "../../models.ts";
+import {processMappingFile, validateMappingFile} from "../../services/csvService.ts";
 
 
 function Home() {
-    const {setStep, labName, handleClose} = useCdeContext();
+    const {
+        setStep,
+        labName,
+        handleClose,
+        cdeFileMapping,
+        setLoadingMessage,
+        setErrorMessage,
+        setMapping
+    } = useCdeContext();
+
+
+    const handleStartMapping = async () => {
+        if (!cdeFileMapping) {
+            setErrorMessage('Mapping file not found')
+            return
+        }
+
+        setLoadingMessage('Validating and processing file...');
+
+        try {
+            const isValid = await validateMappingFile(cdeFileMapping);
+            if (isValid) {
+                const mapping = await processMappingFile(cdeFileMapping);
+                setMapping(mapping);
+                setStep(STEPS.REPOSITORY);
+            } else {
+                setErrorMessage('Invalid CSV file format.');
+            }
+        } catch (error: any) {
+            setErrorMessage(error.message);
+        }
+
+        setLoadingMessage(null);
+    };
 
     return (
         <ModalLayout
             title="Map selected datasets"
             headerLeftNode={
                 <StyledIconButton color="primary" size="small" onClick={handleClose}>
-                    <img src={X} alt="X Icon" />
+                    <img src={X} alt="X Icon"/>
                 </StyledIconButton>
             }>
             <Stack alignItems="center" justifyContent="center" width="100%" sx={{mx: 6}}>
@@ -50,7 +84,7 @@ function Home() {
                             <Button
                                 disableRipple
                                 variant="contained"
-                                onClick={() => setStep(STEPS.REPOSITORY)}>
+                                onClick={handleStartMapping}>
                                 Start mapping
                             </Button>
                         </Box>
