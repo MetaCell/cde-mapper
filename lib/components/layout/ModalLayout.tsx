@@ -9,7 +9,7 @@ interface IMainProps {
     footerTopElement?: React.ReactNode;
 }
 
-const { textWhite } = vars;
+const { textWhite, palette } = vars;
 
 export const ModalLayout = ({
                                 title,
@@ -28,7 +28,7 @@ export const ModalLayout = ({
                     alignItems: 'center',
                     position: 'sticky',
                     top: 0,
-                    borderBottom: `1px solid grey`,
+                    borderBottom: `1px solid ${palette.grey[100]}`,
                     padding: '0.75rem 1.5rem',
                     backgroundColor: textWhite,
                     zIndex: 1,
@@ -39,6 +39,7 @@ export const ModalLayout = ({
                         fontSize: '0.875rem',
                         fontWeight: 600,
                         lineHeight: '1.25rem',
+                        color: 'grey.700'
                     },
                 }}
             >
@@ -46,7 +47,7 @@ export const ModalLayout = ({
                 {headerLeftNode && <Divider />}
                 <Typography>{title}</Typography>
             </Stack>
-            <Box sx={{ position: 'relative', minHeight: 'calc(100vh - 104px)' }}>
+            <Box sx={{ position: 'relative' }}>
                 {children}
             </Box>
 

@@ -90,11 +90,52 @@ const theme = createTheme({
           borderRadius: '0.5rem',
           textTransform: 'none',
           fontWeight: 600,
+          padding: '0.5rem 0.875rem',
+          lineHeight: '1.25rem',
         },
       },
     },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontWeight: 500,
+          backgroundColor: palette.grey[100],
+          color: palette.grey[700]
+        },
+        sizeSmall: {
+          fontSize: '0.75rem',
+          '& .MuiChip-icon': {
+            marginLeft: '0.375rem'
+          }
+        },
+        colorSuccess: {
+          backgroundColor: palette.success[50],
+          color: palette.success[700]
+        },
+      }
+    },
     MuiCssBaseline: {
       styleOverrides: `
+      box-sizing: unset;
+
+      *, *::before, *::after {
+        box-sizing: unset;
+      }
+
+      *::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+  
+      *::-webkit-scrollbar-thumb {
+        background: ${palette.grey[200]};
+        border-radius: 0.5rem;
+        height: 0.5rem;
+      }
       `,
     },
   },

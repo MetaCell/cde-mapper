@@ -9,6 +9,7 @@ const StyledIconButton = styled(IconButton, {
     shouldForwardProp: prop => prop !== 'variant',
 })<IStyledIconButton>(({ variant, theme }) => ({
     borderRadius: '0.5rem',
+    padding: '0.5rem',
     ...(variant === 'outlined'
         ? {
             border: `1px solid ${theme.palette.grey[300]}`,

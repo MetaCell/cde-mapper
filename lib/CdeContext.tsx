@@ -2,6 +2,7 @@ import {createContext, PropsWithChildren, useContext, useState} from 'react';
 import {Config, DatasetCDEMapping, InitParams, STEPS} from "./models.ts";
 import theme from "./theme.ts";
 import {ThemeProvider} from "@mui/material";
+import CssBaseline from '@mui/material/CssBaseline';
 
 export const CdeContext = createContext({
     labName: '',
@@ -58,6 +59,7 @@ export const CdeContextProvider = ({children, labName, callback, cdeFileMapping,
 
     return (
         <ThemeProvider theme={theme}>
+            <CssBaseline/>
             <CdeContext.Provider value={contextValue}>
                 {children}
             </CdeContext.Provider>
