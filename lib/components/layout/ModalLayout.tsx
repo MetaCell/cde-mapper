@@ -1,28 +1,28 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 import { Box, Divider, Typography, Button,  IconButton} from '@mui/material';
 import { vars } from "../../theme/variables";
 import { CloseIcon } from "../../icons";
 import {useCdeContext} from "../../CdeContext.tsx";
-
+import Info from "./InfoSection";
 
 const { baseWhite, gray100, gray700 } = vars
 
 const styles = {
-  root: {
-    padding: '0.75rem 1.5rem',
-    gap: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    borderBottom: `0.0625rem solid ${gray100}`,
-    background: baseWhite,
+    root: {
+      padding: '0.75rem 1.5rem',
+      gap: '1.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      borderBottom: `0.0625rem solid ${gray100}`,
+      background: baseWhite,
 
-    '& .MuiTypography-root': {
-      fontSize: '0.875rem',
-      fontWeight: 600,
-      lineHeight: '142.857%',
-      color: gray700
+      '& .MuiTypography-root': {
+        fontSize: '0.875rem',
+        fontWeight: 600,
+        lineHeight: '142.857%',
+        color: gray700
+      }
     }
-  }
 }
 interface IMainProps {
     // title: string;
@@ -39,6 +39,7 @@ export const ModalLayout = ({
                                 footerTopElement,
                             }: PropsWithChildren<IMainProps>) => {
     const {handleClose} = useCdeContext();
+    const [open, setOpen] = useState(false)
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={styles.root}>
@@ -49,19 +50,19 @@ export const ModalLayout = ({
                     '&:hover': {
                         background: gray100
                     }
-                    }}
-                    onClick={handleClose}
-                    >
-                        <CloseIcon />
+                    }}>
+                    <CloseIcon />
                     </IconButton>
                     <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
                     <Typography>
-                        Map selected datasets
+                    Map selected dataset
                     </Typography>
                 </Box>
 
-                <Button disableRipple variant="outlined">Info</Button>
+                <Button onClick={() => setOpen(true)} disableRipple variant="outlined">Info</Button>
             </Box>
+
+            <Info open={open} setOpen={setOpen} />
             <Box sx={{ position: 'relative', minHeight: 'calc(100vh - 104px)' }}>
                 {children}
             </Box>

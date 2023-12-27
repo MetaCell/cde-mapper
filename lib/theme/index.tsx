@@ -24,6 +24,30 @@ theme = createTheme({
       `
     },
 
+    MuiModal: {
+      styleOverrides: {
+        backdrop: {
+          background: 'rgba(0, 0, 0, 0.10)'
+        }
+      }
+    },
+    MuiBackdrop: {
+      styleOverrides: {
+        root: {
+          background: 'rgba(0, 0, 0, 0.10)'
+        }
+      }
+    },
+
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          width: '22.5rem',
+          boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)'
+        }
+      }
+    },
+
     MuiButton: {
       styleOverrides: {
         root: {
