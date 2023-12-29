@@ -1,16 +1,33 @@
-import { Box, Button, Divider, Drawer, IconButton, Link, Typography } from "@mui/material";
-import React from "react";
+import { Box, Button, Divider, IconButton, Link, Typography } from "@mui/material";
 import { CloseIcon } from "../../icons";
 import { vars } from "../../theme/variables";
-
-interface IInfo {
-  open: boolean;
-  setOpen: Function;
-}
+import { useCdeContext } from "../../CdeContext";
 
 const { gray700, gray600, primary600, gray400 } = vars;
 
 const styles = {
+  backdrop: {
+    position: 'absolute',
+    background: 'rgba(0, 0, 0, 0.10)',
+    width: '100%',
+    height: '100%',
+    transition: 'all ease-in-out .3s',
+    zIndex: 9,
+  },
+
+  wrap: {
+    width: '22.5rem',
+    zIndex: 91,
+    position: 'absolute',
+    height: '100%',
+    top: 0,
+    right: 0,
+    marginLeft: 'auto',
+    transition: 'all ease-in-out .3s',
+    background: '#fff',
+    boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)',
+  },
+
   header: {
     display: 'flex',
     flexDirection: 'column',
@@ -35,7 +52,7 @@ const styles = {
     alignItems: 'start',
     flexDirection: 'column',
     gap: '1rem',
-    height: 'calc(100vh - 10.25rem)',
+    height: 'calc(100% - 10.25rem)',
     overflow: 'auto',
     p: '1rem 1.5rem',
 
@@ -92,16 +109,14 @@ const styles = {
   }
 };
 
-const Info: React.FC<IInfo> = ({ open, setOpen }) => {
+const Info = () => {
+  const { setInfoOpen } = useCdeContext();
   const handleClose = () => {
-    setOpen(false)
+    setInfoOpen(false)
   }
-  return (
-    <Drawer
-      anchor='right'
-      open={open}
-      onClose={handleClose}
-    >
+
+  const InfoContent = () => (
+    <>
       <Box sx={styles.header}>
         <IconButton onClick={handleClose} sx={{ p: 1, borderRadius: 2, ml: 'auto' }}>
           <CloseIcon />
@@ -167,7 +182,16 @@ const Info: React.FC<IInfo> = ({ open, setOpen }) => {
           </Typography>
         </Box>
       </Box>
-    </Drawer>
+    </>
+  )
+
+  return (
+    <>
+      <Box sx={styles.backdrop} onClick={handleClose} />
+      <Box sx={styles.wrap}>
+        {InfoContent()}
+      </Box>
+    </>
   )
 };
 
