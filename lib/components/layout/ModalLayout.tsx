@@ -1,90 +1,49 @@
-import React, { PropsWithChildren, useState } from 'react';
-import { Box, Divider, Typography, Button,  IconButton} from '@mui/material';
-import { vars } from "../../theme/variables";
-import { CloseIcon } from "../../icons";
+import React, { PropsWithChildren } from 'react';
+import { Box, Typography, CircularProgress} from '@mui/material';
+// import { vars } from "../../theme/variables";
 import {useCdeContext} from "../../CdeContext.tsx";
-import Info from "./InfoSection";
+import Header from "../common/Header";
 
-const { baseWhite, gray100, gray700 } = vars
+// const { baseWhite } = vars
 
-const styles = {
-    root: {
-      padding: '0.75rem 1.5rem',
-      gap: '1.5rem',
-      display: 'flex',
-      alignItems: 'center',
-      borderBottom: `0.0625rem solid ${gray100}`,
-      background: baseWhite,
-
-      '& .MuiTypography-root': {
-        fontSize: '0.875rem',
-        fontWeight: 600,
-        lineHeight: '142.857%',
-        color: gray700
-      }
-    }
-}
 interface IMainProps {
-    // title: string;
-    // headerLeftNode?: React.ReactNode;
     footerNode?: React.ReactNode;
     footerTopElement?: React.ReactNode;
 }
 
 export const ModalLayout = ({
-                                // title,
                                 children,
-                                // headerLeftNode,
-                                footerNode,
-                                footerTopElement,
+                                // footerNode,
+                                // footerTopElement,
                             }: PropsWithChildren<IMainProps>) => {
-    const {handleClose} = useCdeContext();
-    const [open, setOpen] = useState(false)
-    return (
-        <Box sx={{ width: '100%' }}>
-            <Box sx={styles.root}>
-                <Box display='flex' alignItems='center' flex={1}>
-                    <IconButton disableRipple sx={{
-                    borderRadius: '0.5rem',
-
-                    '&:hover': {
-                        background: gray100
-                    }
-                    }}>
-                    <CloseIcon />
-                    </IconButton>
-                    <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
-                    <Typography>
-                    Map selected dataset
-                    </Typography>
-                </Box>
-
-                <Button onClick={() => setOpen(true)} disableRipple variant="outlined">Info</Button>
-            </Box>
-
-            <Info open={open} setOpen={setOpen} />
-            <Box sx={{ position: 'relative', minHeight: 'calc(100vh - 104px)' }}>
-                {children}
-            </Box>
-
-            {(footerNode || footerTopElement) && (
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        bottom: 0,
-                        width: '100%',
-                        '& .footer': {
-                            width: '100%',
-                            padding: '0.75rem 1.5rem',
-                            backgroundColor: baseWhite,
-                            borderTop: `1px solid grey`,
-                        },
-                    }}
-                >
-                    {footerTopElement ? footerTopElement : null}
-                    {footerNode ? <Box className="footer">{footerNode}</Box> : null}
-                </Box>
-            )}
+                                const { loadingMessage } = useCdeContext();
+  return (
+    <>
+      <Header />
+      {loadingMessage ? (
+        <Box sx={{ background: '#FCFCFD' }} py={25} flexDirection='column' display='flex' alignItems='center'>
+          <CircularProgress />
+          <Typography sx={{fontSize: '0.875rem', fontWeight: 400, lineHeight: '142.857%', mt: '0.75rem', color: '#676C74'}}>Processing data...</Typography>
         </Box>
-    );
+      ) : children}
+      {/* {(footerNode || footerTopElement) && (
+        <Box
+            sx={{
+                position: 'fixed',
+                bottom: 0,
+                width: '100%',
+                '& .footer': {
+                    width: '100%',
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: baseWhite,
+                    borderTop: `1px solid grey`,
+                },
+            }}
+        >
+            {footerTopElement ? footerTopElement : null}
+            {footerNode ? <Box className="footer">{footerNode}</Box> : null}
+        </Box>
+    )} */}
+    </>
+  )
 };

@@ -3,7 +3,7 @@ import TABLE from '../../components/assets/svg/table.svg';
 import {useCdeContext} from "../../CdeContext.tsx";
 import {STEPS} from "../../models.ts";
 import {processMappingFile, validateMappingFile} from "../../services/csvService.ts";
-import StepsLayout from './StepsLayout.tsx';
+import {ModalLayout} from "../layout/ModalLayout.tsx";
 
 
 function Home() {
@@ -42,7 +42,7 @@ function Home() {
     };
 
     return (
-        <StepsLayout>
+        <ModalLayout>
             <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
                 background: '#FCFCFD',
                 '& img': {
@@ -68,7 +68,7 @@ function Home() {
                     <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs instead </Button>
                 </Box>
             </Box>
-        </StepsLayout>
+        </ModalLayout>
     );
 }
 
