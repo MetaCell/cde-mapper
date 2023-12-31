@@ -28,7 +28,7 @@ export const useCdeContext = () => useContext(CdeContext);
 
 export const CdeContextProvider = ({children, labName, callback, cdeFileMapping, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
-    const [step, setStep] = useState<number>(STEPS.HOME);
+    const [step, setStep] = useState<number>(STEPS.REPOSITORY);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isOpen, setIsOpen] = useState<boolean>(true)

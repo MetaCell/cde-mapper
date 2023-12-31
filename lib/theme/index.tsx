@@ -116,7 +116,83 @@ theme = createTheme({
           }
         }
       }
-    }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#000',
+          padding: '0.75rem',
+          borderRadius: '0.5rem'
+        }
+      }
+    },
+
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          padding: 0
+        },
+        indicator: {
+          backgroundColor: '#19418F'
+        }
+      }
+    },
+
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          padding: 0
+        }
+      }
+    },
+
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: '1rem',
+          padding: '0.125rem 0.5rem',
+        },
+        label: {
+          fontSize: '0.75rem',
+          lineHeight: '150%',
+          fontWeight: 500,
+          padding: 0,
+          fontFamily: primaryFont,
+        },
+        filledPrimary: {
+          background: '#EEF2FC',
+          '& .MuiChip-label': {
+            color: '#2155BA'
+          }
+        }
+      }
+    },
+
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          flexDirection: 'row',
+          minHeight: '3.375rem',
+          textTransform: 'none',
+          fontSize: '0.875rem',
+          columnGap: '0.5rem',
+          fontWeight: 500,
+          lineHeight: '142.857%',
+          color: '#676C74',
+          padding: '1.125rem 0',
+
+          '&.Mui-selected': {
+            color: '#19418F',
+            fontWeight: 600
+          },
+
+          '&:not(:first-of-type)': {
+            marginLeft: '1.5rem'
+          }
+        }
+      }
+    },
   }
 });
 
