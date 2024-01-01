@@ -10,7 +10,7 @@ const CdeModal: FC = () => {
     const theme = useTheme();
     const {config, step, loadingMessage, errorMessage,
         setErrorMessage, handleClose, isOpen} = useCdeContext();
-    const {width, height} = config;
+    // const {width, height} = config;
 
     useEffect(() => {
         if (errorMessage) {
@@ -42,12 +42,12 @@ const CdeModal: FC = () => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: width,
-                    height: height,
                     bgcolor: 'background.paper',
                     boxShadow: theme.shadows[5],
-                    p: 4,
-                    outline: 'none'
+                    outline: 'none',
+                    borderRadius: '0.5rem',
+                    minWidth: '1100px',
+                    minHeight: '750px'
                 }}
             >
                 {loadingMessage && <CircularProgress/>}
