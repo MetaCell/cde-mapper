@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 import { vars } from "./variables";
+import CaretRight from '../images/CaretRight.png';
 
 const { primaryFont, gray300, baseWhite, gray500 } = vars
 
@@ -56,6 +57,14 @@ theme = createTheme({
       styleOverrides: {
         root: {
           background: 'rgba(0, 0, 0, 0.10)'
+        }
+      }
+    },
+
+    MuiDialog: {
+      styleOverrides: {
+        paperWidthXl: {
+          maxWidth: '68.75rem'
         }
       }
     },
@@ -150,6 +159,8 @@ theme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
+          height: 'auto',
+          fontFamily: primaryFont,
           borderRadius: '1rem',
           padding: '0.125rem 0.5rem',
         },
@@ -174,6 +185,7 @@ theme = createTheme({
         root: {
           flexDirection: 'row',
           minHeight: '3.375rem',
+          overflow: 'visible',
           textTransform: 'none',
           fontSize: '0.875rem',
           columnGap: '0.5rem',
@@ -188,7 +200,19 @@ theme = createTheme({
           },
 
           '&:not(:first-of-type)': {
-            marginLeft: '1.5rem'
+            marginLeft: '1.5rem',
+            position: 'relative',
+
+            '&:before': {
+              content: '""',
+              backgroundImage: `url(${CaretRight})`,
+              left: '-1.25rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '1rem',
+              height: '1rem',
+              position: 'absolute'
+            }
           }
         }
       }
