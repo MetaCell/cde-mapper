@@ -4,8 +4,9 @@ import Home from "./steps/Home.tsx";
 import {useCdeContext} from "../CdeContext.tsx";
 import {useTheme} from '@mui/material/styles';
 import {STEPS} from "../models.ts";
-import StepTwo from "./steps/StepTwo.tsx";
+// import StepTwo from "./steps/StepTwo.tsx";
 import Modal from './common/Modal.tsx'
+import MappingStep from './steps/MappingStep.tsx';
 
 const CdeModal: FC = () => {
     const theme = useTheme();
@@ -27,7 +28,7 @@ const CdeModal: FC = () => {
             case STEPS.HOME:
                 return <Home/>;
             case STEPS.REPOSITORY:
-                return <StepTwo/>;
+                return <MappingStep/>;
             // Add cases for other steps
             default:
                 return <div>Unknown step</div>;
