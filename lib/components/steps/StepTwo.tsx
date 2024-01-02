@@ -6,18 +6,12 @@ import {useCdeContext} from "../../CdeContext.tsx";
 
 
 function StepOne() {
-    const {handleClose, mapping} = useCdeContext();
+    const {mapping} = useCdeContext();
 
     console.log(mapping)
 
     return (
-        <ModalLayout
-            title="Map selected datasets"
-            headerLeftNode={
-                <StyledIconButton color="primary" size="small" onClick={handleClose}>
-                    <img src={X} alt="X Icon" />
-                </StyledIconButton>
-            }>
+        <ModalLayout>
             <Stack alignItems="center" justifyContent="center" width="100%" sx={{mx: 6}}>
                 <Stack spacing={6} sx={{width: 'max-content'}}>
                     <Typography> This is step 2</Typography>
