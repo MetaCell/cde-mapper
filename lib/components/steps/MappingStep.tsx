@@ -106,7 +106,7 @@ function MappingStep() {
                                 </>
                             }
                         >
-                            <Tab label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} />
+                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} />
                         </Tooltip>
                     ))}
                 </Tabs>
