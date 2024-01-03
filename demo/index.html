@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDE Demo App</title>
+    <style>
+        .dropzone {
+            border: 2px dashed grey;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h6>Upload CSV Files</h6>
+    <div id="cdeFileDropzone" class="dropzone">
+        <input type="file" id="cdeFileInput" hidden>
+        <p>Click to select a Dictionary file</p>
+    </div>
+    <div id="datasetFileDropzone" class="dropzone">
+        <input type="file" id="datasetFileInput" hidden>
+        <p>Click to select a Dataset file</p>
+    </div>
+    <button id="submitButton" disabled>Submit</button>
+</div>
+
+<script type="module" src="index.js"></script>
+</body>
+</html>

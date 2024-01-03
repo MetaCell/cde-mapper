@@ -9,13 +9,11 @@ import {ModalLayout} from "../layout/ModalLayout.tsx";
 function Home() {
     const {
         setStep,
-        labName,
         cdeFileMapping,
         setLoadingMessage,
         setErrorMessage,
         setMapping
     } = useCdeContext();
-
 
     const handleStartMapping = async () => {
         if (!cdeFileMapping) {
@@ -34,7 +32,8 @@ function Home() {
             } else {
                 setErrorMessage('Invalid CSV file format.');
             }
-        } catch (error: any) {
+        } catch (error) {
+            // @ts-ignore
             setErrorMessage(error.message);
         }
 
