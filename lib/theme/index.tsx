@@ -82,10 +82,10 @@ theme = createTheme({
           borderRadius: '0.5rem',
           lineHeight: '142.857%',
           textTransform: 'none',
-          boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
+          boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
 
           '&:hover': {
-            boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
+            boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
           }
         },
 

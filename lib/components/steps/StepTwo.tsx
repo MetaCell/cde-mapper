@@ -65,7 +65,6 @@ function StepOne() {
                             <Box sx={{mt: 1.5}}>
                                 <Button
                                     disableRipple
-                                    color="secondary"
                                     variant="text"
                                 >
                                     Can’t find the repository you’re looking for? Contact us{' '}

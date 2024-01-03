@@ -6,9 +6,9 @@ import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
 import {useRadioGroup} from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import vars from '../assets/styles/variables';
+import { vars } from '../../theme/variables';
 
-const { palette } = vars
+const { primary50, primary600, primary800, gray100, gray300, gray500, gray700 } = vars
 
 interface StyledCardProps {
     value: string;
@@ -29,9 +29,9 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
             <Card 
                 variant="outlined"
                 sx={{
-                    border: checked ? `1.5px solid ${palette.primary[600]}` : `1px solid ${palette.grey[100]}`,
+                    border: checked ? `1.5px solid ${primary600}` : `1px solid ${gray100}`,
                     borderRadius: '0.5rem',
-                    backgroundColor: checked ? palette.primary[50] : '#fff'
+                    backgroundColor: checked ? primary50 : '#fff'
                 }}
             >
                 <CardContent
@@ -44,19 +44,22 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
                         },
                         "& .MuiRadio-root": {
                             padding: 0,
-                            color: palette.grey[300],
+                            color: gray300,
                             marginRight: '0.75rem',
-                            marginLeft: '0.6rem'
+                            marginLeft: '0.6rem',
+                            '&.Mui-checked': {
+                                color: primary600
+                            }
                         },
                         "& .MuiTypography-body1": {
-                            color: checked ? palette.primary[800] : palette.grey[700],
+                            color: checked ? primary800 : gray700,
                             fontWeight: 500,
                             fontSize: '0.875rem'
                         }
                     }}
                 >
                     <FormControlLabel value={value} control={<Radio size="small"/>} label={value}/>
-                    {isSuggested && <Typography variant="caption" sx={{ color: palette.grey[500] }}>
+                    {isSuggested && <Typography variant="caption" sx={{ color: gray500 }}>
                         Suggested
                     </Typography>}
                 </CardContent>
