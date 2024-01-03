@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
     define: {
         'process.env': {}
     },
@@ -19,6 +19,6 @@ export default defineConfig({
             entry: resolve(__dirname, 'lib/main.tsx'),
             name: 'CdeSelector',
             fileName: 'cde-selector',
-        }
-    }
-})
+        },
+        sourcemap: mode == 'dev',
+    }}));

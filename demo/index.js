@@ -1,5 +1,4 @@
-import { init } from '../dist/cde-selector.js';
-
+import {mapAndInit} from "./integration.js";
 
 let cdeFile = null;
 let datasetFile = null;
@@ -31,16 +30,7 @@ document.getElementById('datasetFileInput').addEventListener('change', function(
 document.getElementById('submitButton').addEventListener('click', function(event) {
     event.preventDefault();
     if (cdeFile && datasetFile) {
-        // Replace 'init' with the actual function from your library
-        init({
-            cdeFileMapping: cdeFile,
-            datasetSample: datasetFile,
-            labFileMapping: null,
-            callback: (data) => console.log(data),
-            repositories: [],
-            config: { width: '60%', height: '80%' },
-            labName: 'TestLabName'
-        });
+        mapAndInit(cdeFile, datasetFile); // This function will be defined in integration.js
     }
 });
 

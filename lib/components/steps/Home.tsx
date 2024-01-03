@@ -2,21 +2,21 @@ import {Box, Button, Typography} from '@mui/material';
 import TABLE from '../../components/assets/svg/table.svg';
 import {useCdeContext} from "../../CdeContext.tsx";
 import {STEPS} from "../../models.ts";
-import {processMappingFile, validateMappingFile} from "../../services/csvService.ts";
+import {processInputMappings, validateInputMappings} from "../../services/mappingService.ts";
 import {ModalLayout} from "../layout/ModalLayout.tsx";
 
 
 function Home() {
     const {
         setStep,
-        cdeFileMapping,
+        inputMappings,
         setLoadingMessage,
         setErrorMessage,
         setMapping
     } = useCdeContext();
 
     const handleStartMapping = async () => {
-        if (!cdeFileMapping) {
+        if (inputMappings.length == 0) {
             setErrorMessage('Mapping file not found')
             return
         }
@@ -24,17 +24,23 @@ function Home() {
         setLoadingMessage('Validating and processing file...');
 
         try {
-            const isValid = await validateMappingFile(cdeFileMapping);
+            const isValid = validateInputMappings(inputMappings);
             if (isValid) {
-                const mapping = await processMappingFile(cdeFileMapping);
+                // todo: process all the input mappings in a generic way
+                const mapping = processInputMappings(inputMappings);
                 setMapping(mapping);
                 setStep(STEPS.REPOSITORY);
+                console.log(mapping)
             } else {
                 setErrorMessage('Invalid CSV file format.');
             }
-        } catch (error) {
-            // @ts-ignore
-            setErrorMessage(error.message);
+        }  catch (error) {
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                // Handle cases where the error is not an Error instance
+                setErrorMessage('An unknown error occurred');
+            }
         }
 
         setLoadingMessage(null);
