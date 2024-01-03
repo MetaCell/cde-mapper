@@ -17,7 +17,6 @@ function Home() {
     const {
         setStep,
         labName,
-        handleClose,
         cdeFileMapping,
         setLoadingMessage,
         setErrorMessage,

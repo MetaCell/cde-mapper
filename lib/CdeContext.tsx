@@ -1,6 +1,6 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
 import {Config, DatasetCDEMapping, InitParams, STEPS} from "./models.ts";
-import theme from "./theme.ts";
+import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -20,7 +20,9 @@ export const CdeContext = createContext({
     errorMessage: null as string | null,
     setErrorMessage: (_errorMessage: string | null) => {},
     isOpen: true,
-    handleClose: () => {}
+    handleClose: () => { },
+    infoOpen: false,
+    setInfoOpen: (_open: boolean) => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);
@@ -31,6 +33,7 @@ export const CdeContextProvider = ({children, labName, callback, cdeFileMapping,
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isOpen, setIsOpen] = useState<boolean>(true)
+    const [infoOpen, setInfoOpen] = useState<boolean>(false)
 
 
     const handleClose = () => {
@@ -53,7 +56,9 @@ export const CdeContextProvider = ({children, labName, callback, cdeFileMapping,
         mapping,
         setMapping,
         isOpen,
-        handleClose
+        handleClose,
+        infoOpen,
+        setInfoOpen
     };
 
 
