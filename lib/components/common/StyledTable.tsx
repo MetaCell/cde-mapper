@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,9 +5,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import vars from '../assets/styles/variables';
+import { vars } from '../../theme/variables';
 
-const { palette } = vars;
+const { gray50, gray200 } = vars;
 
 function createData(
     subject: string,
@@ -45,6 +44,7 @@ export const StyledTable = () => {
                 sx={{
                     position: 'relative',
                     borderBottom: 0,
+                    minWidth: 720,
                     '&::after': {
                         content: '""',
                         position: 'absolute',
@@ -55,17 +55,23 @@ export const StyledTable = () => {
                         background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)'
                     },
                     '& .MuiTableCell-root': {
-                        borderRight: `1px solid ${palette.grey[200]} !important`,
+                        borderRight: `1px solid ${gray200} !important`,
                         padding: '0.75rem 1.5rem !important',
-                        fontSize: '0.75rem',
-                        borderBottom: `1px solid ${palette.grey[200]}`,
+                        fontSize: '0.875rem',
+                        borderBottom: `1px solid ${gray200}`,
                         minWidth: '4.5rem',
-                        minHeight: '2.75rem'
+                        minHeight: '2.75rem',
+                        lineHeight: '1.25rem'
                     }
                 }}
                 aria-label="styled table"
             >
-                <TableHead>
+                <TableHead sx={{
+                    '& .MuiTableCell-root': {
+                        lineHeight: '1.125rem',
+                        fontSize: '0.75rem'
+                    }
+                }}>
                     <TableRow>
                         {
                             columns.map(column => (
@@ -73,7 +79,7 @@ export const StyledTable = () => {
                                     key={column}
                                     align="left"
                                     sx={{
-                                        backgroundColor: palette.grey[50]
+                                        backgroundColor: gray50
                                     }}
                                 >
                                     {column}
