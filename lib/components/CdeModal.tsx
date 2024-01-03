@@ -4,7 +4,7 @@ import Home from "./steps/Home.tsx";
 import {useCdeContext} from "../CdeContext.tsx";
 import {useTheme} from '@mui/material/styles';
 import {STEPS} from "../models.ts";
-import StepTwo from "./steps/StepTwo.tsx";
+import StepTwo from "./steps/StepOne.tsx";
 import Modal from './common/Modal.tsx'
 
 const CdeModal: FC = () => {
