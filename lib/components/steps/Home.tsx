@@ -26,7 +26,6 @@ function Home() {
         try {
             const isValid = validateInputMappings(inputMappings);
             if (isValid) {
-                // todo: process all the input mappings in a generic way
                 const mapping = processInputMappings(inputMappings);
                 setMapping(mapping);
                 setStep(STEPS.REPOSITORY);
@@ -38,7 +37,6 @@ function Home() {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
             } else {
-                // Handle cases where the error is not an Error instance
                 setErrorMessage('An unknown error occurred');
             }
         }

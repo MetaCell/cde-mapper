@@ -17,7 +17,7 @@ export function mapAndInit(cdeFile, datasetFile) {
                     // Map other fields as needed
                 }));
 
-                // Then call the 'init' function from your library
+                // Then call the 'init' function from the library
                 init({
                     inputMappings: [cdeMappings],
                     datasetSample: datasetFile,
