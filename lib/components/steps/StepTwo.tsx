@@ -20,13 +20,7 @@ function StepOne() {
     };
 
     return (
-        <ModalLayout
-            title="Map selected datasets"
-            headerLeftNode={
-                <StyledIconButton color="primary" size="small" onClick={handleClose}>
-                    <img src={X} alt="X Icon"/>
-                </StyledIconButton>
-            }>
+        <ModalLayout>
             <>
                 <StyledStepper />
                 <Stack alignItems="center" justifyContent="center" sx={{mx: 3, my: 6}}>

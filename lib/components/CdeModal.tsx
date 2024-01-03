@@ -1,10 +1,11 @@
 import {FC, useEffect} from 'react';
-import {Modal, Box, CircularProgress, Snackbar} from '@mui/material';
+import {Snackbar} from '@mui/material';
 import Home from "./steps/Home.tsx";
 import {useCdeContext} from "../CdeContext.tsx";
 import {useTheme} from '@mui/material/styles';
 import {STEPS} from "../models.ts";
 import StepTwo from "./steps/StepTwo.tsx";
+import Modal from './common/Modal.tsx'
 
 const CdeModal: FC = () => {
     const theme = useTheme();
@@ -35,30 +36,16 @@ const CdeModal: FC = () => {
 
 
     return (
-        <Modal open={isOpen} onClose={handleClose}>
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: 'background.paper',
-                    boxShadow: theme.shadows[5],
-                    outline: 'none',
-                    borderRadius: '0.5rem',
-                    minWidth: '1100px',
-                    minHeight: '750px'
-                }}
-            >
-                {loadingMessage && <CircularProgress/>}
-                {!loadingMessage && renderStepComponent()}
-                <Snackbar
-                    open={!!errorMessage}
-                    message={errorMessage}
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                />
-            </Box>
-        </Modal>
+        <>
+            <Modal open={isOpen} onClose={handleClose} maxWidth="xl">
+                {renderStepComponent()}
+            </Modal>
+            <Snackbar
+                open={!!errorMessage}
+                message={errorMessage}
+                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+            />
+        </>
     );
 };
 
