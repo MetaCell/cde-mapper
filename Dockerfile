@@ -8,10 +8,10 @@ WORKDIR ${APP_DIR}
 
 # ADD package-lock.json ${APP_DIR}
 # RUN npm ci
-ADD package.json ${APP_DIR}
+COPY package.json ${APP_DIR}
 RUN npm install
 
-# USER node
+# user node
 ADD --chown=node:node . ${APP_DIR}
 RUN npm run build
 
