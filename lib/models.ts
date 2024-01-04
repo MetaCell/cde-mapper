@@ -24,8 +24,7 @@ export interface Config {
 }
 
 export interface InitParams {
-    cdeFileMapping: File;
-    labFileMapping: File | null;
+    inputMappings: InputMapping[][];
     datasetSample: File;
     callback: (cdeFileMapping: File | null) => void;
     repositories: Repository[];
@@ -33,6 +32,13 @@ export interface InitParams {
     labName: string
 }
 
+
+export interface InputMapping {
+    variableName: string;
+    abbreviation: string;
+    interlexID: string;
+    [key: string]: string;
+}
 
 // Internal
 
