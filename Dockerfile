@@ -12,8 +12,7 @@ ADD package.json ${APP_DIR}
 RUN npm install
 
 # USER node
-# ADD --chown=node:node . ${APP_DIR}
-ADD . ${APP_DIR}
+ADD --chown=node:node . ${APP_DIR}
 RUN ls -al 
 RUN npm run build
 
