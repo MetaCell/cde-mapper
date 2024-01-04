@@ -12,6 +12,7 @@ COPY package.json ${APP_DIR}
 RUN npm install
 
 COPY . ${APP_DIR}
+RUN ls -al demo
 RUN npm run build
 
 FROM ${PARENT}
