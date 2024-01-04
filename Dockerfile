@@ -6,12 +6,12 @@ ENV APP_DIR=/app
 
 WORKDIR ${APP_DIR}
 
+USER node
+
 # COPY package-lock.json ${APP_DIR}
 # RUN npm ci
 COPY package.json ${APP_DIR}
 RUN npm install
-
-USER node
 
 COPY . ${APP_DIR}
 RUN ls -al demo
