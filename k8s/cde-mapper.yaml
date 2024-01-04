@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cde-mapper
+  labels:
+    app: cde-mapper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cde-mapper
+  template:
+    metadata:
+      labels:
+        app: cde-mapper
+    spec:
+      containers:
+      - name: cde-mapper
+        image: us.gcr.io/metacellllc/cde/cde-mapper:{{CF_SHORT_REVISION}}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /index.html
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 45
+          periodSeconds: 30
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /index.html
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 50m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cde-mapper
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: cde-mapper
