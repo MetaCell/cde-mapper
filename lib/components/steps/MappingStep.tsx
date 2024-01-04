@@ -4,6 +4,7 @@ import { useCdeContext } from "../../CdeContext.tsx";
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { ArrowDropDown, ArrowIcon, CheckboxDefault, CheckboxSelected, ChevronRight, GlobeIcon, LeftIcon, LinkIcon, RightIcon } from '../../icons/index.tsx';
+import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 
 function a11yProps(index: number) {
@@ -34,7 +35,7 @@ const tabsArr = [
 const renderTabComponent = (step: number) => {
   switch (step) {
       case 0:
-          return <Typography> Step one </Typography>;
+          return <StepOne/>
       case 1:
           return <StepTwo />;
       // Add cases for other steps

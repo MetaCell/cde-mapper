@@ -39,6 +39,7 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
+                        paddingLeft: '1.5rem',
                         "&:last-child": {
                             paddingBottom: "1rem"
                         },
@@ -54,7 +55,8 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
                         "& .MuiTypography-body1": {
                             color: checked ? primary800 : gray700,
                             fontWeight: 500,
-                            fontSize: '0.875rem'
+                            fontSize: '0.875rem',
+                            lineHeight: '1.25rem'
                         }
                     }}
                 >
