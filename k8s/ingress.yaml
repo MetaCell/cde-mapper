@@ -36,4 +36,4 @@ spec:
   tls:
   - hosts:
     - {{DOMAIN}}
-    secretName: scde-mapper-tls
+    secretName: cde-mapper-tls
