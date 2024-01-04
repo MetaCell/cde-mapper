@@ -25,7 +25,8 @@ const CdeModal: FC = () => {
             case STEPS.HOME:
                 return <Home/>;
             case STEPS.REPOSITORY:
-                return <MappingStep/>;
+                // return <MappingStep/>;
+                return <Home/>;
             // Add cases for other steps
             default:
                 return <div>Unknown step</div>;

@@ -7,7 +7,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { vars } from '../../theme/variables';
 
-const { gray50, gray200 } = vars;
+const { gray50, gray100, gray200 } = vars;
 
 function createData(
     subject: string,
@@ -37,14 +37,15 @@ export const StyledTable = () => {
             component={Paper} 
             elevation={0}
             sx={{
-                maxWidth: 650
+                maxWidth: 650,
+                border: `1px solid ${gray100}`,
+                borderBottom: 0
             }}
         >
             <Table
                 sx={{
                     position: 'relative',
                     borderBottom: 0,
-                    minWidth: 720,
                     '&::after': {
                         content: '""',
                         position: 'absolute',
@@ -59,7 +60,7 @@ export const StyledTable = () => {
                         padding: '0.75rem 1.5rem !important',
                         fontSize: '0.875rem',
                         borderBottom: `1px solid ${gray200}`,
-                        minWidth: '4.5rem',
+                        minWidth: '7.5rem',
                         minHeight: '2.75rem',
                         lineHeight: '1.25rem'
                     }

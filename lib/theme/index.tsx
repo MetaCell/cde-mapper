@@ -204,6 +204,8 @@ theme = createTheme({
           fontFamily: primaryFont,
           borderRadius: '1rem',
           padding: '0.125rem 0.5rem',
+          backgroundColor: gray100,
+          color: gray700
         },
         label: {
           fontSize: '0.75rem',
@@ -211,13 +213,18 @@ theme = createTheme({
           fontWeight: 500,
           padding: 0,
           fontFamily: primaryFont,
+          paddingLeft: '0.25rem'
         },
         filledPrimary: {
           background: '#EEF2FC',
           '& .MuiChip-label': {
             color: '#2155BA'
           }
-        }
+        },
+        colorSuccess: {
+          backgroundColor: success50,
+          color: success700
+        },
       }
     },
 
