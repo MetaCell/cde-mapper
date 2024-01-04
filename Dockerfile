@@ -14,8 +14,10 @@ USER node
 # RUN npm ci
 COPY package.json ${APP_DIR}
 RUN npm install
+RUN ls -al 
 
 COPY . ${APP_DIR}
+RUN ls -al 
 RUN ls -al demo
 RUN npm run build
 RUN ls -al demo
