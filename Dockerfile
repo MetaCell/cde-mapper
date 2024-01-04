@@ -16,7 +16,7 @@ COPY package.json ${APP_DIR}
 RUN npm install
 RUN ls -al 
 
-COPY . ${APP_DIR}
+ADD --chown=node:node . ${APP_DIR}
 RUN ls -al 
 RUN ls -al demo
 RUN npm run build
