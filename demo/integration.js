@@ -1,4 +1,4 @@
-import { init } from '/cde-mapper/dist/cde-selector.js';
+import { init } from './cde-mapper.js';
 
 export function mapAndInit(cdeFile, datasetFile) {
     const reader = new FileReader();
