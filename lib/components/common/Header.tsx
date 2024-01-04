@@ -15,6 +15,7 @@ const styles = {
     borderBottom: `0.0625rem solid ${gray100}`,
     background: baseWhite,
     position: 'sticky',
+    zIndex: 9,
     top: 0,
 
     '& .MuiTypography-root': {

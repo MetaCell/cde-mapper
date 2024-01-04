@@ -12,12 +12,12 @@ const styles = {
     width: '100%',
     height: '100%',
     transition: 'all ease-in-out .3s',
-    zIndex: 9,
+    zIndex: 91,
   },
 
   wrap: {
     width: '22.5rem',
-    zIndex: 91,
+    zIndex: 92,
     position: 'absolute',
     height: '100%',
     top: 0,

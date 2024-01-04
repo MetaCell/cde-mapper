@@ -1,6 +1,7 @@
 export const vars = {
   primaryFont: "'Inter', sans-serif",
   baseWhite: '#fff',
+  gray50: '#F4F5F5',
   gray100: '#ECEDEE',
   gray200: '#E4E5E7',
   gray300: '#D6D8DB',
@@ -10,5 +11,8 @@ export const vars = {
   gray700: '#373A3E',
   primary50: '#EEF2FC',
   primary600: '#19418F',
-  primary800: '#0A1A38'
+  primary800: '#0A1A38',
+  primary100: '#C2D4F4',
+  primary700: '#122E64',
+  black: '#000000'
 };
