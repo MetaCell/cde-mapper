@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# don't store the prod build in git
+# it can be build by npm run build
+demo/cde-mapper.js
+
+# for now we don't store the package-lock.json
+package-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -1,0 +1,33 @@
+version: "1.0"
+stages:
+  - clone
+  - buildCdeMapper
+  - deploy
+steps:
+  main_clone:
+    title: Clone main repository
+    type: git-clone
+    stage: clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_BRANCH}}'
+    git: github
+  buildCdeMapper:
+    title: "Building CDE Mapper Docker Image"
+    type: build
+    stage: buildCdeMapper
+    buildkit: true
+    image_name: "cde/cde-mapper"
+    tag: "${{CF_SHORT_REVISION}}"
+    dockerfile: Dockerfile
+    registry: ${{REGISTRY}}
+  deploy-to-kubernetes:
+    image: codefresh/cf-deploy-kubernetes
+    tag: latest
+    stage: deploy
+    working_directory: ./k8s
+    commands:
+      - /cf-deploy-kubernetes cde-mapper.yaml
+      - /cf-deploy-kubernetes ingress.yaml
+    environment:
+      - KUBECONTEXT=${{CLUSTER}}
+      - KUBERNETES_NAMESPACE=${{NAMESPACE}}

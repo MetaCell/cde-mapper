@@ -12,16 +12,14 @@ const { primary600, gray600 } = vars;
 function Home() {
     const {
         setStep,
-        labName,
-        cdeFileMapping,
+        inputMappings,
         setLoadingMessage,
         setErrorMessage,
         setMapping
     } = useCdeContext();
 
-
     const handleStartMapping = async () => {
-        if (!cdeFileMapping) {
+        if (inputMappings.length == 0) {
             setErrorMessage('Mapping file not found')
             return
         }
@@ -29,16 +27,21 @@ function Home() {
         setLoadingMessage('Validating and processing file...');
 
         try {
-            const isValid = await validateMappingFile(cdeFileMapping);
+            const isValid = validateInputMappings(inputMappings);
             if (isValid) {
-                const mapping = await processMappingFile(cdeFileMapping);
+                const mapping = processInputMappings(inputMappings);
                 setMapping(mapping);
                 setStep(STEPS.REPOSITORY);
+                console.log(mapping)
             } else {
                 setErrorMessage('Invalid CSV file format.');
             }
-        } catch (error: any) {
-            setErrorMessage(error.message);
+        }  catch (error) {
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage('An unknown error occurred');
+            }
         }
 
         setLoadingMessage(null);

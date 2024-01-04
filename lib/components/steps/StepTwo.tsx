@@ -1,7 +1,5 @@
 import {Stack, Typography} from '@mui/material';
-import X from '../../components/assets/svg/x.svg';
 import {ModalLayout} from "../layout/ModalLayout.tsx";
-import StyledIconButton from '../common/StyledIconButton.tsx';
 import {useCdeContext} from "../../CdeContext.tsx";
 
 
