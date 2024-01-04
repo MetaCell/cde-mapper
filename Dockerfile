@@ -6,15 +6,12 @@ ENV APP_DIR=/app
 
 WORKDIR ${APP_DIR}
 
-RUN env && id
-RUN ls -al
-USER node
-
 # ADD package-lock.json ${APP_DIR}
 # RUN npm ci
 ADD package.json ${APP_DIR}
 RUN npm install
 
+USER node
 # ADD --chown=node:node . ${APP_DIR}
 ADD . ${APP_DIR}
 RUN ls -al 
