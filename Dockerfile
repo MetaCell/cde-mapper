@@ -6,6 +6,8 @@ ENV APP_DIR=/app
 
 WORKDIR ${APP_DIR}
 
+RUN env && id
+RUN ls -al
 USER node
 
 # COPY package-lock.json ${APP_DIR}
