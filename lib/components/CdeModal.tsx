@@ -2,17 +2,14 @@ import {FC, useEffect} from 'react';
 import {Snackbar} from '@mui/material';
 import Home from "./steps/Home.tsx";
 import {useCdeContext} from "../CdeContext.tsx";
-import {useTheme} from '@mui/material/styles';
 import {STEPS} from "../models.ts";
 // import StepTwo from "./steps/StepTwo.tsx";
 import Modal from './common/Modal.tsx'
 import MappingStep from './steps/MappingStep.tsx';
 
 const CdeModal: FC = () => {
-    const theme = useTheme();
-    const {config, step, loadingMessage, errorMessage,
+    const {step, errorMessage,
         setErrorMessage, handleClose, isOpen} = useCdeContext();
-    const {width, height} = config;
 
     useEffect(() => {
         if (errorMessage) {

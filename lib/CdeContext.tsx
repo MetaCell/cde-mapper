@@ -1,32 +1,48 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
-import {Config, DatasetCDEMapping, InitParams, STEPS} from "./models.ts";
+import {Config, DatasetCDEMapping, InitParams, InputMapping, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 
-export const CdeContext = createContext({
+export const CdeContext = createContext<{
+    labName: string;
+    config: Config;
+    inputMappings: InputMapping[][];
+    mapping: DatasetCDEMapping;
+    setMapping: (mapping: DatasetCDEMapping) => void;
+    step: number;
+    setStep: (step: number) => void;
+    loadingMessage: string | null;
+    setLoadingMessage: (loadingMessage: string | null) => void;
+    errorMessage: string | null;
+    setErrorMessage: (errorMessage: string | null) => void;
+    isOpen: boolean;
+    handleClose: () => void;
+    infoOpen: boolean;
+    setInfoOpen: (open: boolean) => void;
+}>({
     labName: '',
     config: {
         width: "100%",
         height: "100%",
-    } as Config,
-    cdeFileMapping: null as File | null,
+    },
+    inputMappings: [],
     mapping: {} as DatasetCDEMapping,
-    setMapping: (_mapping: DatasetCDEMapping) => {},
+    setMapping: () => {},
     step: 0,
-    setStep: (_step: number) => {},
-    loadingMessage: null as string | null,
-    setLoadingMessage: (_loadingMessage: string | null) => {},
-    errorMessage: null as string | null,
-    setErrorMessage: (_errorMessage: string | null) => {},
+    setStep: () => {},
+    loadingMessage: null,
+    setLoadingMessage: () => {},
+    errorMessage: null,
+    setErrorMessage: () => {},
     isOpen: true,
     handleClose: () => { },
     infoOpen: false,
-    setInfoOpen: (_open: boolean) => {}
+    setInfoOpen: () => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, callback, cdeFileMapping, config}: PropsWithChildren<InitParams>) => {
+export const CdeContextProvider = ({children, labName, callback, inputMappings, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
     const [step, setStep] = useState<number>(STEPS.REPOSITORY);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
@@ -45,7 +61,7 @@ export const CdeContextProvider = ({children, labName, callback, cdeFileMapping,
     const contextValue = {
         config,
         labName,
-        cdeFileMapping,
+        inputMappings,
         step,
         setStep,
         loadingMessage,
