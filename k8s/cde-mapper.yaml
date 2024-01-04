@@ -19,12 +19,12 @@ spec:
         image: us.gcr.io/metacellllc/cde/cde-mapper:{{CF_SHORT_REVISION}}
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8000
+        - containerPort: 80
         livenessProbe:
           failureThreshold: 3
           httpGet:
             path: /index.html
-            port: 8000
+            port: 80
             scheme: HTTP
           initialDelaySeconds: 45
           periodSeconds: 30
@@ -33,7 +33,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /index.html
-            port: 8000
+            port: 80
             scheme: HTTP
           initialDelaySeconds: 15
           periodSeconds: 30
@@ -54,6 +54,6 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
-    targetPort: 8000
+    targetPort: 80
   selector:
     app: cde-mapper

@@ -13,11 +13,10 @@ RUN npm install
 
 # USER node
 ADD --chown=node:node . ${APP_DIR}
-RUN ls -al 
 RUN npm run build
 
 FROM ${PARENT}
-ENV PORT=8000
+ENV PORT=80
 
 COPY --from=build /app/demo/* /var/www/html
 EXPOSE ${PORT}
