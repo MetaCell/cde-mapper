@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc --p ./tsconfig-build.json && vite build && cp dist/cde-mapper.js demo",
+    "build": "tsc --p ./tsconfig-build.json && vite build && cp -f dist/cde-mapper.js demo",
     "build:watch": "tsc --p ./tsconfig-build.json && vite build --watch --mode dev",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
