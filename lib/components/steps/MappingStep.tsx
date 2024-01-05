@@ -1,10 +1,11 @@
-import { Box, Button, Checkbox, Chip, Divider, Grid, IconButton, Link, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { ArrowDropDown, ArrowIcon, CheckboxDefault, CheckboxSelected, ChevronRight, GlobeIcon, LeftIcon, LinkIcon, RightIcon } from '../../icons/index.tsx';
 import StepTwo from './StepTwo.tsx';
+import StepThree from './StepThree.tsx';
+import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 
 function a11yProps(index: number) {
     return {
@@ -34,17 +35,19 @@ const tabsArr = [
 const renderTabComponent = (step: number) => {
   switch (step) {
       case 0:
-          return <Typography> Step one </Typography>;
+          return <ModalHeightWrapper><Typography> Step one </Typography></ModalHeightWrapper>;
       case 1:
           return <StepTwo />;
+      case 2:
+          return <StepThree />;
       // Add cases for other steps
       default:
           return <div>Unknown step</div>;
   }
 };
 
-function CustomTabPanel(props) {
-  const { value, index, ...other } = props;
+function CustomTabPanel(props: { [x: string]: any; children: any; value: any; index: any; }) {
+  const { children, value, index, ...other } = props;
 
   return (
     <div
@@ -54,9 +57,7 @@ function CustomTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        renderTabComponent(index)
-      )}
+      {value === index && children}
     </div>
   );
 }
@@ -70,7 +71,7 @@ CustomTabPanel.propTypes = {
 function MappingStep() {
     const { mapping } = useCdeContext();
 
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = React.useState(2);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -117,15 +118,9 @@ function MappingStep() {
                     </Button>
                 </Box>
             </Box>
-            <CustomTabPanel value={value} index={0}>
-              Step One
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-              <StepTwo />
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
-              Item Three
-            </CustomTabPanel>
+            {tabsArr?.map((_tab, index) => (
+                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index)}</CustomTabPanel>
+            ))}
         </ModalLayout>
     );
 }

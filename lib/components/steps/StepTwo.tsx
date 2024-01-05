@@ -3,6 +3,7 @@ import { useCdeContext } from "../../CdeContext.tsx";
 import React, { useState } from 'react';
 import { ArrowDropDown, LeftIcon, RightIcon } from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
+import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 
 function StepTwo() {
     const { mapping } = useCdeContext();
@@ -13,7 +14,7 @@ function StepTwo() {
 
     return (
         <>
-            <Box overflow='auto' maxHeight='calc(100vh - (3.9375rem + 3.5625rem + 4.4375rem + 2rem + 2rem))' p='1.5rem' pb={6}>
+            <ModalHeightWrapper>
                 <Box mb={3} borderBottom='0.0625rem solid #ECEDEE' py='0.6875rem' display='flex' alignItems='center' justifyContent='space-between'>
                     <Typography sx={{
                         color: '#676C74',
@@ -90,7 +91,7 @@ function StepTwo() {
                         <SuggestionDetailUI />
                     </Box>
                 )}
-            </Box>
+            </ModalHeightWrapper>
 
             <Box width='calc(100% - 3rem)' mx='auto' justifyContent='space-between' display='flex' alignItems='center' sx={{ background: '#fff', zIndex: 9 }} py='1rem' borderTop='0.0625rem solid #ECEDEE'>
                 <Box gap='0.75rem' display='flex' alignItems='center'>
