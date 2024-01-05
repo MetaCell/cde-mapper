@@ -1,9 +1,8 @@
-import { Box, Button, Checkbox, Chip, Divider, Grid, IconButton, Link, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ArrowDropDown, ArrowIcon, CheckboxDefault, CheckboxSelected, ChevronRight, GlobeIcon, LeftIcon, LinkIcon, RightIcon } from '../../icons/index.tsx';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 
@@ -44,7 +43,7 @@ const renderTabComponent = (step: number) => {
   }
 };
 
-function CustomTabPanel(props) {
+function CustomTabPanel(props: any) {
   const { value, index, ...other } = props;
 
   return (

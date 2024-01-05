@@ -5,7 +5,7 @@ import StyledCard from '../common/StyledCard.tsx';
 
 
 function StepOne() {
-    const { handleClose, mapping } = useCdeContext();
+    const { mapping } = useCdeContext();
     const [selectedRadioValue, setSelectedRadioValue] = useState("Spinal Cord Injury (SCI)");
 
     console.log(mapping)

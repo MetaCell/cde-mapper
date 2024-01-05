@@ -1,5 +1,4 @@
 import { Box, Checkbox, Grid, Link, Typography } from '@mui/material';
-import React from 'react';
 import { ArrowIcon, CheckboxDefault, CheckboxSelected, GlobeIcon, LinkIcon } from '../../icons/index.tsx';
 
 function SuggestionDetailUI() {
