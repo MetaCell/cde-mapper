@@ -1,7 +1,7 @@
-import { Box, Button, Typography, Chip, Stack } from '@mui/material';
+import { Box, Button, Typography, Chip } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import { STEPS } from "../../models.ts";
-import { processMappingFile, validateMappingFile } from "../../services/csvService.ts";
+import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
