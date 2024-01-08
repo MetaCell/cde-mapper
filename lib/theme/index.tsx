@@ -131,6 +131,17 @@ theme = createTheme({
       }
     },
 
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          height: '2.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          minWidth: 0
+        }
+      },
+    },
+
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
