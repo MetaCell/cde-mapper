@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Stack, Typography, Box, Button, FormControl, RadioGroup } from '@mui/material';
+import { Stack, Typography, Box, Button, FormControl, RadioGroup, Link } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import StyledCard from '../common/StyledCard.tsx';
+import { vars } from '../../theme/variables.ts';
 
+const { gray500 } = vars
 
 function StepOne() {
     const { mapping } = useCdeContext();
@@ -52,12 +54,7 @@ function StepOne() {
                             </Button>
                         </Box>
                         <Box sx={{ mt: 1.5 }}>
-                            <Button
-                                disableRipple
-                                variant="text"
-                            >
-                                Can’t find the repository you’re looking for? Contact us{' '}
-                            </Button>
+                            <Link href={`mailto:${''}`}>Can’t find the repository you’re looking for? Contact us</Link>
                         </Box>
                     </Stack>
                 </Stack>
