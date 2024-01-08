@@ -205,15 +205,15 @@ theme = createTheme({
           borderRadius: '1rem',
           padding: '0.125rem 0.5rem',
           backgroundColor: gray100,
-          color: gray700
+          color: gray700,
+          gap: '0.25rem'
         },
         label: {
           fontSize: '0.75rem',
           lineHeight: '150%',
           fontWeight: 500,
           padding: 0,
-          fontFamily: primaryFont,
-          paddingLeft: '0.25rem'
+          fontFamily: primaryFont
         },
         filledPrimary: {
           background: '#EEF2FC',

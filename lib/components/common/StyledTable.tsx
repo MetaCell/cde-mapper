@@ -69,7 +69,6 @@ export const StyledTable = () => {
             >
                 <TableHead sx={{
                     '& .MuiTableCell-root': {
-                        lineHeight: '1.125rem',
                         fontSize: '0.75rem'
                     }
                 }}>
