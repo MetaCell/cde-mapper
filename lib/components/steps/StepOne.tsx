@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { Stack, Typography, Box, Button, FormControl, RadioGroup, Link } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import StyledCard from '../common/StyledCard.tsx';
-import { vars } from '../../theme/variables.ts';
-
-const { gray500 } = vars
 
 function StepOne() {
     const { mapping } = useCdeContext();
