@@ -1,13 +1,13 @@
-import { useState } from 'react';
 import { Box, Button, Chip, IconButton, Typography } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
+import React from 'react';
 import { ArrowDropDown, LeftIcon, RightIcon } from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 
 function StepTwo() {
     const { mapping } = useCdeContext();
 
-    const [showOtherSuggestions, setShowOtherSuggestions] = useState(false);
+    const [showOtherSuggestions, setShowOtherSuggestions] = React.useState(false);
 
     console.log(mapping)
 

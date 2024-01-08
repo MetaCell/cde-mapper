@@ -1,7 +1,7 @@
-import React from 'react';
 import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
+import React, { ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
@@ -31,35 +31,21 @@ const tabsArr = [
     }
 ];
 
-const renderTabComponent = (step: number) => {
-  switch (step) {
-      case 0:
-          return <StepOne/>
-      case 1:
-          return <StepTwo />;
-      // Add cases for other steps
-      default:
-          return <div>Unknown step</div>;
+function CustomTabPanel(props: { children: ReactNode; value: number; index: number; }) {
+    const { children, value, index, ...other } = props;
+  
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && children}
+      </div>
+    );
   }
-};
-
-function CustomTabPanel(props: any) {
-  const { value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        renderTabComponent(index)
-      )}
-    </div>
-  );
-}
 
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
@@ -118,7 +104,7 @@ function MappingStep() {
                 </Box>
             </Box>
             <CustomTabPanel value={value} index={0}>
-              Step One
+              <StepOne/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               <StepTwo />
