@@ -3,6 +3,7 @@ import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
 import React, { ReactNode } from 'react';
 import PropTypes from 'prop-types';
+import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 
 function a11yProps(index: number) {
@@ -103,7 +104,7 @@ function MappingStep() {
                 </Box>
             </Box>
             <CustomTabPanel value={value} index={0}>
-              Step One
+              <StepOne/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               <StepTwo />

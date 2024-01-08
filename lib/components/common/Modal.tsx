@@ -21,7 +21,8 @@ const Modal:React.FC<any> = ({
         },
         '& .MuiDialog-paper': {
           boxShadow: '0rem 0.125rem 0.25rem -0.125rem rgba(7, 8, 8, 0.06), 0rem 0.25rem 0.5rem -0.125rem rgba(7, 8, 8, 0.10)',
-          overflow: infoOpen ? 'hidden' : 'auto'
+          overflow: infoOpen ? 'hidden' : 'auto',
+          minHeight: 750
         }
       }}
     >
