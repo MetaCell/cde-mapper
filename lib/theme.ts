@@ -90,6 +90,8 @@ const theme = createTheme({
           borderRadius: '0.5rem',
           textTransform: 'none',
           fontWeight: 600,
+          padding: '0.5rem 0.875rem',
+          lineHeight: '1.25rem',
         },
       },
     },

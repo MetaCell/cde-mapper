@@ -1,10 +1,13 @@
-import {Box, Button, Typography} from '@mui/material';
-import TABLE from '../../components/assets/svg/table.svg';
-import {useCdeContext} from "../../CdeContext.tsx";
-import {STEPS} from "../../models.ts";
-import {processInputMappings, validateInputMappings} from "../../services/mappingService.ts";
-import {ModalLayout} from "../layout/ModalLayout.tsx";
+import { Box, Button, Typography, Chip } from '@mui/material';
+import { useCdeContext } from "../../CdeContext.tsx";
+import { STEPS } from "../../models.ts";
+import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
+import { ModalLayout } from "../layout/ModalLayout.tsx";
+import { StyledTable } from '../common/StyledTable.tsx';
+import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
+import { vars } from '../../theme/variables.ts';
 
+const { primary600, gray600 } = vars;
 
 function Home() {
     const {
@@ -47,13 +50,9 @@ function Home() {
     return (
         <ModalLayout>
             <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
-                background: '#FCFCFD',
-                '& img': {
-                    maxWidth: '40.625rem',
-                    display: 'block'
-                }
+                background: '#FCFCFD'
             }}>
-                <Typography sx={{ marginBottom: '0.25rem' }} variant='h3'>
+                <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
                     Create mapping(s) with selected dataset?
                 </Typography>
                 <Typography variant='body2' sx={{
@@ -62,8 +61,36 @@ function Home() {
                 }}>
                     You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
                 </Typography>
-                <Box my={3}>
-                    <img src={TABLE} alt="table"/>
+                <Box my={6}>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} width={1}>
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            sx={{
+                                borderLeft: `2px solid ${primary600}`,
+                                '& .MuiTypography-h6': {
+                                    fontSize: '1.125rem',
+                                    color: primary600,
+                                    lineHeight: '1.75rem',
+                                    marginLeft: '0.75rem',
+                                    marginRight: '0.5rem'
+                                },
+                                '& .MuiTypography-body2': {
+                                    color: gray600,
+                                    lineHeight: '1.25rem',
+                                    fontSize: '0.875rem'
+                                }
+                            }} 
+                        >
+                            <Typography variant="h6">124</Typography>
+                            <Typography variant="body2">total number of column headers</Typography>
+                        </Box>
+                        <Box display="flex" alignItems="center" gap={1}>
+                            <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess/>} />
+                            <Chip size="small" label="83 unmapped, 13 suggestions available" color="default" icon={<CircleChipDefault/>} />
+                        </Box>
+                    </Box>
+                    <StyledTable />
                 </Box>
 
                 <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>

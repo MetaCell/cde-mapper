@@ -2,6 +2,7 @@ import {createContext, PropsWithChildren, useContext, useState} from 'react';
 import {Config, DatasetCDEMapping, InitParams, InputMapping, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
+import CssBaseline from '@mui/material/CssBaseline';
 
 export const CdeContext = createContext<{
     labName: string;
@@ -44,7 +45,7 @@ export const useCdeContext = () => useContext(CdeContext);
 
 export const CdeContextProvider = ({children, labName, callback, inputMappings, config}: PropsWithChildren<InitParams>) => {
     const [mapping, setMapping] = useState<DatasetCDEMapping>({});
-    const [step, setStep] = useState<number>(STEPS.REPOSITORY);
+    const [step, setStep] = useState<number>(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isOpen, setIsOpen] = useState<boolean>(true)
@@ -79,6 +80,7 @@ export const CdeContextProvider = ({children, labName, callback, inputMappings, 
 
     return (
         <ThemeProvider theme={theme}>
+            <CssBaseline/>
             <CdeContext.Provider value={contextValue}>
                 {children}
             </CdeContext.Provider>

@@ -66,3 +66,15 @@ export const ArrowDropDown = () => (
     <path d="M7.9165 14.167L12.0832 10.0003L7.9165 5.83366L7.9165 14.167Z" fill="#19418F"/>
   </svg>
 )
+
+export const CircleChipDefault = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+    <circle cx="4" cy="4" r="3" fill="#676C74"/>
+  </svg>
+)
+
+export const CircleChipSuccess = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+    <circle cx="4" cy="4" r="3" fill="#12B76A"/>
+  </svg>
+)
