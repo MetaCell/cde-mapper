@@ -1,6 +1,6 @@
 import { Box, Button, Chip, IconButton, Typography } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
-import React, { useState } from 'react';
+import React from 'react';
 import { ArrowDropDown, LeftIcon, RightIcon } from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
@@ -8,7 +8,7 @@ import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 function StepTwo() {
     const { mapping } = useCdeContext();
 
-    const [showOtherSuggestions, setShowOtherSuggestions] = useState(false);
+    const [showOtherSuggestions, setShowOtherSuggestions] = React.useState(false);
 
     console.log(mapping)
 
