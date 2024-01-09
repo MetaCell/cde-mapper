@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import React, { useState } from "react";
 import Checkbox from "../common/CheckBox";
+import CustomEntitiesDropdown from "./CustomMappingDropdown";
 
 const styles = {
   root: {
@@ -89,7 +90,181 @@ const StepThree = () => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const mockEntities = [
+    {
+      "id": "5304",
+      "group": 'Origins',
+      "label": "('Aortic arch', 'arch of aorta')",
+      "content": [
+        {
+          "title": "Name",
+          "value": "('Aortic arch', 'arch of aorta')"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0001508"
+        }
+      ]
+    },
+    {
+      "id": "32845",
+      "group": 'Origins',
+      "label": "(embryonic) hindbrain flexure",
+      "content": [
+        {
+          "title": "Name",
+          "value": "(embryonic) hindbrain flexure"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0005820"
+        }
+      ]
+    },
+    {
+      "id": "47428",
+      "group": 'Origins',
+      "label": "(mid-third) lateral capsular ligament",
+      "content": [
+        {
+          "title": "Name",
+          "value": "(mid-third) lateral capsular ligament"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0014899"
+        }
+      ]
+    },
+    {
+      "id": "12822",
+      "group": 'Origins',
+      "label": "(pre-)piriform cortex",
+      "content": [
+        {
+          "title": "Name",
+          "value": "(pre-)piriform cortex"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0002590"
+        }
+      ]
+    },
+    {
+      "id": "1798",
+      "group": 'Origins',
+      "label": "02 optic nerve",
+      "content": [
+        {
+          "title": "Name",
+          "value": "02 optic nerve"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0000941"
+        }
+      ]
+    },
+    {
+      "id": "53259",
+      "group": 'Origins',
+      "label": "10 R+L thoracic",
+      "content": [
+        {
+          "title": "Name",
+          "value": "10 R+L thoracic"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0039167"
+        }
+      ]
+    },
+    {
+      "id": "6604",
+      "group": 'Origins',
+      "label": "10n",
+      "content": [
+        {
+          "title": "Name",
+          "value": "10n"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0001759"
+        }
+      ]
+    },
+    {
+      "id": "52948",
+      "group": 'Origins',
+      "label":"11 R+L thoracic",
+      "content": [
+        {
+          "title": "Name",
+          "value": "11 R+L thoracic"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0038635"
+        }
+      ]
+    },
+    {
+      "id": "52950",
+      "group": 'Origins',
+      "label": "11 thoracic lymph node",
+      "content": [
+        {
+          "title": "Name",
+          "value": "11 thoracic lymph node"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0038635"
+        }
+      ]
+    },
+    {
+      "id": "52956",
+      "group": 'Origins',
+      "label": "12R+L thoracic lymph node",
+      "content": [
+        {
+          "title": "Name",
+          "value": "12R+L thoracic lymph node"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0038638"
+        }
+      ]
+    },
+    {
+      "id": "6050",
+      "group": 'Origins',
+      "label": "12n",
+      "content": [
+        {
+          "title": "Name",
+          "value": "12n"
+        },
+        {
+          "title": "Ontology URI",
+          "value": "http://purl.obolibrary.org/obo/UBERON_0001650"
+        }
+      ]
+    }
+  ];
 
+
+  const getEntities = (searchValue: string) => mockEntities;
+
+
+  const updateOriginsInStatment = (options: any, id: string) => {
+  return false;
+  }
   return (
     <>
       <ModalHeightWrapper pb={10}>
@@ -661,6 +836,23 @@ const StepThree = () => {
                 </Box>
                 <Box sx={styles.col}>
                   <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
+                  <CustomEntitiesDropdown options= {{
+                    placeholder: "Look for Origins",
+                    searchPlaceholder: "Search for Origins",
+                    noResultReason: "We couldn’t find any record with these origin in the database.",
+                    disabledReason: "Add Destination entity to get access to the forward connection form",
+                    onSearch: (searchValue: string) => getEntities(searchValue),
+                    onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions, statement?.id),
+                    // statement: statement,
+                    // errors: statement?.errors?.includes("Invalid origin")
+                    //   ? statement.errors
+                    //   : "",
+                    value: mockEntities[0] ?? "",
+                    CustomFooter : () => <Box sx={{mt: '1.5rem', display: 'flex', gap: 1, flexWrap: 'wrap', pt: '1.5rem', borderTop: '0.0625rem solid #F2F4F7'}}>
+                      {/* <Chip variant="filled" color="error" label={"https://google.com"} /> */}
+                      <Chip variant="outlined" label={"https://google.com"} />
+                    </Box>,
+                  }}/>
                 </Box>
               </Box>
 
