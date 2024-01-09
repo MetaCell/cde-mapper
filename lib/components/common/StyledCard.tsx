@@ -14,9 +14,11 @@ const { primary50, primary600, primary800, gray100, gray300, gray500, gray700 } 
 interface StyledCardProps {
     value: string;
     isSuggested?: boolean;
+    selectedValue: string;
+    onChange: (value: string) => void;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
+const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested, selectedValue, onChange }) => {
 
     const radioGroup = useRadioGroup();
     let checked = false;
@@ -24,6 +26,12 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
     if (radioGroup) {
         checked = radioGroup.value === value;
     }
+
+    const handleRadioChange = () => {
+        if (value !== selectedValue) {
+            onChange(value);
+        }
+    };
 
     return (
         <Box sx={{ minWidth: 320 }}>
@@ -35,7 +43,7 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
                     backgroundColor: checked ? primary50 : '#fff'
                 }}
             >
-                <CardActionArea>
+                <CardActionArea onClick={handleRadioChange}>
                     <CardContent
                         sx={{
                             display: "flex",
@@ -62,7 +70,7 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested }) => {
                             }
                         }}
                     >
-                        <FormControlLabel value={value} control={<Radio size="small" />} label={value} />
+                        <FormControlLabel value={value} control={<Radio size="small" checked={selectedValue === value} onChange={handleRadioChange} />} label={value} />
                         {isSuggested && <Typography variant="caption" sx={{ color: gray500 }}>
                             Suggested
                         </Typography>}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, Typography, Box, Button, FormControl, RadioGroup, Link } from '@mui/material';
+import { Stack, Typography, Box, Button, Link } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import StyledCard from '../common/StyledCard.tsx';
 
@@ -9,8 +9,7 @@ function StepOne() {
 
     console.log(mapping)
 
-    const handleRadioChange = (event: any, value: any) => {
-        event.persist();
+    const handleRadioChange = (value: string) => {
         setSelectedRadioValue(value);
     };
 
@@ -35,12 +34,10 @@ function StepOne() {
                             This can be changed at any time during the process.
                         </Typography>
                     </Stack>
-                    <FormControl>
-                        <RadioGroup row value={selectedRadioValue} onChange={handleRadioChange} sx={{ gap: 1.5 }}>
-                            <StyledCard value={"Spinal Cord Injury (SCI)"} isSuggested={true} />
-                            <StyledCard value={"Trauma Brain Injury (TBI)"} />
-                        </RadioGroup>
-                    </FormControl>
+                    <Stack direction="row" spacing={1.5}>
+                        <StyledCard value={"Spinal Cord Injury (SCI)"} isSuggested={true} selectedValue={selectedRadioValue} onChange={handleRadioChange} />
+                        <StyledCard value={"Trauma Brain Injury (TBI)"} selectedValue={selectedRadioValue} onChange={handleRadioChange} />
+                    </Stack>
                     <Stack alignItems="center" sx={{ width: '100%' }}>
                         <Box>
                             <Button

@@ -33,30 +33,30 @@ const tabsArr = [
 
 function CustomTabPanel(props: { children: ReactNode; value: number; index: number; }) {
     const { children, value, index, ...other } = props;
-  
+
     return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && children}
-      </div>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && children}
+        </div>
     );
-  }
+}
 
 CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
 };
 
 function MappingStep() {
     const { mapping } = useCdeContext();
 
-    const [value, setValue] = React.useState(1);
+    const [value, setValue] = React.useState(0);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -97,20 +97,22 @@ function MappingStep() {
                     ))}
                 </Tabs>
 
-                <Box display='flex' gap='0.625rem' alignItems='center'>
-                    <Button variant='text'>
-                        Continue without suggestions
-                    </Button>
-                </Box>
+                {
+                    value !== 0 && <Box display='flex' gap='0.625rem' alignItems='center'>
+                        <Button variant='text'>
+                            Continue without suggestions
+                        </Button>
+                    </Box>
+                }
             </Box>
             <CustomTabPanel value={value} index={0}>
-              <StepOne/>
+                <StepOne />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-              <StepTwo />
+                <StepTwo />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
-              Item Three
+                Item Three
             </CustomTabPanel>
         </ModalLayout>
     );
