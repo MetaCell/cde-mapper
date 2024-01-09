@@ -89,6 +89,39 @@ theme = createTheme({
       }
     },
 
+    MuiMenu: {
+      styleOverrides: {
+        list: {
+          padding: '0.25rem 0.375rem',
+        },
+        paper: {
+          borderColor: '#E4E5E7',
+          boxShadow: '0rem 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0rem 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)'
+        }
+      }
+    },
+
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          padding: '0.625rem',
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          color: '#070808',
+          lineHeight: '142.857%',
+          borderRadius: '0.375rem',
+
+          '&:hover': {
+            background: '#F4F5F5'
+          },
+
+          '&.Mui-disabled': {
+            display: 'none'
+          }
+        }
+      }
+    },
+
     MuiInputAdornment: {
       styleOverrides: {
         root: {
@@ -104,12 +137,12 @@ theme = createTheme({
           padding: '0.75rem',
           borderColor: '#ECEDEE',
 
-          '&:first-of-type': {
-            paddingLeft: 0
-          },
-          '&:last-of-type': {
-            paddingRight: 0
-          },
+          // '&:first-of-type': {
+          //   paddingLeft: 0
+          // },
+          // '&:last-of-type': {
+          //   paddingRight: 0
+          // },
         },
         body: {
           paddingTop: '1.5rem',
@@ -127,6 +160,38 @@ theme = createTheme({
             verticalAlign: 'middle',
             marginLeft: '0.75rem'
           }
+        }
+      }
+    },
+
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          margin: 0,
+          gap: '0.5rem',
+
+          '&:not(:first-child)': {
+            marginTop: '0.75rem'
+          }
+        },
+        label: {
+          fontSize: '0.875rem',
+          fontWeight: 500,
+          lineHeight: '142.857%',
+          color: '#373A3E',
+          userSelect: 'none'
+        }
+      }
+    },
+
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          borderRadius: '0.5rem',
+          border: '0.0625rem solid rgba(236, 237, 238, 0.30)',
+          background: '#FFF',
+          boxShadow: '0rem 0.125rem 0.25rem -0.125rem rgba(7, 8, 8, 0.06), 0rem 0.25rem 0.5rem -0.125rem rgba(7, 8, 8, 0.10)',
+          minWidth: '18.75rem'
         }
       }
     },
@@ -149,6 +214,14 @@ theme = createTheme({
           borderRadius: '0.5rem',
           paddingLeft: '0.75rem',
 
+          '&.Mui-focused': {
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderWidth: '0.0625rem',
+              borderColor: '#5F8CE3',
+              boxShadow: '0rem 0rem 0rem 0.25rem #C2D4F4, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+            }
+          },
+
           '&.Mui-disabled': {
             pointerEvents: 'none',
             background: '#F4F5F5',
@@ -158,14 +231,14 @@ theme = createTheme({
             }
           },
 
-          '&:hover': {
+          '&:not(.Mui-focused):hover': {
             '& .MuiOutlinedInput-notchedOutline': {
               borderColor: '#E4E5E7'
             }
           }
         },
         notchedOutline: {
-          borderColor: '#E4E5E7'
+          borderColor: '#E4E5E7',
         },
         input: {
           fontSize: '0.875rem',

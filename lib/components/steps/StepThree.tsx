@@ -1,12 +1,13 @@
-import { Box, Button, Chip, FormControl, Grid, IconButton, InputAdornment, Link, MenuItem, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
+import { Box, Button, Chip, FormControl, FormGroup, Grid, IconButton, InputAdornment, Link, MenuItem, Popover, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
 import ModalHeightWrapper from "../common/ModalHeightWrapper"
-import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, LeftIcon, LinkIcon, PairIcon, RightIcon, SearchIcon, SortIcon } from "../../icons";
+import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, LinkIcon, PairIcon, SearchIcon, SortIcon } from "../../icons";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import React, { useState } from "react";
+import Checkbox from "../common/CheckBox";
 
 const styles = {
   root: {
@@ -16,7 +17,7 @@ const styles = {
     display: 'flex',
     boxSizing: 'border-box',
     columnGap: '1.5rem',
-    padding: '0.75rem',
+    padding: '0.75rem 0',
     borderBottom: '0.0625rem solid #ECEDEE',
   },
   wrap: {},
@@ -25,13 +26,14 @@ const styles = {
     boxSizing: 'border-box',
     columnGap: '1.5rem',
     flexWrap: 'wrap',
-    padding: '1.5rem 0.75rem',
+    padding: '1.5rem 0',
     borderBottom: '0.0625rem solid #ECEDEE',
   },
   col: {
     display: 'flex',
     alignItems: 'center',
     flexShrink: 0,
+    gap: '0.75rem',
     boxSizing: 'border-box',
 
     '&:first-of-type': {
@@ -74,6 +76,20 @@ const StepThree = () => {
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
   };
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
   return (
     <>
       <ModalHeightWrapper pb={10}>
@@ -86,10 +102,110 @@ const StepThree = () => {
               startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
             }}
           />
-          <Button variant="outlined">
+          <Button
+            variant="outlined"
+            aria-describedby={id}
+            onClick={handleClick}
+          >
             <FilterIcon />
             Filter
           </Button>
+
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <Box sx={{
+              borderBottom: '0.0625rem solid #ECEDEE',
+              padding: '1rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Typography sx={{
+                fontSize: '0.75rem',
+                fontWeight: 500,
+                lineHeight: '150%',
+                color: '#676C74'
+              }}>Filter by</Typography>
+              <Button
+                variant="text"
+                sx={{
+                  p: 0,
+                  '&:hover': {
+                    background: 'transparent'
+                  }
+                }}
+              >
+                Reset filters
+              </Button>
+            </Box>
+
+            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
+              <Typography sx={{fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem'}}>Status</Typography>
+              <Checkbox label="All" />
+
+              <Box pl={3} mt="0.75rem" sx={{
+                position: 'relative',
+                '&:before': {
+                  content: '""',
+                  width: '0.0625rem',
+                  height: '100%',
+                  background: '#ECEDEE',
+                  position: 'absolute',
+                  top: 0,
+                  left: '0.4688rem'
+                }
+              }}>
+                <FormGroup>
+                  <Checkbox label="Mapped to CDE" />
+                  <Checkbox label="Mapped to Data Dictionary field" />
+                  <Checkbox label="Unmapped" />
+                </FormGroup>
+              </Box>
+            </Box>
+            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
+              <Typography sx={{fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem'}}>Type of mapping</Typography>
+              <Checkbox label="All" />
+              <Box pl={3} mt="0.75rem" sx={{
+                position: 'relative',
+                '&:before': {
+                  content: '""',
+                  width: '0.0625rem',
+                  height: '100%',
+                  background: '#ECEDEE',
+                  position: 'absolute',
+                  top: 0,
+                  left: '0.4688rem'
+                }
+              }}>
+                <FormGroup>
+                  <Checkbox label="Mapped to CDE" />
+                  <Checkbox label="Mapped to Data Dictionary field" />
+                  <Checkbox label="Unmapped" />
+                </FormGroup>
+              </Box>
+            </Box>
+
+            <Box sx={{
+              padding: '1rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <Checkbox label="Hide previously mapped columns" />
+            </Box>
+          </Popover>
         </Box>
 
         <Box px={1.5}>
@@ -137,6 +253,198 @@ const StepThree = () => {
                     <PairIcon />
                     <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
                     <InfoIcon style={{ marginLeft: '0.25rem' }} />
+                  </Box>
+
+                  <Box pl='2.5625rem'>
+                    <Box sx={{
+                      position: 'relative',
+                      '&:before': {
+                        content: '""',
+                        position: 'absolute',
+                        left: '-1.375rem',
+                        height: 'calc(100% + 0.625rem)',
+                        bottom: 0,
+                        width: '0.125rem',
+                        background: '#ECEDEE',
+                        borderRadius: '3.125rem',
+                      }
+                    }}>
+                      <Box sx={{
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        columnGap: '1.5rem',
+
+                        '& > div': {
+                          display: 'flex',
+                          alignItems: 'center',
+                        },
+
+                        '&:before': {
+                          content: '""',
+                          position: 'absolute',
+                          left: '-1.375rem',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: '0.75rem',
+                          height: '0.125rem',
+                          background: '#ECEDEE',
+                          borderTopRightRadius: '3.125rem',
+                          borderBottomRightRadius: '3.125rem',
+                        }
+                      }} mb={1.5}>
+                        <Box sx={{ width: '18.75rem' }}>
+                        <FormControl fullWidth>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            placeholder=""
+                            onChange={handleChange}
+                          >
+                            <MenuItem disabled value={0}>
+                              Choose column header to map...
+                            </MenuItem>
+                            <MenuItem value={1}>Ten</MenuItem>
+                            <MenuItem value={2}>Twenty</MenuItem>
+                            <MenuItem value={3}>Thirty</MenuItem>
+                          </Select>
+                        </FormControl>
+                        </Box>
+                        <Box><ArrowIcon /></Box>
+                        <Box display='flex' gap={1.5} flex={1}>
+                          <Box flex={1} sx={{
+                            padding: '0.4375rem 0.875rem',
+                            borderRadius: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            background: '#F4F5F5',
+                            border: '0.0625rem solid #E4E5E7',
+                          }}>
+                            <GlobeIcon />
+                            <Typography sx={{
+                              fontSize: '0.875rem',
+                              fontWeight: 500,
+                              lineHeight: '142.857%',
+                              color: '#070808'
+                            }}>
+                              Subject_name
+                            </Typography>
+                            <Typography sx={{
+                              fontSize: '0.875rem',
+                              fontWeight: 400,
+                              lineHeight: '142.857%',
+                              color: '#676C74'
+                            }}>
+                              Name of each subject in the dataset
+                            </Typography>
+                          </Box>
+
+                          <Box display='flex' gap={0.5}>
+                            <IconButton sx={{
+                                borderRadius: '0.5rem',
+                                padding: '0.4375rem',
+                                // border: '0.0625rem solid #E4E5E7',
+                                // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                            }}>
+                                <CrossIcon />
+                            </IconButton>
+                            <IconButton sx={{
+                                borderRadius: '0.5rem',
+                                padding: '0.4375rem',
+                                border: '0.0625rem solid #D6D8DB',
+                                boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                            }}>
+                                <CheckIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Box sx={{
+                        border: '0.0625rem solid #E4E5E7',
+                        borderRadius: '0.5rem'
+                      }}>
+                        <Typography sx={{
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          lineHeight: '150%',
+                          color: '#373A3E',
+                          padding: '0.625rem 0.875rem',
+                          borderBottom: '0.0625rem solid #E4E5E7',
+                        }}>CDE Details</Typography>
+
+                        <Box p="0.875rem">
+                          <Grid container spacing='1.5rem'>
+                            {[
+                              {
+                                heading: 'CDE Abbrev',
+                                text: 'SmallSpeciesStrainTyp'
+                              },
+                              {
+                                heading: 'VariableName',
+                                text: 'Strain'
+                              },
+                              {
+                                heading: 'Title',
+                                text: 'Strain of the mouse'
+                              },
+                              {
+                                heading: 'Description',
+                                text: 'Strain of the mouse'
+                              },
+                              {
+                                heading: 'Unit of measure',
+                                text: '-'
+                              },
+                              {
+                                heading: 'Data type',
+                                text: 'Alphanumeric'
+                              },
+                              {
+                                heading: 'Comments',
+                                text: '-'
+                              },
+                              {
+                                heading: 'InterLex ID',
+                                text: 'CDE:0369382',
+                                link: true
+                              }
+                            ].map((item: any) => (
+                              <Grid item md={3}>
+                                <Typography sx={{
+                                  color: '#676C74',
+                                  fontWeight: 400,
+                                  lineHeight: '150%',
+                                  marginBottom: '0.25rem',
+                                  fontSize: '0.75rem',
+                                }}>
+                                  {item.heading}
+                                </Typography>
+                                <Typography sx={{
+                                  color: '#070808',
+                                  fontWeight: 400,
+                                  lineHeight: '142.857%',
+                                  fontSize: '0.875rem',
+                                  '& a': {
+                                    color: '#2155BA',
+                                    fontWeight: 500,
+                                    cursor: 'pointer',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem'
+                                  }
+                                }}>
+                                  {item?.link ? <Link>{item.text}<LinkIcon /></Link> : item.text}
+                                </Typography>
+
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </Box>
+                      </Box>
+                    </Box>
                   </Box>
 
                   <Box pl='2.5625rem'>
