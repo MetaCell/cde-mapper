@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 import { vars } from "./variables";
 import CaretRight from '../images/CaretRight.png';
 
-const { primaryFont, gray300, gray50, baseWhite, gray500, primary700, gray700, primary600, primary100, black } = vars
+const { primaryFont, gray300, gray50, baseWhite, gray100, gray500, primary700, gray700, primary600, primary100, black, success50, success700, gray200 } = vars
 
 let theme = createTheme();
 
@@ -34,6 +34,21 @@ theme = createTheme({
           padding: 0;
           box-sizing: border-box;
           font-family: ${primaryFont}
+        }
+
+        *::-webkit-scrollbar {
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+  
+        *::-webkit-scrollbar-track {
+          background: transparent;
+        }
+    
+        *::-webkit-scrollbar-thumb {
+          background: ${gray200};
+          border-radius: 0.5rem;
+          height: 0.5rem;
         }
       `
     },
@@ -153,7 +168,6 @@ theme = createTheme({
         }
       }
     },
-
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
@@ -190,20 +204,27 @@ theme = createTheme({
           fontFamily: primaryFont,
           borderRadius: '1rem',
           padding: '0.125rem 0.5rem',
+          backgroundColor: gray100,
+          color: gray700,
+          gap: '0.25rem'
         },
         label: {
           fontSize: '0.75rem',
           lineHeight: '150%',
           fontWeight: 500,
           padding: 0,
-          fontFamily: primaryFont,
+          fontFamily: primaryFont
         },
         filledPrimary: {
           background: '#EEF2FC',
           '& .MuiChip-label': {
             color: '#2155BA'
           }
-        }
+        },
+        colorSuccess: {
+          backgroundColor: success50,
+          color: success700
+        },
       }
     },
 

@@ -13,6 +13,8 @@ export const vars = {
   primary600: '#19418F',
   primary800: '#0A1A38',
   primary100: '#C2D4F4',
+  success50: '#ECFDF3',
+  success700: '#027A48',
   primary700: '#122E64',
   black: '#000000'
 };
