@@ -266,6 +266,31 @@ theme = createTheme({
         }
       }
     },
+
+    MuiRadio: {
+      styleOverrides: {
+        sizeSmall: {
+          width: '1rem',
+          height: '1rem'
+        }
+      }
+    },
+
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+          color: gray500,
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          fontFamily: primaryFont,
+          
+          "&:hover": {
+            color: gray700
+          }
+        }
+      }
+    }
   }
 });
 
