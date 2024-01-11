@@ -1,6 +1,5 @@
 import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
-import { useCdeContext } from "../../CdeContext.tsx";
 import React, { ReactNode } from 'react';
 import PropTypes from 'prop-types';
 import StepOne from './StepOne.tsx';
@@ -54,15 +53,12 @@ CustomTabPanel.propTypes = {
 };
 
 function MappingStep() {
-    const { mapping } = useCdeContext();
 
     const [value, setValue] = React.useState(0);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
-    console.log(mapping)
 
     return (
         <ModalLayout>

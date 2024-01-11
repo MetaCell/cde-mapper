@@ -19,7 +19,7 @@ export function mapAndInit(cdeFile, datasetFile) {
 
                 // Then call the 'init' function from the library
                 init({
-                    inputMappings: [cdeMappings],
+                    mappings: [cdeMappings],
                     datasetSample: datasetFile,
                     callback: (data) => console.log(data),
                     repositories: [],

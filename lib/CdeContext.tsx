@@ -1,15 +1,21 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
-import {Config, DatasetCDEMapping, InitParams, InputMapping, STEPS} from "./models.ts";
+import {Config, CDEMapping, InitParams, InputMappingRow, STEPS, DatasetRow} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
 
 export const CdeContext = createContext<{
+    // Inputs Module
     labName: string;
     config: Config;
-    inputMappings: InputMapping[][];
-    mapping: DatasetCDEMapping;
-    setMapping: (mapping: DatasetCDEMapping) => void;
+    mappings: InputMappingRow[];
+    datasetSample: DatasetRow[];
+
+    // Data Module
+    cdeMapping: CDEMapping;
+    setCDEMapping: (mapping: CDEMapping) => void;
+
+    // UI Module
     step: number;
     setStep: (step: number) => void;
     loadingMessage: string | null;
@@ -26,9 +32,10 @@ export const CdeContext = createContext<{
         width: "100%",
         height: "100%",
     },
-    inputMappings: [],
-    mapping: {} as DatasetCDEMapping,
-    setMapping: () => {},
+    datasetSample: [],
+    mappings: [],
+    cdeMapping: {} as CDEMapping,
+    setCDEMapping: () => {},
     step: 0,
     setStep: () => {},
     loadingMessage: null,
@@ -43,8 +50,8 @@ export const CdeContext = createContext<{
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, callback, inputMappings, config}: PropsWithChildren<InitParams>) => {
-    const [mapping, setMapping] = useState<DatasetCDEMapping>({});
+export const CdeContextProvider = ({children, labName, callback, mappings, datasetSample, config}: PropsWithChildren<InitParams>) => {
+    const [cdeMapping, setCDEMapping] = useState<CDEMapping>({});
     const [step, setStep] = useState<number>(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -62,15 +69,16 @@ export const CdeContextProvider = ({children, labName, callback, inputMappings, 
     const contextValue = {
         config,
         labName,
-        inputMappings,
+        mappings: mappings,
+        datasetSample: datasetSample,
         step,
         setStep,
         loadingMessage,
         setLoadingMessage,
         errorMessage,
         setErrorMessage,
-        mapping,
-        setMapping,
+        cdeMapping,
+        setCDEMapping,
         isOpen,
         handleClose,
         infoOpen,

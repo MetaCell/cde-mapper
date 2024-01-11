@@ -24,19 +24,20 @@ export interface Config {
 }
 
 export interface InitParams {
-    inputMappings: InputMapping[][];
-    datasetSample: File;
+    mappings: InputMappingRow[];
+    datasetSample: string[][];
     callback: (cdeFileMapping: File | null) => void;
     repositories: Repository[];
     config: Config;
     labName: string
 }
 
-
-export interface InputMapping {
+export interface InputMappingRow {
+    // Mandatory fields
     variableName: string;
     abbreviation: string;
     interlexID: string;
+    // Any optional fields
     [key: string]: string;
 }
 
@@ -51,15 +52,14 @@ export enum CDEStatus {
     Mapped = 'mapped',
     Unmapped = 'unmapped'
 }
-export interface DatasetCDEEntry {
-    type: CDEType;
-    status: CDEStatus;
-    // Include other optional string attributes as needed
-    [key: string]: string;
+
+export interface MappingRow extends InputMappingRow {
+    cdeStatus: CDEStatus;
+    cdeType: CDEType;
 }
 
-export interface DatasetCDEMapping {
-    [variableName: string]: DatasetCDEEntry;// Key is the column name from the dataset
+export interface CDEMapping {
+    [variableName: string]: MappingRow; // Key is the column name from the dataset
 }
 
 export enum STEPS {

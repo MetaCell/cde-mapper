@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { Stack, Typography, Box, Button, Link } from '@mui/material';
-import { useCdeContext } from "../../CdeContext.tsx";
 import StyledCard from '../common/StyledCard.tsx';
 
 function StepOne() {
-    const { mapping } = useCdeContext();
     const [selectedRadioValue, setSelectedRadioValue] = useState("Spinal Cord Injury (SCI)");
 
-    console.log(mapping)
 
     const handleRadioChange = (value: string) => {
         setSelectedRadioValue(value);

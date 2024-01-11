@@ -3,18 +3,18 @@ import {mapAndInit} from "./integration.js";
 let cdeFile = null;
 let datasetFile = null;
 
-document.getElementById('cdeFileDropzone').addEventListener('click', function() {
-    document.getElementById('cdeFileInput').click();
+document.getElementById('dictionaryFileDropzone').addEventListener('click', function() {
+    document.getElementById('dictionaryFileInput').click();
 });
 
 document.getElementById('datasetFileDropzone').addEventListener('click', function() {
     document.getElementById('datasetFileInput').click();
 });
 
-document.getElementById('cdeFileInput').addEventListener('change', function(event) {
+document.getElementById('dictionaryFileInput').addEventListener('change', function(event) {
     if (event.target.files.length > 0) {
         cdeFile = event.target.files[0];
-        document.getElementById('cdeFileDropzone').textContent = `Selected file: ${cdeFile.name}`;
+        document.getElementById('dictionaryFileDropzone').textContent = `Selected file: ${cdeFile.name}`;
         updateSubmitButtonState();
     }
 });

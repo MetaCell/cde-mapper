@@ -30,7 +30,8 @@ const rows = [
     createData('sub2', 'Mouse', 'C57BL167', 'Male', '6 weeks', 'sharing'),
 ];
 
-export const StyledTable = () => {
+export const StyledTable = (props: { sample: string[][] }) => {
+    console.log(props.sample)
 
     return (
         <TableContainer 
