@@ -317,6 +317,7 @@ const StepThree = () => {
                 variant="text"
                 sx={{
                   p: 0,
+                  fontSize: '0.75rem',
                   '&:hover': {
                     background: 'transparent'
                   }
@@ -400,6 +401,46 @@ const StepThree = () => {
               </Box>
             </Box>
             <Box sx={styles.wrap}>
+            <Box sx={styles.row}>
+                <Box sx={styles.col}>
+                  <Chip
+                    label="Unmapped"
+                    size="small"
+                    icon={<BulletIcon color="#676C74" />}
+                  />
+                </Box>
+                <Box sx={styles.col}>
+                  <TextField
+                    disabled
+                    fullWidth
+                    value='MotorForceApplied'
+                  />
+                </Box>
+                <Box sx={styles.col}>
+                  <ArrowIcon />
+                </Box>
+                <Box sx={styles.col}>
+                  {/* <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." /> */}
+                  <CustomEntitiesDropdown options= {{
+                    placeholder: "Look for Origins",
+                    searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                    noResultReason: "We couldn’t find any record with these origin in the database.",
+                    disabledReason: "Add Destination entity to get access to the forward connection form",
+                    onSearch: (searchValue: string) => getEntities(searchValue),
+                    onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions, statement?.id),
+                    // statement: statement,
+                    // errors: statement?.errors?.includes("Invalid origin")
+                    //   ? statement.errors
+                    //   : "",
+                    value: mockEntities[0] ?? "",
+                    // CustomFooter : () => <Box sx={{mt: '1.5rem', display: 'flex', gap: 1, flexWrap: 'wrap', pt: '1.5rem', borderTop: '0.0625rem solid #F2F4F7'}}>
+                    //   {/* <Chip variant="filled" color="error" label={"https://google.com"} /> */}
+                    //   <Chip variant="outlined" label={"https://google.com"} />
+                    // </Box>,
+                  }}/>
+                </Box>
+              </Box>
+
               <Box sx={styles.row}>
                 <Box sx={styles.col}>
                   <Chip
@@ -437,7 +478,7 @@ const StepThree = () => {
                         content: '""',
                         position: 'absolute',
                         left: '-1.375rem',
-                        height: 'calc(100% + 0.625rem)',
+                        height: 'calc(100% + 1.5625rem)',
                         bottom: 0,
                         width: '0.125rem',
                         background: '#ECEDEE',
@@ -622,14 +663,14 @@ const StepThree = () => {
                     </Box>
                   </Box>
 
-                  <Box pl='2.5625rem'>
+                  <Box pl='2.5625rem' mt={3}>
                     <Box sx={{
                       position: 'relative',
                       '&:before': {
                         content: '""',
                         position: 'absolute',
                         left: '-1.375rem',
-                        height: 'calc(100% + 0.625rem)',
+                        height: 'calc(100% + 1.5625rem)',
                         bottom: 0,
                         width: '0.125rem',
                         background: '#ECEDEE',
@@ -813,46 +854,6 @@ const StepThree = () => {
                       </Box>
                     </Box>
                   </Box>
-                </Box>
-              </Box>
-
-              <Box sx={styles.row}>
-                <Box sx={styles.col}>
-                  <Chip
-                    label="Unmapped"
-                    size="small"
-                    icon={<BulletIcon color="#676C74" />}
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    value='MotorForceApplied'
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <ArrowIcon />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
-                  <CustomEntitiesDropdown options= {{
-                    placeholder: "Look for Origins",
-                    searchPlaceholder: "Search for Origins",
-                    noResultReason: "We couldn’t find any record with these origin in the database.",
-                    disabledReason: "Add Destination entity to get access to the forward connection form",
-                    onSearch: (searchValue: string) => getEntities(searchValue),
-                    onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions, statement?.id),
-                    // statement: statement,
-                    // errors: statement?.errors?.includes("Invalid origin")
-                    //   ? statement.errors
-                    //   : "",
-                    value: mockEntities[0] ?? "",
-                    CustomFooter : () => <Box sx={{mt: '1.5rem', display: 'flex', gap: 1, flexWrap: 'wrap', pt: '1.5rem', borderTop: '0.0625rem solid #F2F4F7'}}>
-                      {/* <Chip variant="filled" color="error" label={"https://google.com"} /> */}
-                      <Chip variant="outlined" label={"https://google.com"} />
-                    </Box>,
-                  }}/>
                 </Box>
               </Box>
 

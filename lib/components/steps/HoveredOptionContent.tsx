@@ -26,6 +26,7 @@ const HoveredOptionContent = ({
       flexDirection='column'
       minHeight={1}
       sx={{
+        boxSizing: 'border-box',
         '& .MuiTypography-body1': {
           color: "#A9ACB2",
           fontSize: "0.75rem",
@@ -73,4 +74,3 @@ const HoveredOptionContent = ({
 };
 
 export default HoveredOptionContent;
-

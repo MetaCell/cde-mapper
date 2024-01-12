@@ -164,15 +164,21 @@ theme = createTheme({
       }
     },
 
+    MuiFormGroup: {
+      styleOverrides: {
+        root: {
+          '& .MuiFormControlLabel-root:not(:first-child)': {
+            marginTop: '0.75rem'
+          }
+        }
+      }
+    },
+
     MuiFormControlLabel: {
       styleOverrides: {
         root: {
           margin: 0,
           gap: '0.5rem',
-
-          '&:not(:first-child)': {
-            marginTop: '0.75rem'
-          }
         },
         label: {
           fontSize: '0.875rem',
@@ -271,6 +277,10 @@ theme = createTheme({
           '&:hover': {
             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
           }
+        },
+
+        startIcon: {
+          margin: 0
         },
 
         containedPrimary: {
