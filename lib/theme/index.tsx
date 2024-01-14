@@ -2,7 +2,32 @@ import { createTheme } from "@mui/material/styles";
 import { vars } from "./variables";
 import CaretRight from '../images/CaretRight.png';
 
-const { primaryFont, gray300, gray50, baseWhite, gray500, primary700, gray700, primary600, primary100, black } = vars
+const { 
+  primaryFont, 
+  gray100, 
+  primary50, 
+  success700, 
+  success500, 
+  success50, 
+  gray400, 
+  gray900, 
+  primary300, 
+  primary500, 
+  gray200, 
+  gray300, 
+  gray50, 
+  baseWhite, 
+  gray500, 
+  primary700, 
+  gray700, 
+  primary600, 
+  primary100, 
+  black,
+  primary400,
+  purple50,
+  purple700,
+  purple500
+} = vars
 
 let theme = createTheme();
 
@@ -41,7 +66,7 @@ theme = createTheme({
     MuiCircularProgress: {
       styleOverrides: {
         root: {
-          color: '#2155BA'
+          color: primary500
         }
       }
     },
@@ -76,7 +101,7 @@ theme = createTheme({
         },
         paper: {
           width: '22.5rem',
-          boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)'
+          boxShadow: '0 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)'
         }
       }
     },
@@ -95,8 +120,8 @@ theme = createTheme({
           padding: '0.25rem 0.375rem',
         },
         paper: {
-          borderColor: '#E4E5E7',
-          boxShadow: '0rem 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0rem 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)'
+          borderColor: gray200,
+          boxShadow: '0 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)'
         }
       }
     },
@@ -104,15 +129,15 @@ theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          padding: '0.625rem',
-          fontSize: '0.875rem',
+          padding: '0.5rem 0.625rem',
+          fontSize: '0.75rem',
           fontWeight: 500,
-          color: '#070808',
+          color: gray900,
           lineHeight: '142.857%',
           borderRadius: '0.375rem',
 
           '&:hover': {
-            background: '#F4F5F5'
+            background: gray50
           },
 
           '&.Mui-disabled': {
@@ -135,14 +160,7 @@ theme = createTheme({
       styleOverrides: {
         root: {
           padding: '0.75rem',
-          borderColor: '#ECEDEE',
-
-          // '&:first-of-type': {
-          //   paddingLeft: 0
-          // },
-          // '&:last-of-type': {
-          //   paddingRight: 0
-          // },
+          borderColor: gray100
         },
         body: {
           paddingTop: '1.5rem',
@@ -152,7 +170,8 @@ theme = createTheme({
           fontSize: '0.75rem',
           fontWeight: 500,
           lineHeight: '150%',
-          color: '#676C74',
+          justifyContent: 'space-between',
+          color: gray500,
 
           '& svg': {
             display: 'inline-block',
@@ -184,7 +203,7 @@ theme = createTheme({
           fontSize: '0.875rem',
           fontWeight: 500,
           lineHeight: '142.857%',
-          color: '#373A3E',
+          color: gray700,
           userSelect: 'none'
         }
       }
@@ -195,8 +214,8 @@ theme = createTheme({
         paper: {
           borderRadius: '0.5rem',
           border: '0.0625rem solid rgba(236, 237, 238, 0.30)',
-          background: '#FFF',
-          boxShadow: '0rem 0.125rem 0.25rem -0.125rem rgba(7, 8, 8, 0.06), 0rem 0.25rem 0.5rem -0.125rem rgba(7, 8, 8, 0.10)',
+          background: baseWhite,
+          boxShadow: '0 0.125rem 0.25rem -0.125rem rgba(7, 8, 8, 0.06), 0 0.25rem 0.5rem -0.125rem rgba(7, 8, 8, 0.10)',
           minWidth: '18.75rem'
         }
       }
@@ -223,38 +242,38 @@ theme = createTheme({
           '&.Mui-focused': {
             '& .MuiOutlinedInput-notchedOutline': {
               borderWidth: '0.0625rem',
-              borderColor: '#5F8CE3',
-              boxShadow: '0rem 0rem 0rem 0.25rem #C2D4F4, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+              borderColor: primary300,
+              boxShadow: `0 0 0 0.25rem ${primary100}, 0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)`
             }
           },
 
           '&.Mui-disabled': {
             pointerEvents: 'none',
-            background: '#F4F5F5',
+            background: gray50,
 
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#E4E5E7'
+              borderColor: gray200
             }
           },
 
           '&:not(.Mui-focused):hover': {
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#E4E5E7'
+              borderColor: gray200
             }
           }
         },
         notchedOutline: {
-          borderColor: '#E4E5E7',
+          borderColor: gray200,
         },
         input: {
           fontSize: '0.875rem',
           lineHeight: '142.857%',
           padding: '0 0',
-          color: '#676C74',
+          color: gray500,
           height: '2.25rem',
 
           '&::placeholder': {
-            color: '#A9ACB2',
+            color: gray400,
             opacity: 1
           }
         }
@@ -272,10 +291,10 @@ theme = createTheme({
           lineHeight: '142.857%',
           textTransform: 'none',
           gap: '0.5rem',
-          boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
+          boxShadow: '0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)',
 
           '&:hover': {
-            boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
+            boxShadow: '0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)',
           }
         },
 
@@ -290,7 +309,7 @@ theme = createTheme({
           },
           '&:focus': {
             background: primary600,
-            boxShadow: '0rem 0rem 0rem 0.25rem #C2D4F4, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+            boxShadow: `0 0 0 0.25rem ${primary100}, 0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)`
           },
           '&.Mui-disabled': {
             background: primary100,
@@ -320,11 +339,11 @@ theme = createTheme({
           '&:focus': {
             border: `0.0625rem solid ${gray300}`,
             background: baseWhite,
-            boxShadow: '0rem 0rem 0rem 0.25rem #ECEDEE, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+            boxShadow: `0 0 0 0.25rem ${gray100}, 0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)`
           },
           '&.Mui-disabled': {
             background: baseWhite,
-            border: `0.0625rem solid #E4E5E7`,
+            border: `0.0625rem solid ${gray200}`,
             color: gray300,
           }
         }
@@ -366,7 +385,7 @@ theme = createTheme({
           height: 'auto',
           fontFamily: primaryFont,
           borderRadius: '1rem',
-          background: '#ECEDEE',
+          background: gray100,
           '& svg': {
             marginRight: '0.25rem'
           }
@@ -375,7 +394,7 @@ theme = createTheme({
         sizeSmall: {
           padding: '0.125rem 0.5rem',
           '& .MuiChip-label': {
-            color: '#373A3E',
+            color: gray700,
           }
         },
 
@@ -392,20 +411,42 @@ theme = createTheme({
         },
 
         colorSuccess: {
-          background: '#ECFDF3',
+          background: success50,
           '& .MuiChip-label': {
-            color: '#027A48',
+            color: success700,
 
             '&:before': {
-              background: '#12B76A',
+              background: success500,
+            }
+          }
+        },
+
+        colorSecondary: {
+          background: purple50,
+          '& .MuiChip-label': {
+            color: purple700,
+
+            '&:before': {
+              background: purple500,
+            }
+          }
+        },
+
+        colorInfo: {
+          background: primary50,
+          '& .MuiChip-label': {
+            color: primary500,
+
+            '&:before': {
+              background: primary400,
             }
           }
         },
 
         filledPrimary: {
-          background: '#EEF2FC',
+          background: primary50,
           '& .MuiChip-label': {
-            color: '#2155BA'
+            color: primary500
           }
         }
       }

@@ -1,6 +1,6 @@
-import { Box, Button, Chip, FormControl, FormGroup, Grid, IconButton, InputAdornment, Link, MenuItem, Popover, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
+import { Box, Button, Chip, FormControl, FormGroup, IconButton, InputAdornment, MenuItem, Popover, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
 import ModalHeightWrapper from "../common/ModalHeightWrapper"
-import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, LinkIcon, PairIcon, SearchIcon, SortIcon } from "../../icons";
+import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, PairIcon, SearchIcon, SortIcon, TargetIcon } from "../../icons";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import React, { useState } from "react";
 import Checkbox from "../common/CheckBox";
 import CustomEntitiesDropdown from "./CustomMappingDropdown";
+import CdeDetails from "../common/CdeDetails";
 
 const styles = {
   root: {
@@ -73,6 +74,7 @@ const styles = {
 const StepThree = () => {
   const [togglePreview, setTogglePreview] = useState(false);
   const [age, setAge] = React.useState('0');
+  const [togglePairingSuggestions, setTogglePairingSuggestions] = useState(true);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
@@ -259,12 +261,8 @@ const StepThree = () => {
   ];
 
 
-  const getEntities = (searchValue: string) => mockEntities;
+  const getEntities = () => mockEntities;
 
-
-  const updateOriginsInStatment = (options: any, id: string) => {
-  return false;
-  }
   return (
     <>
       <ModalHeightWrapper pb={10}>
@@ -426,8 +424,8 @@ const StepThree = () => {
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with these origin in the database.",
                     disabledReason: "Add Destination entity to get access to the forward connection form",
-                    onSearch: (searchValue: string) => getEntities(searchValue),
-                    onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions, statement?.id),
+                    onSearch: () => getEntities(),
+                    // onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions),
                     // statement: statement,
                     // errors: statement?.errors?.includes("Invalid origin")
                     //   ? statement.errors
@@ -465,404 +463,238 @@ const StepThree = () => {
                 </Box>
 
                 <Box width='100%' mt={1.5}>
-                  <Box mb={3} display='inline-flex' alignItems='center' gap={1} sx={{ cursor: 'pointer', userSelect: 'none' }}>
+                  <Box onClick={() => setTogglePairingSuggestions(!togglePairingSuggestions)} mb={togglePairingSuggestions ? 3 : 0} display='inline-flex' alignItems='center' gap={1} sx={{ cursor: 'pointer', userSelect: 'none' }}>
                     <PairIcon />
                     <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
                     <InfoIcon style={{ marginLeft: '0.25rem' }} />
                   </Box>
 
-                  <Box pl='2.5625rem'>
-                    <Box sx={{
-                      position: 'relative',
-                      '&:before': {
-                        content: '""',
-                        position: 'absolute',
-                        left: '-1.375rem',
-                        height: 'calc(100% + 1.5625rem)',
-                        bottom: 0,
-                        width: '0.125rem',
-                        background: '#ECEDEE',
-                        borderRadius: '3.125rem',
-                      }
-                    }}>
-                      <Box sx={{
-                        position: 'relative',
-                        display: 'flex',
-                        alignItems: 'center',
-                        columnGap: '1.5rem',
-
-                        '& > div': {
-                          display: 'flex',
-                          alignItems: 'center',
-                        },
-
-                        '&:before': {
-                          content: '""',
-                          position: 'absolute',
-                          left: '-1.375rem',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          width: '0.75rem',
-                          height: '0.125rem',
-                          background: '#ECEDEE',
-                          borderTopRightRadius: '3.125rem',
-                          borderBottomRightRadius: '3.125rem',
-                        }
-                      }} mb={1.5}>
-                        <Box sx={{ width: '18.75rem' }}>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={age}
-                            placeholder=""
-                            onChange={handleChange}
-                          >
-                            <MenuItem disabled value={0}>
-                              Choose column header to map...
-                            </MenuItem>
-                            <MenuItem value={1}>Ten</MenuItem>
-                            <MenuItem value={2}>Twenty</MenuItem>
-                            <MenuItem value={3}>Thirty</MenuItem>
-                          </Select>
-                        </FormControl>
-                        </Box>
-                        <Box><ArrowIcon /></Box>
-                        <Box display='flex' gap={1.5} flex={1}>
-                          <Box flex={1} sx={{
-                            padding: '0.4375rem 0.875rem',
-                            borderRadius: '0.5rem',
+                  {togglePairingSuggestions && (
+                    <>
+                      <Box pl='2.5625rem'>
+                        <Box sx={{
+                          position: 'relative',
+                          '&:before': {
+                            content: '""',
+                            position: 'absolute',
+                            left: '-1.375rem',
+                            height: 'calc(100% + 3.75rem)',
+                            bottom: '-2.625rem',
+                            width: '0.125rem',
+                            background: '#ECEDEE',
+                            borderRadius: '3.125rem',
+                          }
+                        }}>
+                          <Box sx={{
+                            position: 'relative',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.5rem',
-                            background: '#F4F5F5',
-                            border: '0.0625rem solid #E4E5E7',
-                          }}>
-                            <GlobeIcon />
-                            <Typography sx={{
-                              fontSize: '0.875rem',
-                              fontWeight: 500,
-                              lineHeight: '142.857%',
-                              color: '#070808'
-                            }}>
-                              Subject_name
-                            </Typography>
-                            <Typography sx={{
-                              fontSize: '0.875rem',
-                              fontWeight: 400,
-                              lineHeight: '142.857%',
-                              color: '#676C74'
-                            }}>
-                              Name of each subject in the dataset
-                            </Typography>
-                          </Box>
+                            columnGap: '1.5rem',
 
-                          <Box display='flex' gap={0.5}>
-                            <IconButton sx={{
-                                borderRadius: '0.5rem',
-                                padding: '0.4375rem',
-                                // border: '0.0625rem solid #E4E5E7',
-                                // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                            }}>
-                                <CrossIcon />
-                            </IconButton>
-                            <IconButton sx={{
-                                borderRadius: '0.5rem',
-                                padding: '0.4375rem',
-                                border: '0.0625rem solid #D6D8DB',
-                                boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                            }}>
-                                <CheckIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Box>
-                      <Box sx={{
-                        border: '0.0625rem solid #E4E5E7',
-                        borderRadius: '0.5rem'
-                      }}>
-                        <Typography sx={{
-                          fontSize: '0.75rem',
-                          fontWeight: 500,
-                          lineHeight: '150%',
-                          color: '#373A3E',
-                          padding: '0.625rem 0.875rem',
-                          borderBottom: '0.0625rem solid #E4E5E7',
-                        }}>CDE Details</Typography>
+                            '& > div': {
+                              display: 'flex',
+                              alignItems: 'center',
+                            },
 
-                        <Box p="0.875rem">
-                          <Grid container spacing='1.5rem'>
-                            {[
-                              {
-                                heading: 'CDE Abbrev',
-                                text: 'SmallSpeciesStrainTyp'
-                              },
-                              {
-                                heading: 'VariableName',
-                                text: 'Strain'
-                              },
-                              {
-                                heading: 'Title',
-                                text: 'Strain of the mouse'
-                              },
-                              {
-                                heading: 'Description',
-                                text: 'Strain of the mouse'
-                              },
-                              {
-                                heading: 'Unit of measure',
-                                text: '-'
-                              },
-                              {
-                                heading: 'Data type',
-                                text: 'Alphanumeric'
-                              },
-                              {
-                                heading: 'Comments',
-                                text: '-'
-                              },
-                              {
-                                heading: 'InterLex ID',
-                                text: 'CDE:0369382',
-                                link: true
-                              }
-                            ].map((item: any) => (
-                              <Grid item md={3}>
-                                <Typography sx={{
-                                  color: '#676C74',
-                                  fontWeight: 400,
-                                  lineHeight: '150%',
-                                  marginBottom: '0.25rem',
-                                  fontSize: '0.75rem',
+                            '&:before': {
+                              content: '""',
+                              position: 'absolute',
+                              left: '-1.375rem',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              width: '0.75rem',
+                              height: '0.125rem',
+                              background: '#ECEDEE',
+                              borderTopRightRadius: '3.125rem',
+                              borderBottomRightRadius: '3.125rem',
+                            }
+                          }} mb={1.5}>
+                            <Box sx={{ width: '18.75rem' }}>
+                            <FormControl fullWidth>
+                              <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={age}
+                                placeholder=""
+                                onChange={handleChange}
+                              >
+                                <MenuItem disabled value={0} sx={{
+                                  color: '#A9ACB2'
                                 }}>
-                                  {item.heading}
+                                  Choose column header to map...
+                                </MenuItem>
+                                <MenuItem value={1}>MotorFoceApplied</MenuItem>
+                                <MenuItem value={2}>Subject</MenuItem>
+                                <MenuItem value={3}>Age</MenuItem>
+                              </Select>
+                            </FormControl>
+                            </Box>
+                            <Box><ArrowIcon /></Box>
+                            <Box display='flex' gap={1.5} flex={1}>
+                              <Box flex={1} sx={{
+                                padding: '0.4375rem 0.875rem',
+                                borderRadius: '0.5rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                background: '#F4F5F5',
+                                border: '0.0625rem solid #E4E5E7',
+                              }}>
+                                <GlobeIcon />
+                                <Typography sx={{
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  lineHeight: '142.857%',
+                                  color: '#070808'
+                                }}>
+                                  Subject_name
                                 </Typography>
                                 <Typography sx={{
-                                  color: '#070808',
+                                  fontSize: '0.875rem',
                                   fontWeight: 400,
                                   lineHeight: '142.857%',
-                                  fontSize: '0.875rem',
-                                  '& a': {
-                                    color: '#2155BA',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    textDecoration: 'none',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.25rem'
-                                  }
+                                  color: '#676C74'
                                 }}>
-                                  {item?.link ? <Link>{item.text}<LinkIcon /></Link> : item.text}
+                                  Name of each subject in the dataset
                                 </Typography>
+                              </Box>
 
-                              </Grid>
-                            ))}
-                          </Grid>
+                              <Box display='flex' gap={0.5}>
+                                <IconButton sx={{
+                                    borderRadius: '0.5rem',
+                                    padding: '0.4375rem',
+                                    // border: '0.0625rem solid #E4E5E7',
+                                    // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                }}>
+                                    <CrossIcon />
+                                </IconButton>
+                                <IconButton sx={{
+                                    borderRadius: '0.5rem',
+                                    padding: '0.4375rem',
+                                    border: '0.0625rem solid #D6D8DB',
+                                    boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                }}>
+                                    <CheckIcon />
+                                </IconButton>
+                              </Box>
+                            </Box>
+                          </Box>
+                          <CdeDetails />
                         </Box>
                       </Box>
-                    </Box>
-                  </Box>
 
-                  <Box pl='2.5625rem' mt={3}>
-                    <Box sx={{
-                      position: 'relative',
-                      '&:before': {
-                        content: '""',
-                        position: 'absolute',
-                        left: '-1.375rem',
-                        height: 'calc(100% + 1.5625rem)',
-                        bottom: 0,
-                        width: '0.125rem',
-                        background: '#ECEDEE',
-                        borderRadius: '3.125rem',
-                      }
-                    }}>
-                      <Box sx={{
-                        position: 'relative',
-                        display: 'flex',
-                        alignItems: 'center',
-                        columnGap: '1.5rem',
-
-                        '& > div': {
-                          display: 'flex',
-                          alignItems: 'center',
-                        },
-
-                        '&:before': {
-                          content: '""',
-                          position: 'absolute',
-                          left: '-1.375rem',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          width: '0.75rem',
-                          height: '0.125rem',
-                          background: '#ECEDEE',
-                          borderTopRightRadius: '3.125rem',
-                          borderBottomRightRadius: '3.125rem',
-                        }
-                      }} mb={1.5}>
-                        <Box sx={{ width: '18.75rem' }}>
-                        <FormControl fullWidth>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={age}
-                            placeholder=""
-                            onChange={handleChange}
-                          >
-                            <MenuItem disabled value={0}>
-                              Choose column header to map...
-                            </MenuItem>
-                            <MenuItem value={1}>Ten</MenuItem>
-                            <MenuItem value={2}>Twenty</MenuItem>
-                            <MenuItem value={3}>Thirty</MenuItem>
-                          </Select>
-                        </FormControl>
-                        </Box>
-                        <Box><ArrowIcon /></Box>
-                        <Box display='flex' gap={1.5} flex={1}>
-                          <Box flex={1} sx={{
-                            padding: '0.4375rem 0.875rem',
-                            borderRadius: '0.5rem',
+                      <Box pl='2.5625rem' mt={3}>
+                        <Box sx={{
+                          position: 'relative',
+                        }}>
+                          <Box sx={{
+                            position: 'relative',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.5rem',
-                            background: '#F4F5F5',
-                            border: '0.0625rem solid #E4E5E7',
-                          }}>
-                            <GlobeIcon />
-                            <Typography sx={{
-                              fontSize: '0.875rem',
-                              fontWeight: 500,
-                              lineHeight: '142.857%',
-                              color: '#070808'
-                            }}>
-                              Subject_name
-                            </Typography>
-                            <Typography sx={{
-                              fontSize: '0.875rem',
-                              fontWeight: 400,
-                              lineHeight: '142.857%',
-                              color: '#676C74'
-                            }}>
-                              Name of each subject in the dataset
-                            </Typography>
-                          </Box>
+                            columnGap: '1.5rem',
 
-                          <Box display='flex' gap={0.5}>
-                            <IconButton sx={{
-                                borderRadius: '0.5rem',
-                                padding: '0.4375rem',
-                                // border: '0.0625rem solid #E4E5E7',
-                                // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                            }}>
-                                <CrossIcon />
-                            </IconButton>
-                            <IconButton sx={{
-                                borderRadius: '0.5rem',
-                                padding: '0.4375rem',
-                                border: '0.0625rem solid #D6D8DB',
-                                boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                            }}>
-                                <CheckIcon />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </Box>
-                      <Box sx={{
-                        border: '0.0625rem solid #E4E5E7',
-                        borderRadius: '0.5rem'
-                      }}>
-                        <Typography sx={{
-                          fontSize: '0.75rem',
-                          fontWeight: 500,
-                          lineHeight: '150%',
-                          color: '#373A3E',
-                          padding: '0.625rem 0.875rem',
-                          borderBottom: '0.0625rem solid #E4E5E7',
-                        }}>CDE Details</Typography>
+                            '& > div': {
+                              display: 'flex',
+                              alignItems: 'center',
+                            },
 
-                        <Box p="0.875rem">
-                          <Grid container spacing='1.5rem'>
-                            {[
-                              {
-                                heading: 'CDE Abbrev',
-                                text: 'SmallSpeciesStrainTyp'
-                              },
-                              {
-                                heading: 'VariableName',
-                                text: 'Strain'
-                              },
-                              {
-                                heading: 'Title',
-                                text: 'Strain of the mouse'
-                              },
-                              {
-                                heading: 'Description',
-                                text: 'Strain of the mouse'
-                              },
-                              {
-                                heading: 'Unit of measure',
-                                text: '-'
-                              },
-                              {
-                                heading: 'Data type',
-                                text: 'Alphanumeric'
-                              },
-                              {
-                                heading: 'Comments',
-                                text: '-'
-                              },
-                              {
-                                heading: 'InterLex ID',
-                                text: 'CDE:0369382',
-                                link: true
-                              }
-                            ].map((item: any) => (
-                              <Grid item md={3}>
+                            '&:before': {
+                              content: '""',
+                              position: 'absolute',
+                              left: '-1.375rem',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              width: '0.75rem',
+                              height: '0.125rem',
+                              background: '#ECEDEE',
+                              borderTopRightRadius: '3.125rem',
+                              borderBottomRightRadius: '3.125rem',
+                            }
+                          }} mb={1.5}>
+                            <Box sx={{ width: '18.75rem' }}>
+                            <FormControl fullWidth>
+                              <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={age}
+                                placeholder=""
+                                onChange={handleChange}
+                              >
+                                <MenuItem disabled value={0}>
+                                  Choose column header to map...
+                                </MenuItem>
+                                <MenuItem value={1}>Ten</MenuItem>
+                                <MenuItem value={2}>Twenty</MenuItem>
+                                <MenuItem value={3}>Thirty</MenuItem>
+                              </Select>
+                            </FormControl>
+                            </Box>
+                            <Box><ArrowIcon /></Box>
+                            <Box display='flex' gap={1.5} flex={1}>
+                              <Box flex={1} sx={{
+                                padding: '0.4375rem 0.875rem',
+                                borderRadius: '0.5rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                background: '#F4F5F5',
+                                border: '0.0625rem solid #E4E5E7',
+                              }}>
+                                <GlobeIcon />
                                 <Typography sx={{
-                                  color: '#676C74',
-                                  fontWeight: 400,
-                                  lineHeight: '150%',
-                                  marginBottom: '0.25rem',
-                                  fontSize: '0.75rem',
+                                  fontSize: '0.875rem',
+                                  fontWeight: 500,
+                                  lineHeight: '142.857%',
+                                  color: '#070808'
                                 }}>
-                                  {item.heading}
+                                  Subject_name
                                 </Typography>
                                 <Typography sx={{
-                                  color: '#070808',
+                                  fontSize: '0.875rem',
                                   fontWeight: 400,
                                   lineHeight: '142.857%',
-                                  fontSize: '0.875rem',
-                                  '& a': {
-                                    color: '#2155BA',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    textDecoration: 'none',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.25rem'
-                                  }
+                                  color: '#676C74'
                                 }}>
-                                  {item?.link ? <Link>{item.text}<LinkIcon /></Link> : item.text}
+                                  Name of each subject in the dataset
                                 </Typography>
+                              </Box>
 
-                              </Grid>
-                            ))}
-                          </Grid>
+                              <Box display='flex' gap={0.5}>
+                                <IconButton sx={{
+                                    borderRadius: '0.5rem',
+                                    padding: '0.4375rem',
+                                    // border: '0.0625rem solid #E4E5E7',
+                                    // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                }}>
+                                    <CrossIcon />
+                                </IconButton>
+                                <IconButton sx={{
+                                    borderRadius: '0.5rem',
+                                    padding: '0.4375rem',
+                                    border: '0.0625rem solid #D6D8DB',
+                                    boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                }}>
+                                    <CheckIcon />
+                                </IconButton>
+                              </Box>
+                            </Box>
+                          </Box>
+                          <CdeDetails />
                         </Box>
                       </Box>
-                    </Box>
-                  </Box>
+                    </>
+                  )}
+
                 </Box>
               </Box>
 
               <Box sx={styles.row}>
                 <Box sx={styles.col}>
                   <Chip
-                    label="Unmapped"
+                    color="secondary"
+                    label="Mapped to Data Dictionary"
                     size="small"
-                    icon={<BulletIcon color="#676C74" />}
+                    icon={<BulletIcon color="#7A5AF8" />}
                   />
                 </Box>
                 <Box sx={styles.col}>
@@ -883,9 +715,10 @@ const StepThree = () => {
               <Box sx={styles.row}>
                 <Box sx={styles.col}>
                   <Chip
-                    label="Unmapped"
+                    label="Suggested"
+                    color="info"
                     size="small"
-                    icon={<BulletIcon color="#676C74" />}
+                    icon={<BulletIcon color="#346DDB" />}
                   />
                 </Box>
                 <Box sx={styles.col}>
@@ -1076,6 +909,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1086,6 +920,7 @@ const StepThree = () => {
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
                   lineHeight: '142.857%',
+                  fontSize: '0.875rem',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
               </Box>
@@ -1094,6 +929,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1103,6 +939,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1112,6 +949,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1121,6 +959,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1130,6 +969,7 @@ const StepThree = () => {
                   color: '#A9ACB2',
                   border: '0.0938rem dashed #E4E5E7',
                   borderRadius: '0.25rem',
+                  fontSize: '0.875rem',
                   lineHeight: '142.857%',
                   padding: '0.375rem 0.5rem'
                 }}>No mapping yet</Typography>
@@ -1163,17 +1003,52 @@ const StepThree = () => {
                   '& .MuiTableCell-root': {
                     background: '#F4F5F5',
                   },
+
+                  '& .MuiTableCell-head': {
+                    '&:not(:hover) svg': {
+                      display: 'none'
+                    }
+                  }
                 }}>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
+                  <TableCell>
+                    <Box display='flex' alignItems='center' justifyContent='space-between'>Subject<TargetIcon/></Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box display='flex' alignItems='center' justifyContent='space-between'>Species<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Strain<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Sex<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Age<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Group<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>StudyInjModelTyp<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Subject<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Species<TargetIcon/></Box>
+
+                  </TableCell>
+                  <TableCell>
+                  <Box display='flex' alignItems='center' justifyContent='space-between'>Strain<TargetIcon/></Box>
+
+                  </TableCell>
                 </TableRow>
               </TableHead>
 
