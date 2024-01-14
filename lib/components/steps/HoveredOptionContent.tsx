@@ -1,4 +1,3 @@
-import React from 'react';
 import { Stack, Typography, Box } from '@mui/material';
 
 const DefaultBody = ({ entity }: any) => (

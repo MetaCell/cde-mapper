@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Typography, Box } from '@mui/material';
 import { vars } from "../../theme/variables";
 const { titleFontColor } = vars;

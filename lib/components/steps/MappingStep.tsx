@@ -1,7 +1,7 @@
 import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
-import React, { ReactNode } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
