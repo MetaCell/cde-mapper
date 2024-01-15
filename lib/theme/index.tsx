@@ -18,6 +18,10 @@ theme = createTheme({
       lineHeight: '150%',
       color: gray700,
     },
+    h6: {
+      fontSize: '1.125rem',
+      color: gray700
+    },
     body2: {
       fontSize: '1rem',
       fontWeight: 400,
