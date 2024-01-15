@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 import { vars } from "./variables";
 import CaretRight from '../images/CaretRight.png';
 
-const { primaryFont, gray300, gray50, baseWhite, gray100, gray500, primary700, gray700, primary600, primary100, black, success50, success700, gray200 } = vars
+const { primaryFont, gray300, gray50, baseWhite, gray100, gray500, primary700, gray700, primary600, primary100, success50, success700, gray200, gray900 } = vars
 
 let theme = createTheme();
 
@@ -171,9 +171,11 @@ theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: black,
-          padding: '0.75rem',
-          borderRadius: '0.5rem'
+          backgroundColor: gray900,
+          padding: '0.5rem 0.75rem',
+          borderRadius: '0.5rem',
+          fontSize: '0.75rem',
+          fontWeight: 600
         }
       }
     },
