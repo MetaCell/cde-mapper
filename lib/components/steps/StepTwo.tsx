@@ -4,6 +4,17 @@ import React from 'react';
 import { ArrowDropDown, LeftIcon, RightIcon } from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
+import { vars } from '../../theme/variables.ts';
+
+const {
+    gray100,
+    gray500,
+    gray50,
+    gray300,
+    gray200,
+    baseWhite,
+    primary600
+} = vars;
 
 function StepTwo() {
     const { mapping } = useCdeContext();
@@ -15,9 +26,9 @@ function StepTwo() {
     return (
         <>
             <ModalHeightWrapper>
-                <Box mb={3} borderBottom='0.0625rem solid #ECEDEE' py='0.6875rem' display='flex' alignItems='center' justifyContent='space-between'>
+                <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex' alignItems='center' justifyContent='space-between'>
                     <Typography sx={{
-                        color: '#676C74',
+                        color: gray500,
                         fontSize: '0.875rem',
                         fontWeight: 500,
                         lineHeight: '142.857%'
@@ -25,7 +36,7 @@ function StepTwo() {
                         Column header from datasets
                     </Typography>
                     <Typography sx={{
-                        color: '#676C74',
+                        color: gray500,
                         fontSize: '0.75rem',
                         fontWeight: 400,
                         lineHeight: '150%'
@@ -37,10 +48,10 @@ function StepTwo() {
                 <Typography sx={{
                     padding: '0.5rem 0.75rem',
                     borderRadius: '0.5rem',
-                    border: '0.0625rem solid #E4E5E7',
-                    background: '#F4F5F5',
+                    border: `0.0625rem solid ${gray200}`,
+                    background: gray50,
                     fontSize: '0.875rem',
-                    color: '#676C74',
+                    color: gray500,
                     lineHeight: '142.857%',
                     fontWeight: 400,
                     marginBottom: '3rem'
@@ -48,9 +59,9 @@ function StepTwo() {
                     Strain
                 </Typography>
 
-                <Box mb={3} borderBottom='0.0625rem solid #ECEDEE' py='0.6875rem' display='flex' alignItems='center' justifyContent='space-between'>
+                <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex' alignItems='center' justifyContent='space-between'>
                     <Typography sx={{
-                        color: '#676C74',
+                        color: gray500,
                         fontSize: '0.875rem',
                         fontWeight: 500,
                         lineHeight: '142.857%'
@@ -58,7 +69,7 @@ function StepTwo() {
                         CDE suggestions
                     </Typography>
                     <Typography sx={{
-                        color: '#676C74',
+                        color: gray500,
                         fontSize: '0.75rem',
                         fontWeight: 400,
                         lineHeight: '150%'
@@ -71,7 +82,7 @@ function StepTwo() {
                     <SuggestionDetailUI />
                     <SuggestionDetailUI />
                     <Button variant='text' onClick={() =>  setShowOtherSuggestions(!showOtherSuggestions)} disableRipple sx={{
-                        p: 0, gap: '0.25rem', color: '#19418F',
+                        p: 0, gap: '0.25rem', color: primary600,
 
                         '& svg': {
                             transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
@@ -93,21 +104,21 @@ function StepTwo() {
                 )}
             </ModalHeightWrapper>
 
-            <Box width='calc(100% - 3rem)' mx='auto' justifyContent='space-between' display='flex' alignItems='center' sx={{ background: '#fff', zIndex: 9 }} py='1rem' borderTop='0.0625rem solid #ECEDEE'>
+            <Box width='calc(100% - 3rem)' mx='auto' justifyContent='space-between' display='flex' alignItems='center' sx={{ background: baseWhite, zIndex: 9 }} py='1rem' borderTop={`0.0625rem solid ${gray100}`}>
                 <Box gap='0.75rem' display='flex' alignItems='center'>
                     <Box gap='0.25rem' display='flex' alignItems='center'>
                         <IconButton disabled sx={{
                             borderRadius: '0.5rem',
                             padding: '0.5rem',
-                            border: '0.0625rem solid #E4E5E7',
+                            border: `0.0625rem solid ${gray200}`,
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                         }}>
-                            <LeftIcon color="#D6D8DB" />
+                            <LeftIcon color={gray300} />
                         </IconButton>
                         <IconButton sx={{
                             borderRadius: '0.5rem',
                             padding: '0.5rem',
-                            border: '0.0625rem solid #D6D8DB',
+                            border: `0.0625rem solid ${gray300}`,
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                         }}>
                             <RightIcon />

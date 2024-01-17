@@ -1,4 +1,10 @@
 import { Stack, Typography, Box } from '@mui/material';
+import { vars } from '../../theme/variables';
+
+const {
+  gray400,
+  gray700
+} = vars;
 
 const DefaultBody = ({ entity }: any) => (
 <Stack spacing={2} flexGrow={1}>
@@ -28,14 +34,14 @@ const HoveredOptionContent = ({
       sx={{
         boxSizing: 'border-box',
         '& .MuiTypography-body1': {
-          color: "#A9ACB2",
+          color: gray400,
           fontSize: "0.75rem",
           fontWeight: 500,
           lineHeight: "1.125rem",
         },
 
         '& .MuiTypography-body2': {
-          color: "#373A3E",
+          color: gray700,
           fontSize: "0.875rem",
           fontWeight: 400,
           lineHeight: "1.25rem",

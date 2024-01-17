@@ -1,5 +1,14 @@
 import { Box, Typography, Grid, Link } from "@mui/material";
 import { LinkIcon } from "../../icons";
+import { vars } from "../../theme/variables";
+
+const {
+    gray700,
+    gray200,
+    gray500,
+    gray900,
+    primary500
+} = vars;
 
 const DEFAULT_DATA = [
     {
@@ -40,16 +49,16 @@ const DEFAULT_DATA = [
 const CdeDetails = ({ heading = 'CDE Details', data = DEFAULT_DATA }: any) => {
     return (
         <Box sx={{
-            border: '0.0625rem solid #E4E5E7',
+            border: `0.0625rem solid ${gray200}`,
             borderRadius: '0.5rem'
         }}>
             <Typography sx={{
                 fontSize: '0.75rem',
                 fontWeight: 500,
                 lineHeight: '150%',
-                color: '#373A3E',
+                color: gray700,
                 padding: '0.625rem 0.875rem',
-                borderBottom: '0.0625rem solid #E4E5E7',
+                borderBottom: `0.0625rem solid ${gray200}`,
             }}>
                 {heading}
             </Typography>
@@ -59,7 +68,7 @@ const CdeDetails = ({ heading = 'CDE Details', data = DEFAULT_DATA }: any) => {
                     {data.map((item: any) => (
                         <Grid item md={3}>
                             <Typography sx={{
-                                color: '#676C74',
+                                color: gray500,
                                 fontWeight: 400,
                                 lineHeight: '150%',
                                 marginBottom: '0.25rem',
@@ -68,12 +77,12 @@ const CdeDetails = ({ heading = 'CDE Details', data = DEFAULT_DATA }: any) => {
                                 {item.heading}
                             </Typography>
                             <Typography sx={{
-                                color: '#070808',
+                                color: gray900,
                                 fontWeight: 400,
                                 lineHeight: '142.857%',
                                 fontSize: '0.875rem',
                                 '& a': {
-                                    color: '#2155BA',
+                                    color: primary500,
                                     fontWeight: 500,
                                     cursor: 'pointer',
                                     textDecoration: 'none',

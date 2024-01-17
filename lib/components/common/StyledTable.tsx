@@ -7,7 +7,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { vars } from '../../theme/variables';
 
-const { gray50, gray100, gray200 } = vars;
+const { gray50, gray100, gray200, baseWhite } = vars;
 
 function createData(
     subject: string,
@@ -38,7 +38,7 @@ export const StyledTable = () => {
             elevation={0}
             sx={{
                 maxWidth: 650,
-                border: `1px solid ${gray100}`,
+                border: `0.0625rem solid ${gray100}`,
                 borderBottom: 0
             }}
         >
@@ -53,13 +53,13 @@ export const StyledTable = () => {
                         width: '100%',
                         height: '40%',
                         bottom: 0,
-                        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)'
+                        background: `linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, ${baseWhite} 83.85%)`
                     },
                     '& .MuiTableCell-root': {
-                        borderRight: `1px solid ${gray200} !important`,
+                        borderRight: `0.0625rem solid ${gray200} !important`,
                         padding: '0.75rem 1.5rem !important',
                         fontSize: '0.875rem',
-                        borderBottom: `1px solid ${gray200}`,
+                        borderBottom: `0.0625rem solid ${gray200}`,
                         minWidth: '7.5rem',
                         minHeight: '2.75rem',
                         lineHeight: '1.25rem'

@@ -24,6 +24,8 @@ export const vars = {
   purple50: '#F4F3FF',
   purple500: '#7A5AF8',
   purple700: '#5925DC',
+  warning50: '#FFFAEB',
+  warning700: '#B54708',
   black: '#000000',
   titleFontColor: '#1D2939',
   grey400:'#98A2B3',

@@ -7,7 +7,7 @@ import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 
-const { primary600, gray600 } = vars;
+const { primary600, gray600, drodownDetailBg } = vars;
 
 function Home() {
     const {
@@ -50,7 +50,7 @@ function Home() {
     return (
         <ModalLayout>
             <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
-                background: '#FCFCFD'
+                background: drodownDetailBg
             }}>
                 <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
                     Create mapping(s) with selected dataset?
@@ -67,7 +67,7 @@ function Home() {
                             display="flex"
                             alignItems="center"
                             sx={{
-                                borderLeft: `2px solid ${primary600}`,
+                                borderLeft: `0.125rem solid ${primary600}`,
                                 '& .MuiTypography-h6': {
                                     fontSize: '1.125rem',
                                     color: primary600,
