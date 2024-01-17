@@ -15,12 +15,13 @@ const HoveredOptionContent = ({
   entity,
   HeaderComponent,
   BodyComponent,
-  FooterComponent
+  FooterComponent,
+  padding
 }: any) => {
   return (
     <Box
       width={1}
-      p={3}
+      p={padding ?? 3}
       display='flex'
       flexDirection='column'
       minHeight={1}
@@ -41,26 +42,28 @@ const HoveredOptionContent = ({
           marginTop: '0.25rem',
         },
 
-        '& .MuiChip-root': {
-          color: "#344054",
-          fontSize: "0.875rem",
-          fontWeight: 500,
-          lineHeight: "1.25rem",
-          borderRadius: '0.375rem',
-          borderColor: '#D0D5DD',
-          padding: '0.125rem 0',
-          '&.MuiChip-filledSuccess': {
-            background: '#ECFDF3',
-            borderRadius: '1rem',
-            color: '#027A48'
+        '& .MuiOutlinedInput-input': {
+          height: '1.75rem'
+        },
+
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: 'transparent'
+        },
+
+        '& .MuiOutlinedInput-root': {
+          paddingLeft: '0.25rem',
+          borderRadius: '0.25rem',
+
+          '&:not(.Mui-focused):hover': {
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'transparent'
+            }
           },
-          '&.MuiChip-filledError': {
-            background: '#FEF3F2',
-            borderRadius: '1rem',
-            color: '#B42318',
-          },
-          '& .MuiChip-label': {
-            p: '0 0.5625rem',
+
+          '&.Mui-focused': {
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'transparent'
+            }
           }
         }
       }}
