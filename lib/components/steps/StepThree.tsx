@@ -1,15 +1,11 @@
-import { Box, Button, Chip, FormControl, FormGroup, IconButton, InputAdornment, MenuItem, Popover, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
+import { Box, Button, Chip, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material"
 import ModalHeightWrapper from "../common/ModalHeightWrapper"
-import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, PairIcon, SearchIcon, SortIcon, TargetIcon } from "../../icons";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { ArrowDropDown, ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, PairIcon, SearchIcon, SortIcon } from "../../icons";
 import React, { useState } from "react";
-import Checkbox from "../common/CheckBox";
-import CustomEntitiesDropdown from "./CustomMappingDropdown";
+import CustomEntitiesDropdown from "../common/CustomMappingDropdown";
 import CdeDetails from "../common/CdeDetails";
+import Filters from "../common/Filters";
+import PreviewTable from "../common/PreviewTable";
 
 const styles = {
   root: {
@@ -82,7 +78,7 @@ const StepThree = () => {
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const filterToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -90,178 +86,106 @@ const StepThree = () => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-  const mockEntities = [
+ 
+  const mockCDE = [
     {
       "id": "5304",
-      "group": 'Origins',
-      "label": "('Aortic arch', 'arch of aorta')",
+      // "group": 'Origins',
+      "label": "GUID",
       "content": [
         {
           "title": "Name",
-          "value": "('Aortic arch', 'arch of aorta')"
+          "value": "GUID"
         },
         {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0001508"
+          "title": "Variable Name",
+          "value": "Subject"
+        },
+        {
+          "title": "Title",
+          "value": "Unique identification of each mouse ID"
         }
       ]
     },
     {
       "id": "32845",
-      "group": 'Origins',
-      "label": "(embryonic) hindbrain flexure",
+      // "group": 'Origins',
+      "label": "SmallSpeciesStrainTyp",
       "content": [
         {
           "title": "Name",
-          "value": "(embryonic) hindbrain flexure"
+          "value": "SmallSpeciesStrainTyp"
         },
         {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0005820"
+          "title": "Variable Name",
+          "value": "Subject"
+        },
+        {
+          "title": "Title",
+          "value": "Unique identification of each mouse ID"
         }
       ]
     },
     {
       "id": "47428",
-      "group": 'Origins',
-      "label": "(mid-third) lateral capsular ligament",
+      // "group": 'Origins',
+      "label": "StudySpeciesTyp",
       "content": [
         {
           "title": "Name",
-          "value": "(mid-third) lateral capsular ligament"
+          "value": "StudySpeciesTyp"
         },
         {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0014899"
+          "title": "Variable Name",
+          "value": "Subject"
+        },
+        {
+          "title": "Title",
+          "value": "Unique identification of each mouse ID"
         }
       ]
     },
     {
       "id": "12822",
-      "group": 'Origins',
-      "label": "(pre-)piriform cortex",
+      // "group": 'Origins',
+      "label": "Weight",
       "content": [
         {
           "title": "Name",
-          "value": "(pre-)piriform cortex"
+          "value": "Weight"
         },
         {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0002590"
+          "title": "Variable Name",
+          "value": "Subject"
+        },
+        {
+          "title": "Title",
+          "value": "Unique identification of each mouse ID"
         }
       ]
     },
     {
       "id": "1798",
-      "group": 'Origins',
-      "label": "02 optic nerve",
+      // "group": 'Origins',
+      "label": "AgeVal",
       "content": [
         {
           "title": "Name",
-          "value": "02 optic nerve"
+          "value": "AgeVal"
         },
         {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0000941"
+          "title": "Variable Name",
+          "value": "Subject"
+        },
+        {
+          "title": "Title",
+          "value": "Unique identification of each mouse ID"
         }
       ]
     },
-    {
-      "id": "53259",
-      "group": 'Origins',
-      "label": "10 R+L thoracic",
-      "content": [
-        {
-          "title": "Name",
-          "value": "10 R+L thoracic"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0039167"
-        }
-      ]
-    },
-    {
-      "id": "6604",
-      "group": 'Origins',
-      "label": "10n",
-      "content": [
-        {
-          "title": "Name",
-          "value": "10n"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0001759"
-        }
-      ]
-    },
-    {
-      "id": "52948",
-      "group": 'Origins',
-      "label":"11 R+L thoracic",
-      "content": [
-        {
-          "title": "Name",
-          "value": "11 R+L thoracic"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0038635"
-        }
-      ]
-    },
-    {
-      "id": "52950",
-      "group": 'Origins',
-      "label": "11 thoracic lymph node",
-      "content": [
-        {
-          "title": "Name",
-          "value": "11 thoracic lymph node"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0038635"
-        }
-      ]
-    },
-    {
-      "id": "52956",
-      "group": 'Origins',
-      "label": "12R+L thoracic lymph node",
-      "content": [
-        {
-          "title": "Name",
-          "value": "12R+L thoracic lymph node"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0038638"
-        }
-      ]
-    },
-    {
-      "id": "6050",
-      "group": 'Origins',
-      "label": "12n",
-      "content": [
-        {
-          "title": "Name",
-          "value": "12n"
-        },
-        {
-          "title": "Ontology URI",
-          "value": "http://purl.obolibrary.org/obo/UBERON_0001650"
-        }
-      ]
-    }
   ];
 
-
-  const getEntities = () => mockEntities;
+  const searchCDE = () => mockCDE;
 
   return (
     <>
@@ -277,109 +201,14 @@ const StepThree = () => {
           />
           <Button
             variant="outlined"
-            aria-describedby={id}
-            onClick={handleClick}
+            aria-describedby={'filter-popover'}
+            onClick={filterToggle}
           >
             <FilterIcon />
             Filter
           </Button>
 
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <Box sx={{
-              borderBottom: '0.0625rem solid #ECEDEE',
-              padding: '1rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Typography sx={{
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                lineHeight: '150%',
-                color: '#676C74'
-              }}>Filter by</Typography>
-              <Button
-                variant="text"
-                sx={{
-                  p: 0,
-                  fontSize: '0.75rem',
-                  '&:hover': {
-                    background: 'transparent'
-                  }
-                }}
-              >
-                Reset filters
-              </Button>
-            </Box>
-
-            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
-              <Typography sx={{fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem'}}>Status</Typography>
-              <Checkbox label="All" />
-
-              <Box pl={3} mt="0.75rem" sx={{
-                position: 'relative',
-                '&:before': {
-                  content: '""',
-                  width: '0.0625rem',
-                  height: '100%',
-                  background: '#ECEDEE',
-                  position: 'absolute',
-                  top: 0,
-                  left: '0.4688rem'
-                }
-              }}>
-                <FormGroup>
-                  <Checkbox label="Mapped to CDE" />
-                  <Checkbox label="Mapped to Data Dictionary field" />
-                  <Checkbox label="Unmapped" />
-                </FormGroup>
-              </Box>
-            </Box>
-            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
-              <Typography sx={{fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem'}}>Type of mapping</Typography>
-              <Checkbox label="All" />
-              <Box pl={3} mt="0.75rem" sx={{
-                position: 'relative',
-                '&:before': {
-                  content: '""',
-                  width: '0.0625rem',
-                  height: '100%',
-                  background: '#ECEDEE',
-                  position: 'absolute',
-                  top: 0,
-                  left: '0.4688rem'
-                }
-              }}>
-                <FormGroup>
-                  <Checkbox label="Mapped to CDE" />
-                  <Checkbox label="Mapped to Data Dictionary field" />
-                  <Checkbox label="Unmapped" />
-                </FormGroup>
-              </Box>
-            </Box>
-
-            <Box sx={{
-              padding: '1rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <Checkbox label="Hide previously mapped columns" />
-            </Box>
-          </Popover>
+          <Filters anchorEl={anchorEl} handleClose={handleClose} />
         </Box>
 
         <Box px={1.5}>
@@ -399,44 +228,91 @@ const StepThree = () => {
               </Box>
             </Box>
             <Box sx={styles.wrap}>
-            <Box sx={styles.row}>
+              <Box sx={styles.row}>
                 <Box sx={styles.col}>
                   <Chip
-                    label="Unmapped"
+                    label={'Unmapped'}
                     size="small"
-                    icon={<BulletIcon color="#676C74" />}
+                    icon={<BulletIcon color={'#676C74'} />}
                   />
                 </Box>
                 <Box sx={styles.col}>
                   <TextField
                     disabled
                     fullWidth
-                    value='MotorForceApplied'
+                    value={'MotorForceApplied'}
                   />
                 </Box>
                 <Box sx={styles.col}>
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  {/* <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." /> */}
                   <CustomEntitiesDropdown options= {{
-                    placeholder: "Look for Origins",
+                    placeholder: "Choose CDE or Data Dictionary fields...",
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                    noResultReason: "We couldn’t find any record with these origin in the database.",
-                    disabledReason: "Add Destination entity to get access to the forward connection form",
-                    onSearch: () => getEntities(),
-                    // onUpdate: (selectedOptions: any) => updateOriginsInStatment(selectedOptions),
-                    // statement: statement,
-                    // errors: statement?.errors?.includes("Invalid origin")
-                    //   ? statement.errors
-                    //   : "",
-                    value: mockEntities[0] ?? "",
-                    // CustomFooter : () => <Box sx={{mt: '1.5rem', display: 'flex', gap: 1, flexWrap: 'wrap', pt: '1.5rem', borderTop: '0.0625rem solid #F2F4F7'}}>
-                    //   {/* <Chip variant="filled" color="error" label={"https://google.com"} /> */}
-                    //   <Chip variant="outlined" label={"https://google.com"} />
-                    // </Box>,
+                    noResultReason: "We couldn’t find any record with this in the database.",
+                    onSearch: () => searchCDE(),
+                    value: mockCDE[1] ?? "",
                   }}/>
+                </Box>  
+              </Box>
+
+              <Box sx={styles.row}>
+                <Box sx={styles.col}>
+                  <Chip
+                    label={'Unmapped'}
+                    size="small"
+                    icon={<BulletIcon color={'#676C74'} />}
+                  />
                 </Box>
+                <Box sx={styles.col}>
+                  <TextField
+                    disabled
+                    fullWidth
+                    value={'Age'}
+                  />
+                </Box>
+                <Box sx={styles.col}>
+                  <ArrowIcon />
+                </Box>
+                <Box sx={styles.col}>
+                  <CustomEntitiesDropdown options= {{
+                    placeholder: "Choose CDE or Data Dictionary fields...",
+                    searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                    noResultReason: "We couldn’t find any record with this in the database.",
+                    onSearch: () => searchCDE(),
+                    value: mockCDE[2] ?? "",
+                  }}/>
+                </Box>  
+              </Box>
+
+              <Box sx={styles.row}>
+                <Box sx={styles.col}>
+                  <Chip
+                    label={'Unmapped'}
+                    size="small"
+                    icon={<BulletIcon color={'#676C74'} />}
+                  />
+                </Box>
+                <Box sx={styles.col}>
+                  <TextField
+                    disabled
+                    fullWidth
+                    value={'Group'}
+                  />
+                </Box>
+                <Box sx={styles.col}>
+                  <ArrowIcon />
+                </Box>
+                <Box sx={styles.col}>
+                  <CustomEntitiesDropdown options= {{
+                    placeholder: "Choose CDE or Data Dictionary fields...",
+                    searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                    noResultReason: "We couldn’t find any record with this in the database.",
+                    onSearch: () => searchCDE(),
+                    value: mockCDE[3] ?? "",
+                  }}/>
+                </Box>  
               </Box>
 
               <Box sx={styles.row}>
@@ -459,14 +335,42 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
+                  <CustomEntitiesDropdown options= {{
+                    placeholder: "Choose CDE or Data Dictionary fields...",
+                    searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                    noResultReason: "We couldn’t find any record with this in the database.",
+                    onSearch: () => searchCDE(),
+                    value: mockCDE[0] ?? "",
+                  }}/>
                 </Box>
 
                 <Box width='100%' mt={1.5}>
                   <Box onClick={() => setTogglePairingSuggestions(!togglePairingSuggestions)} mb={togglePairingSuggestions ? 3 : 0} display='inline-flex' alignItems='center' gap={1} sx={{ cursor: 'pointer', userSelect: 'none' }}>
                     <PairIcon />
                     <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
-                    <InfoIcon style={{ marginLeft: '0.25rem' }} />
+                    <Tooltip
+                      title={
+                        <>
+                          <Typography sx={{
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              lineHeight: '142.857%',
+                              marginBottom: '0.25rem',
+                              color: '#fff',
+                          }}>This is a Tooltip</Typography>
+                          <Typography sx={{
+                              fontSize: '0.75rem',
+                              fontWeight: 400,
+                              lineHeight: '142.857%',
+                              color: '#fff',
+                          }}>
+                            Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
+                          </Typography>
+                        </>
+                      }
+                    >
+                      <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
+                    </Tooltip>
                   </Box>
 
                   {togglePairingSuggestions && (
@@ -521,7 +425,7 @@ const StepThree = () => {
                                 <MenuItem disabled value={0} sx={{
                                   color: '#A9ACB2'
                                 }}>
-                                  Choose column header to map...
+                                  <em>Choose column header to map...</em>
                                 </MenuItem>
                                 <MenuItem value={1}>MotorFoceApplied</MenuItem>
                                 <MenuItem value={2}>Subject</MenuItem>
@@ -563,10 +467,8 @@ const StepThree = () => {
                                 <IconButton sx={{
                                     borderRadius: '0.5rem',
                                     padding: '0.4375rem',
-                                    // border: '0.0625rem solid #E4E5E7',
-                                    // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                                 }}>
-                                    <CrossIcon />
+                                  <CrossIcon />
                                 </IconButton>
                                 <IconButton sx={{
                                     borderRadius: '0.5rem',
@@ -574,7 +476,7 @@ const StepThree = () => {
                                     border: '0.0625rem solid #D6D8DB',
                                     boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                                 }}>
-                                    <CheckIcon />
+                                  <CheckIcon />
                                 </IconButton>
                               </Box>
                             </Box>
@@ -759,74 +661,6 @@ const StepThree = () => {
                 </Box>
               </Box>
 
-              <Box sx={styles.row}>
-                <Box sx={styles.col}>
-                  <Chip
-                    label="Unmapped"
-                    size="small"
-                    icon={<BulletIcon color="#676C74" />}
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    value='MotorForceApplied'
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <ArrowIcon />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
-                </Box>
-              </Box>
-
-              <Box sx={styles.row}>
-                <Box sx={styles.col}>
-                  <Chip
-                    label="Unmapped"
-                    size="small"
-                    icon={<BulletIcon color="#676C74" />}
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    value='MotorForceApplied'
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <ArrowIcon />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
-                </Box>
-              </Box>
-
-              <Box sx={styles.row}>
-                <Box sx={styles.col}>
-                  <Chip
-                    label="Unmapped"
-                    size="small"
-                    icon={<BulletIcon color="#676C74" />}
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField
-                    disabled
-                    fullWidth
-                    value='MotorForceApplied'
-                  />
-                </Box>
-                <Box sx={styles.col}>
-                  <ArrowIcon />
-                </Box>
-                <Box sx={styles.col}>
-                  <TextField fullWidth placeholder="Choose CDE or Data Dictionary fields..." />
-                </Box>
-              </Box>
             </Box>
           </Box>
         </Box>
@@ -976,201 +810,7 @@ const StepThree = () => {
               </Box>
             </Box>
 
-            <Table sx={{
-              '& .MuiTableCell-root': {
-                boxSizing: 'border-box',
-                minWidth: '10rem',
-                width: '10rem',
-                padding: '0.75rem 1.5rem',
-                borderTop: '0.0625rem solid',
-                borderColor: '#E4E5E7',
-                borderLeft: '0.0625rem solid #E4E5E7',
-
-                '&:last-of-type': {
-                  borderRight: '0.0625rem solid #E4E5E7'
-                }
-              },
-
-
-              '& .MuiTableCell-body': {
-                fontSize: '0.875rem',
-                color: '#4F5359',
-                lineHeight: '142.857%'
-              },
-            }}>
-              <TableHead>
-                <TableRow sx={{
-                  '& .MuiTableCell-root': {
-                    background: '#F4F5F5',
-                  },
-
-                  '& .MuiTableCell-head': {
-                    '&:not(:hover) svg': {
-                      display: 'none'
-                    }
-                  }
-                }}>
-                  <TableCell>
-                    <Box display='flex' alignItems='center' justifyContent='space-between'>Subject<TargetIcon/></Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display='flex' alignItems='center' justifyContent='space-between'>Species<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Strain<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Sex<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Age<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Group<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>StudyInjModelTyp<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Subject<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Species<TargetIcon/></Box>
-
-                  </TableCell>
-                  <TableCell>
-                  <Box display='flex' alignItems='center' justifyContent='space-between'>Strain<TargetIcon/></Box>
-
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                  <TableCell>Sex</TableCell>
-                  <TableCell>Age</TableCell>
-                  <TableCell>Group</TableCell>
-                  <TableCell>StudyInjModelTyp</TableCell>
-                  <TableCell>Subject</TableCell>
-                  <TableCell>Species</TableCell>
-                  <TableCell>Strain</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <PreviewTable />
           </Box>
         )}
       </Box>

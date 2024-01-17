@@ -116,6 +116,9 @@ theme = createTheme({
 
     MuiMenu: {
       styleOverrides: {
+        root: {
+          zIndex: 99999
+        },
         list: {
           padding: '0.25rem 0.375rem',
         },
@@ -272,6 +275,11 @@ theme = createTheme({
           color: gray500,
           height: '2.25rem',
 
+          '& em': {
+            fontStyle: 'normal',
+            color: gray400,
+          },
+
           '&::placeholder': {
             color: gray400,
             opacity: 1
@@ -314,6 +322,24 @@ theme = createTheme({
           '&.Mui-disabled': {
             background: primary100,
             color: baseWhite,
+          }
+        },
+
+        containedInfo: {
+          background: '#EEF2FC',
+          color: '#19418F',
+          boxShadow: 'none',
+          '&:hover': {
+            background: '#C2D4F4',
+            color: '#122E64',
+          },
+          '&:focus': {
+            background: '#EEF2FC',
+            boxShadow: `0rem 0rem 0rem 0.25rem #C2D4F4, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)`
+          },
+          '&.Mui-disabled': {
+            background: '#FBFCFE',
+            color: '#8AABEA',
           }
         },
 
@@ -384,7 +410,7 @@ theme = createTheme({
         root: {
           height: 'auto',
           fontFamily: primaryFont,
-          borderRadius: '1rem',
+          borderRadius: '3.125rem',
           background: gray100,
           '& svg': {
             marginRight: '0.25rem'
@@ -440,6 +466,13 @@ theme = createTheme({
             '&:before': {
               background: primary400,
             }
+          }
+        },
+
+        colorWarning: {
+          background: '#FFFAEB',
+          '& .MuiChip-label': {
+            color: '#B54708'
           }
         },
 

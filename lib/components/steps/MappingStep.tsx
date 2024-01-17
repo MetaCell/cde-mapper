@@ -1,4 +1,4 @@
-import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Tab, Tabs, Tooltip, Typography, Divider } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
 import React from 'react';
@@ -112,10 +112,24 @@ function MappingStep() {
                     ))}
                 </Tabs>
 
-                <Box display='flex' gap='0.625rem' alignItems='center'>
-                    <Button variant='text'>
+                 <Box display='flex' gap='0.625rem' alignItems='center'>
+                    { value === 1 ? ( <Button variant='text'>
                         Continue without suggestions
-                    </Button>
+                    </Button> ) : value === 2 && (<>
+                    <Typography sx={{
+                        color: '#676C74',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        lineHeight: '150%',
+                    }}>
+                        37/120 column headers still unmapped
+                    </Typography>
+
+                    <Divider sx={{ height: '1.875rem', background: '#ECEDEE', width: '0.0625rem' }} />
+
+                    <Button variant='contained'>
+                        Save mapping
+                    </Button></>)}
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
