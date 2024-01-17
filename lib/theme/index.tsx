@@ -60,6 +60,21 @@ theme = createTheme({
           box-sizing: border-box !important;
           font-family: ${primaryFont}
         }
+
+        *::-webkit-scrollbar {
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+  
+        *::-webkit-scrollbar-track {
+          background: transparent;
+        }
+    
+        *::-webkit-scrollbar-thumb {
+          background: ${gray200};
+          border-radius: 0.5rem;
+          height: 0.5rem;
+        }
       `
     },
 
@@ -298,11 +313,10 @@ theme = createTheme({
           borderRadius: '0.5rem',
           lineHeight: '142.857%',
           textTransform: 'none',
-          gap: '0.5rem',
-          boxShadow: '0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)',
+          boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
 
           '&:hover': {
-            boxShadow: '0 0.0625rem 0.125rem 0 rgba(7, 8, 8, 0.05)',
+            boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
           }
         },
 
@@ -375,7 +389,6 @@ theme = createTheme({
         }
       }
     },
-
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
@@ -433,7 +446,7 @@ theme = createTheme({
           lineHeight: '150%',
           fontWeight: 500,
           padding: 0,
-          fontFamily: primaryFont,
+          fontFamily: primaryFont
         },
 
         colorSuccess: {
@@ -481,7 +494,7 @@ theme = createTheme({
           '& .MuiChip-label': {
             color: primary500
           }
-        }
+        },
       }
     },
 
@@ -523,6 +536,31 @@ theme = createTheme({
         }
       }
     },
+
+    MuiRadio: {
+      styleOverrides: {
+        sizeSmall: {
+          width: '1rem',
+          height: '1rem'
+        }
+      }
+    },
+
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          textDecoration: 'none',
+          color: gray500,
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          fontFamily: primaryFont,
+          
+          "&:hover": {
+            color: gray700
+          }
+        }
+      }
+    }
   }
 });
 

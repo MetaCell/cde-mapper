@@ -3,6 +3,7 @@ import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
 import React from 'react';
 import PropTypes from 'prop-types';
+import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
@@ -35,7 +36,7 @@ const tabsArr = [
 const renderTabComponent = (step: number) => {
   switch (step) {
       case 0:
-          return <ModalHeightWrapper><Typography> Step one </Typography></ModalHeightWrapper>;
+          return <ModalHeightWrapper><StepOne /></ModalHeightWrapper>;
       case 1:
           return <StepTwo />;
       case 2:
@@ -63,15 +64,15 @@ function CustomTabPanel(props: { [x: string]: any; children: any; value: any; in
 }
 
 CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
 };
 
 function MappingStep() {
     const { mapping } = useCdeContext();
 
-    const [value, setValue] = React.useState(2);
+    const [value, setValue] = React.useState(0);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
