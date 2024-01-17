@@ -191,7 +191,7 @@ const StepThree = () => {
 
   return (
     <>
-      <ModalHeightWrapper pb={10}>
+      <ModalHeightWrapper pb={10} height='15rem'>
         <Box alignItems='center' display='flex' gap={1.5} mb={3}>
           <TextField
             fullWidth
@@ -671,7 +671,7 @@ const StepThree = () => {
       <Box sx={{
         position: 'absolute',
         background: '#fff',
-        zIndex: 9,
+        zIndex: 9999999999,
         bottom: 0,
         left: 0,
         width: '100%',

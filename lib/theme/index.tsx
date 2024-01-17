@@ -26,7 +26,9 @@ const {
   primary400,
   purple50,
   purple700,
-  purple500
+  purple500,
+  warning50,
+  warning700
 } = vars
 
 let theme = createTheme();
@@ -105,7 +107,13 @@ theme = createTheme({
       styleOverrides: {
         paperWidthXl: {
           maxWidth: '68.75rem'
-        }
+        },
+        root: {
+          '& .MuiDialog-paper': {
+            minHeight: '0.0625rem !important',
+            height: '100%'
+          }
+        },
       }
     },
 
@@ -313,10 +321,10 @@ theme = createTheme({
           borderRadius: '0.5rem',
           lineHeight: '142.857%',
           textTransform: 'none',
-          boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
+          boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
 
           '&:hover': {
-            boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
+            boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)',
           }
         },
 
@@ -340,20 +348,16 @@ theme = createTheme({
         },
 
         containedInfo: {
-          background: '#EEF2FC',
-          color: '#19418F',
+          background: primary50,
+          color: primary600,
           boxShadow: 'none',
           '&:hover': {
-            background: '#C2D4F4',
-            color: '#122E64',
+            background: primary100,
+            color: primary700,
           },
           '&:focus': {
-            background: '#EEF2FC',
-            boxShadow: `0rem 0rem 0rem 0.25rem #C2D4F4, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)`
-          },
-          '&.Mui-disabled': {
-            background: '#FBFCFE',
-            color: '#8AABEA',
+            background: primary50,
+            boxShadow: `0rem 0rem 0rem 0.25rem ${primary100}, 0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)`
           }
         },
 
@@ -483,9 +487,9 @@ theme = createTheme({
         },
 
         colorWarning: {
-          background: '#FFFAEB',
+          background: warning50,
           '& .MuiChip-label': {
-            color: '#B54708'
+            color: warning700
           }
         },
 
