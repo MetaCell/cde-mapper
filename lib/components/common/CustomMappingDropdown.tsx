@@ -43,55 +43,55 @@ const transition = {
 const styles = {
   root: {
     zIndex: '1000000000',
-    gap: '8px',
-    minHeight: '36px',
+    gap: '0.5rem',
+    minHeight: '2.25rem',
     boxSizing: 'border-box',
-    borderRadius: '8px',
-    border: `1px solid ${buttonOutlinedBorderColor}`,
+    borderRadius: '0.5rem',
+    border: `0.0625rem solid ${buttonOutlinedBorderColor}`,
     cursor: 'pointer',
     background: baseWhite,
     display: 'flex',
     alignItems: 'center',
-    padding: '0 10px 0 14px',
+    padding: '0 0.625rem 0 0.875rem',
     position: 'relative',
-    boxShadow: '0 1px 2px 0 rgba(16, 24, 40, 0.05)',
+    boxShadow: '0 0.0625rem 0.125rem 0 rgba(16, 24, 40, 0.05)',
     ...transition,
     '&:after': {
       content: '""',
-      width: '66px',
-      height: 'calc(100% - 2px)',
+      width: '4.125rem',
+      height: 'calc(100% - 0.125rem)',
       position: 'absolute',
-      right: '1px',
-      top: '1px',
+      right: '0.0625rem',
+      top: '0.0625rem',
       pointerEvents: 'none',
       background: 'linear-gradient(270deg, #FFF 67.69%, rgba(255, 255, 255, 0.00) 116.94%)',
-      borderRadius: '0 8px 8px 0'
+      borderRadius: '0 0.5rem 0.5rem 0'
     }
   },
 
   rootHover: {
     '&:hover': {
       borderColor: dropdownBorderColor,
-      boxShadow: '0px 0px 0px 4px #CEDDED, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)'
+      boxShadow: '0rem 0rem 0rem 0.25rem #CEDDED, 0rem 0.0625rem 0.125rem 0rem rgba(16, 24, 40, 0.05)'
     }
   },
 
   rootOpen: {
     borderColor: dropdownBorderColor,
-    boxShadow: '0px 0px 0px 4px #CEDDED, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)'
+    boxShadow: '0rem 0rem 0rem 0.25rem #CEDDED, 0rem 0.0625rem 0.125rem 0rem rgba(16, 24, 40, 0.05)'
   },
 
   chip: {
-    padding: '2px 4px 2px 5px',
-    gap: '3px',
-    height: '24px',
-    borderRadius: '6px',
-    fontSize: '14px',
-    maxWidth: '128px',
+    padding: '0.125rem 0.25rem 0.125rem 0.3125rem',
+    gap: '0.1875rem',
+    height: '1.5rem',
+    borderRadius: '0.375rem',
+    fontSize: '0.875rem',
+    maxWidth: '8rem',
     fontWeight: 500,
 
     '&.MuiChip-filled': {
-      borderRadius: '16px',
+      borderRadius: '1rem',
       background: lightBlue,
       color: darkBlue,
       mixBlendMode: 'multiply',
@@ -100,7 +100,7 @@ const styles = {
     '&.MuiChip-outlined': {
       color: buttonOutlinedColor,
       background: baseWhite,
-      border: `1px solid ${buttonOutlinedBorderColor}`,
+      border: `0.0625rem solid ${buttonOutlinedBorderColor}`,
     },
 
 
@@ -111,7 +111,7 @@ const styles = {
     '& .MuiChip-deleteIcon': {
       margin: 0,
       color: grey400,
-      fontSize: '12px',
+      fontSize: '0.75rem',
       // zIndex: 10000
     }
   },
@@ -120,13 +120,13 @@ const styles = {
     marginLeft: 'auto',
     position: 'relative',
     zIndex: 9,
-    fontSize: '20px',
+    fontSize: '1.25rem',
     color: captionColor
   },
 
   placeholder: {
     color: captionColor,
-    fontSize: '14px',
+    fontSize: '0.875rem',
     fontWeight: 400,
     userSelect: 'none'
   },
@@ -145,7 +145,7 @@ const styles = {
     flexShrink: 0,
     '& .MuiTypography-body2': {
       color: gray400,
-      fontSize: '12px',
+      fontSize: '0.75rem',
       fontWeight: 500,
       lineHeight: '150%',
       padding: 0
@@ -153,7 +153,7 @@ const styles = {
 
     '& .MuiTypography-body1': {
       color: gray400,
-      fontSize: '12px',
+      fontSize: '0.75rem',
       fontWeight: 500,
       lineHeight: '150%',
       padding: 0,
@@ -243,8 +243,11 @@ export default function CustomEntitiesDropdown({
                   alignItems='center'
                   gap={1}
                   sx={{
+                    '& svg': {
+                      flexShrink: 0
+                    },
                     '& .MuiTypography-root': {
-                      fontSize: '14px',
+                      fontSize: '0.875rem',
                       lineHeight: '142.857%',
                       fontWeight: 500
                     },
@@ -260,7 +263,7 @@ export default function CustomEntitiesDropdown({
                       overflow: 'hidden',
                       minWidth: 0,
                       color: '#676C74',
-                      maxWidth: '80%'
+                      maxWidth: '12.5rem'
                     },
                   }}
                 >
@@ -280,13 +283,13 @@ export default function CustomEntitiesDropdown({
         placement='bottom-end'
         anchorEl={anchorEl}
         sx={{
-            height: "350px",
-            borderRadius: '8px',
-            border: `1px solid ${gray100}`,
+            height: "21.875rem",
+            borderRadius: '0.5rem',
+            border: `0.0625rem solid ${gray100}`,
             background: baseWhite,
-            boxShadow: '0 8px 8px -4px rgba(7, 8, 8, 0.03), 0 20px 24px -4px rgba(7, 8, 8, 0.08)',
-            m: '4px 0  !important',
-            width: autocompleteOptions.length > 0 ? '888px' : '444px',
+            boxShadow: '0 0.5rem 0.5rem -0.25rem rgba(7, 8, 8, 0.03), 0 1.25rem 1.5rem -0.25rem rgba(7, 8, 8, 0.08)',
+            m: '0.25rem 0  !important',
+            width: autocompleteOptions.length > 0 ? '55.5rem' : '27.75rem',
             display: 'flex',
             flexDirection: 'column',
             zIndex: 99999
@@ -299,9 +302,9 @@ export default function CustomEntitiesDropdown({
             flexWrap='wrap'
             gap={1}
             sx={{
-              borderBottom: `1px solid ${gray100}`,
-              height: autocompleteOptions.length > 0 ? '44px' : 'auto',
-              padding: autocompleteOptions.length > 0 ? '0 14px' : '14px'
+              borderBottom: `0.0625rem solid ${gray100}`,
+              height: autocompleteOptions.length > 0 ? '2.75rem' : 'auto',
+              padding: autocompleteOptions.length > 0 ? '0 0.875rem' : '0.875rem'
             }}
           >
             <Typography variant="body2">
@@ -319,7 +322,7 @@ export default function CustomEntitiesDropdown({
                   label={
                     <>
                       <Typography
-                        sx={{ verticalAlign: 'text-bottom', display: 'inline-block', mr: '4px', borderRadius: '3px', background: dropdownChipColor, px: '4px', fontSize: '12px', color: buttonOutlinedColor, fontWeight: 600, height: '18px' }}
+                        sx={{ verticalAlign: 'text-bottom', display: 'inline-block', mr: '0.25rem', borderRadius: '0.1875rem', background: dropdownChipColor, px: '0.25rem', fontSize: '0.75rem', color: buttonOutlinedColor, fontWeight: 600, height: '1.125rem' }}
                         component='span'
                       >
                         {index + 1}
@@ -332,7 +335,7 @@ export default function CustomEntitiesDropdown({
             ))}
           </Box>
         )}
-        <Box display='flex' flex={1} height={autocompleteOptions.length > 0 ? 'calc(100% - 44px)' : 'auto'}>
+        <Box display='flex' flex={1} height={autocompleteOptions.length > 0 ? 'calc(100% - 2.75rem)' : 'auto'}>
         {autocompleteOptions.length > 0 && ( !toggleCustomView ?
             (<Box sx={styles.details}>
               {autocompleteOptions.length > 0 && (hoveredOption ? (
@@ -356,7 +359,7 @@ export default function CustomEntitiesDropdown({
                     <Stack direction='row' spacing={1} sx={{ mt: 0 }}>
                       <Stack flexGrow={1}>
                         <Typography variant="body1">VariableName</Typography>
-                        <Typography sx={{ p: '4px !important' }} variant="body2">MotorForceApplied</Typography>
+                        <Typography sx={{ p: '0.25rem !important' }} variant="body2">MotorForceApplied</Typography>
                       </Stack>
                       <Stack>
                         <Chip size='small' variant='filled' color='secondary' label="Data dictionary" />
@@ -415,17 +418,17 @@ export default function CustomEntitiesDropdown({
                 </Box>
               )}
               HeaderComponent={() => (
-                <Box 
+                <Box
                   position='sticky'
                   top={0}
                   display='flex'
                   alignItems='center'
                   justifyContent='space-between'
-                  sx={{ background: '#FCFCFD', px: '24px', py: '7px', borderBottom: '1px solid #F2F4F7' }}
+                  sx={{ background: '#FCFCFD', px: '1.5rem', py: '0.4375rem', borderBottom: '0.0625rem solid #F2F4F7' }}
                 >
                   <Chip size='small' variant='filled' color='warning' label="Draft" />
                   <Box
-                    gap="4px"
+                    gap="0.25rem"
                     display='flex'
                     alignItems='center'
                   >
@@ -437,29 +440,29 @@ export default function CustomEntitiesDropdown({
             />
           </Box>)
           )}
-          
+
           <Box sx={{
             ...styles.list,
             width: autocompleteOptions.length > 0 ? '40%' : '100%'
           }}>
             <Box sx={{
-              borderBottom: `1px solid ${gray100}`,
-              height: '50px',
-              padding: '0 14px',
+              borderBottom: `0.0625rem solid ${gray100}`,
+              height: '3.125rem',
+              padding: '0 0.875rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '0.5rem',
               flexWrap: 'wrap',
 
               '& .MuiOutlinedInput-input': {
                 padding: 0,
-                fontSize: '12px',
+                fontSize: '0.75rem',
                 color: gray500,
                 fontWeight: '400',
-                height: '50px',
+                height: '3.125rem',
 
                 '&::placeholder': {
-                  fontSize: '12px',
+                  fontSize: '0.75rem',
                   color: gray500,
                   fontWeight: '400',
                 }
@@ -488,18 +491,18 @@ export default function CustomEntitiesDropdown({
             </Box>
             {autocompleteOptions.length > 0 ? (
               <>
-                <Box overflow='auto' height='calc(100% - (44px + 50px))'>
+                <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
                   {Object.keys(groupedOptions).map((group) => (
                     <Box sx={{
-                      padding: '0 6px',
+                      padding: '0 0.375rem',
                       '& .MuiListSubheader-root': {
-                        padding: '0 10px',
-                        height: '30px',
-                        margin: '6px 0 2px',
+                        padding: '0 0.625rem',
+                        height: '1.875rem',
+                        margin: '0.375rem 0 0.125rem',
 
                         // '& .MuiTypography-root': {
-                        //   fontSize: '12px',
-                        //   lineHeight: '18px',
+                        //   fontSize: '0.75rem',
+                        //   lineHeight: '1.125rem',
                         //   fontWeight: 600,
                         //   color: buttonOutlinedColor
                         // },
@@ -509,10 +512,10 @@ export default function CustomEntitiesDropdown({
                       // },
                       '& .MuiButton-root': {
                         padding: 0,
-                        height: '26px',
-                        width: '81px',
-                        fontSize: '12px',
-                        lineHeight: '18px',
+                        height: '1.625rem',
+                        width: '5.0625rem',
+                        fontSize: '0.75rem',
+                        lineHeight: '1.125rem',
                         fontWeight: 600,
                         color: darkBlue
                       },
@@ -523,28 +526,34 @@ export default function CustomEntitiesDropdown({
                         padding: '0',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '6px',
+                        gap: '0.375rem',
 
                         '& li': {
-                          padding: '11px 10px',
+                          padding: '0.6875rem 0.625rem',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px',
+                          gap: '0.5rem',
                           cursor: 'pointer',
 
                           '&:hover': {
-                            borderRadius: '6px',
+                            borderRadius: '0.375rem',
                             background: '#F4F5F5'
                           },
 
                           '&.selected': {
-                            borderRadius: '6px',
+                            borderRadius: '0.375rem',
                             background: '#F4F5F5'
+                          },
+
+                          '&.highlighted': {
+                            borderRadius: '0.375rem',
+                            background: '#F4F5F5',
+                            border: '0.0938rem dashed #5925DC'
                           },
 
                           '& .MuiTypography-body1': {
                             color: '#070808',
-                            fontSize: '14px',
+                            fontSize: '0.875rem',
                             fontWeight: 500,
                             lineHeight: '142.857%',
                             padding: 0
@@ -552,7 +561,7 @@ export default function CustomEntitiesDropdown({
 
                           '& .MuiTypography-body2': {
                             color: captionColor,
-                            fontSize: '12px',
+                            fontSize: '0.75rem',
                             fontWeight: 400,
                             lineHeight: '150%',
                             padding: 0,
@@ -576,9 +585,9 @@ export default function CustomEntitiesDropdown({
                           <Typography
                             sx={{
                               color: '#373A3E',
-                              fontSize: "12px",
+                              fontSize: "0.75rem",
                               fontWeight: 500,
-                              lineHeight: "18px",
+                              lineHeight: "1.125rem",
                             }}
                           >
                             Spinal Cord Injury (SCI)
@@ -586,23 +595,23 @@ export default function CustomEntitiesDropdown({
                           <DownIcon />
                           {toggleMenu && (
                             <Box onClick={(e) => e.stopPropagation()} sx={{
-                              borderRadius: '8px',
+                              borderRadius: '0.5rem',
                               overflow: 'hidden',
                               position: 'absolute',
-                              width: 'calc(100% - 30px)',
-                              top: '34px',
-                              left: '15px',
-                              border: '1px solid #E4E5E7',
+                              width: 'calc(100% - 1.875rem)',
+                              top: '2.125rem',
+                              left: '0.9375rem',
+                              border: '0.0625rem solid #E4E5E7',
                               background: '#FFF',
-                              boxShadow: '0px 4px 6px -2px rgba(7, 8, 8, 0.03), 0px 12px 16px -4px rgba(7, 8, 8, 0.08)',
+                              boxShadow: '0rem 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0rem 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)',
 
                               '& .simple-list': {
                                 gap: 0,
                                 '& li': {
                                   borderRadius: 0,
-                                  paddingLeft: '16px',
-                                  paddingRight: '16px',
-                                  borderBottom: '1px solid #ECEDEE',
+                                  paddingLeft: '1rem',
+                                  paddingRight: '1rem',
+                                  borderBottom: '0.0625rem solid #ECEDEE',
                                   '&:hover': {
                                     borderRadius: 0,
                                   },
@@ -615,12 +624,12 @@ export default function CustomEntitiesDropdown({
                               <ul className='simple-list'>
                                 <li>
                                   <Typography
-                                    sx={{ width: 1, height: 1, padding: "10px" }}
+                                    sx={{ width: 1, height: 1, padding: "0.625rem" }}
                                   >Spinal Cord Injury (SCI)</Typography>
                                 </li>
                                 <li>
                                   <Typography
-                                    sx={{ width: 1, height: 1, padding: "10px" }}
+                                    sx={{ width: 1, height: 1, padding: "0.625rem" }}
                                   >Trauma Brain Injury (TBI)</Typography>
                                 </li>
                               </ul>
@@ -636,25 +645,25 @@ export default function CustomEntitiesDropdown({
                                 <Typography
                                   sx={{
                                     color: '#676C74 !important',
-                                    fontSize: "12px",
+                                    fontSize: "0.75rem",
                                     fontWeight: '400 !important',
-                                    lineHeight: "18px",
+                                    lineHeight: "1.125rem",
                                   }}
                                 >
                                   Common Data Element (CDE)
                                 </Typography>
                               </ListSubheader>
-                              <Box p="6px">
+                              <Box p="0.375rem">
                                 <ul>
                                   <li className='selected'>
                                     <Typography
-                                      sx={{ width: 1, height: 1, padding: "10px" }}
+                                      sx={{ width: 1, height: 1, padding: "0.625rem" }}
                                     >Spinal Cord Injury (SCI)</Typography>
                                     <CheckIcon color="#19418F" />
                                   </li>
                                   <li>
                                     <Typography
-                                      sx={{ width: 1, height: 1, padding: "10px" }}
+                                      sx={{ width: 1, height: 1, padding: "0.625rem" }}
                                     >Trauma Brain Injury (TBI)</Typography>
                                   </li>
                                 </ul>
@@ -664,7 +673,7 @@ export default function CustomEntitiesDropdown({
                         </ListSubheader>
                       </Box>
 
-                      <Box mt={0.5} mx="-6px" p='6px' mb='6px'
+                      <Box mt={0.5} mx="-0.375rem" p='0.375rem' mb='0.375rem'
                         sx={{
                           background: '#EEF2FC',
                           '& ul': {
@@ -690,13 +699,13 @@ export default function CustomEntitiesDropdown({
                         }}
                       >
                           <Typography sx={{
-                            fontSize: '12px',
+                            fontSize: '0.75rem',
                             fontWeight: 500,
                             lineHeight: '150%',
-                            padding: '11px 10px',
+                            padding: '0.6875rem 0.625rem',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
+                            gap: '0.5rem',
                             color: '#122E64'
                           }}>
                             <MagicWandIcon />
@@ -705,14 +714,14 @@ export default function CustomEntitiesDropdown({
                           <ul>
                             <li className='selected'>
                               <Typography
-                                sx={{ height: 1, padding: "10px" }}
+                                sx={{ height: 1, padding: "0.625rem" }}
                               >GUID</Typography>
                               <Typography variant='body2'>SCI</Typography>
                               <CheckIcon color="#2155BA" />
                             </li>
                             <li>
                               <Typography
-                                sx={{ height: 1, padding: "10px" }}
+                                sx={{ height: 1, padding: "0.625rem" }}
                               >SmallSpeciesStrainTyp</Typography>
                               <Typography variant='body2'>SCI</Typography>
                             </li>
@@ -720,46 +729,59 @@ export default function CustomEntitiesDropdown({
                       </Box>
 
 
-                      { toggleCustomView && <Box>
-                        <ListSubheader
-                          component="div"
-                          style={{
-                            position: 'relative',
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Typography
-                            sx={{
-                              color: '#676C74',
-                              fontSize: "12px",
-                              fontWeight: 500,
-                              lineHeight: "18px",
+                      { toggleCustomView &&
+                        <Box>
+                          <ListSubheader
+                            component="div"
+                            style={{
+                              position: 'static',
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
                             }}
                           >
-                            Data dictionary
-                          </Typography>
-                        </ListSubheader>
-                        <ul>
-                          <li className="selected">
                             <Typography
-                              sx={{ width: 1, height: 1, padding: "10px" }}
+                              sx={{
+                                color: '#676C74',
+                                fontSize: "0.75rem",
+                                fontWeight: 500,
+                                lineHeight: "1.125rem",
+                              }}
                             >
-                              MotorForceApplied
+                              Data dictionary
                             </Typography>
-                            <Chip color='secondary' label="Data dictionary" />
-                            <CheckIcon style={{flexShrink: 0}} color="#070808" />
-                          </li> 
-                        </ul>
-                      </Box> }
+                          </ListSubheader>
+                          <ul>
+                            <li className="selected">
+                              <Typography
+                                sx={{ width: 1, height: 1, padding: "0.625rem" }}
+                              >
+                                MotorForceApplied
+                              </Typography>
+                              <Chip color='secondary' label="Data dictionary" />
+                              <CheckIcon style={{flexShrink: 0}} color="#070808" />
+                            </li>
+
+
+                            <li className="highlighted">
+                              <Typography
+                                sx={{ width: 1, height: 1, padding: "0.625rem" }}
+                              >
+                                MotorForceApplied
+                              </Typography>
+                              <Chip color='secondary' label="Data dictionary" />
+                              <Chip color='warning' label="Draft" />
+                            </li>
+                          </ul>
+                        </Box>
+                      }
 
 
                       <Box>
                         <ListSubheader
                           component="div"
                           style={{
-                            position: 'relative',
+                            position: 'static',
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
@@ -768,9 +790,9 @@ export default function CustomEntitiesDropdown({
                           <Typography
                             sx={{
                               color: '#676C74',
-                              fontSize: "12px",
+                              fontSize: "0.75rem",
                               fontWeight: 500,
-                              lineHeight: "18px",
+                              lineHeight: "1.125rem",
                             }}
                           >
                             Spinal Cord Injury (SCI)
@@ -790,7 +812,7 @@ export default function CustomEntitiesDropdown({
                                 className={isOptionSelected(option) ? 'selected' : ''}
                               >
                                 <Typography
-                                  sx={{ width: 1, height: 1, padding: "10px" }}
+                                  sx={{ width: 1, height: 1, padding: "0.625rem" }}
                                 >
                                   {option?.label?.length > 100 ? option?.label.slice(0, 100) + "..." : option?.label}
                                 </Typography>
@@ -807,15 +829,15 @@ export default function CustomEntitiesDropdown({
                   justifyContent="center"
                   alignItems="center"
                   sx={{
-                    borderTop: `1px solid ${gray100}`,
-                    height: '44px',
+                    borderTop: `0.0625rem solid ${gray100}`,
+                    height: '2.75rem',
 
                     '& .MuiButton-root': {
                       color: gray500,
-                      fontSize: "14px",
+                      fontSize: "0.875rem",
                       fontWeight: 600,
                       height: '100%',
-                      lineHeight: "20px",
+                      lineHeight: "1.25rem",
                       zIndex: 200000,
                       width: '100%',
                       borderRadius: 0,
