@@ -86,7 +86,9 @@ const StepThree = () => {
     setAnchorEl(null);
   };
 
- 
+  const open = Boolean(anchorEl);
+  const id = open ? 'filter-popover' : undefined;
+
   const mockCDE = [
     {
       "id": "5304",
@@ -201,14 +203,14 @@ const StepThree = () => {
           />
           <Button
             variant="outlined"
-            aria-describedby={'filter-popover'}
+            aria-describedby={id}
             onClick={filterToggle}
           >
             <FilterIcon />
             Filter
           </Button>
 
-          <Filters anchorEl={anchorEl} handleClose={handleClose} />
+          <Filters anchorEl={anchorEl} handleClose={handleClose} open={open} id={id} />
         </Box>
 
         <Box px={1.5}>

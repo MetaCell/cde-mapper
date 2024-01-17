@@ -165,7 +165,7 @@ export default function CustomEntitiesDropdown({
   placeholder,
   options: { errors, searchPlaceholder, noResultReason, onSearch, value, header = {} },
 }: any) {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue] = useState("");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [toggleMenu, setToggleMenu] = useState(false);
   const [age, setAge] = React.useState('0');

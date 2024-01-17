@@ -1,9 +1,15 @@
 import { Popover, Box, Typography, Button, FormGroup } from '@mui/material';
 import Checkbox from "../common/CheckBox";
 
-const Filters = ({ anchorEl, handleClose }) => {
-  const open = Boolean(anchorEl);
-  const id = open ? 'filter-popover' : undefined;
+interface FiltersProps {
+  anchorEl: Element | null;
+  handleClose: any;
+  open: boolean;
+  id: any;
+}
+
+const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id }) => {
+
   return (
     <Popover
       id={id}
