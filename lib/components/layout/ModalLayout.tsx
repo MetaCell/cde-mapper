@@ -1,10 +1,13 @@
 import React, { PropsWithChildren } from 'react';
 import { Box, Typography, CircularProgress} from '@mui/material';
-// import { vars } from "../../theme/variables";
 import {useCdeContext} from "../../CdeContext.tsx";
 import Header from "../common/Header";
+import { vars } from '../../theme/variables.ts';
 
-// const { baseWhite } = vars
+const {
+  drodownDetailBg,
+  gray500
+ } = vars
 
 interface IMainProps {
     footerNode?: React.ReactNode;
@@ -21,9 +24,9 @@ export const ModalLayout = ({
     <>
       <Header />
       {loadingMessage ? (
-        <Box sx={{ background: '#FCFCFD' }} py={25} flexDirection='column' display='flex' alignItems='center'>
+        <Box sx={{ background: drodownDetailBg }} py={25} flexDirection='column' display='flex' alignItems='center'>
           <CircularProgress />
-          <Typography sx={{fontSize: '0.875rem', fontWeight: 400, lineHeight: '142.857%', mt: '0.75rem', color: '#676C74'}}>Processing data...</Typography>
+          <Typography sx={{fontSize: '0.875rem', fontWeight: 400, lineHeight: '142.857%', mt: '0.75rem', color: gray500}}>Processing data...</Typography>
         </Box>
       ) : children}
       {/* {(footerNode || footerTopElement) && (
@@ -36,7 +39,7 @@ export const ModalLayout = ({
                     width: '100%',
                     padding: '0.75rem 1.5rem',
                     backgroundColor: baseWhite,
-                    borderTop: `1px solid grey`,
+                    borderTop: `0.0625rem solid grey`,
                 },
             }}
         >
