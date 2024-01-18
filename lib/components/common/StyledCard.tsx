@@ -9,7 +9,7 @@ import { useRadioGroup } from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { vars } from '../../theme/variables';
 
-const { primary50, primary600, primary800, gray100, gray300, gray500, gray700 } = vars
+const { baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700 } = vars
 
 interface StyledCardProps {
     value: string;
@@ -38,9 +38,9 @@ const StyledCard: React.FC<StyledCardProps> = ({ value, isSuggested, selectedVal
             <Card
                 variant="outlined"
                 sx={{
-                    border: checked ? `1.5px solid ${primary600}` : `1px solid ${gray100}`,
+                    border: checked ? `0.0938rem solid ${primary600}` : `0.0625rem solid ${gray100}`,
                     borderRadius: '0.5rem',
-                    backgroundColor: checked ? primary50 : '#fff'
+                    backgroundColor: checked ? primary50 : baseWhite
                 }}
             >
                 <CardActionArea onClick={handleRadioChange}>

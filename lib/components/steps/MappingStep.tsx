@@ -1,10 +1,19 @@
-import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Tab, Tabs, Tooltip, Typography, Divider } from '@mui/material';
 import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { useCdeContext } from "../../CdeContext.tsx";
-import React, { ReactNode } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
+import StepThree from './StepThree.tsx';
+import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
+import { vars } from '../../theme/variables.ts';
+
+const {
+    baseWhite,
+    gray500,
+    gray100
+} = vars
 
 function a11yProps(index: number) {
     return {
@@ -31,20 +40,35 @@ const tabsArr = [
     }
 ];
 
-function CustomTabPanel(props: { children: ReactNode; value: number; index: number; }) {
-    const { children, value, index, ...other } = props;
+const renderTabComponent = (step: number) => {
+  switch (step) {
+      case 0:
+          return <ModalHeightWrapper height="11.5rem"><StepOne /></ModalHeightWrapper>;
+      case 1:
+          return <StepTwo />;
+      case 2:
+          return <StepThree />;
+      // Add cases for other steps
+      default:
+          return <div>Unknown step</div>;
+  }
+};
 
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && children}
-        </div>
-    );
+function CustomTabPanel(props: { [x: string]: any; children: any; value: any; index: any; }) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Box
+    height={1}
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && children}
+    </Box>
+  );
 }
 
 CustomTabPanel.propTypes = {
@@ -67,7 +91,7 @@ function MappingStep() {
     return (
         <ModalLayout>
             <Box sx={{
-                borderBottom: '0.0625rem solid #ECEDEE',
+                borderBottom: `0.0625rem solid ${gray100}`,
                 padding: '0 1.5rem',
             }} display='flex' justifyContent='space-between' alignItems='center'>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -81,13 +105,13 @@ function MappingStep() {
                                         fontWeight: 600,
                                         lineHeight: '142.857%',
                                         marginBottom: '0.25rem',
-                                        color: '#fff',
+                                        color: baseWhite,
                                     }}>{tab.heading}</Typography>
                                     <Typography sx={{
                                         fontSize: '0.75rem',
                                         fontWeight: 400,
                                         lineHeight: '142.857%',
-                                        color: '#fff',
+                                        color: baseWhite,
                                     }}>{tab.description}</Typography>
                                 </>
                             }
@@ -97,23 +121,29 @@ function MappingStep() {
                     ))}
                 </Tabs>
 
-                {
-                    value !== 0 && <Box display='flex' gap='0.625rem' alignItems='center'>
-                        <Button variant='text'>
-                            Continue without suggestions
-                        </Button>
-                    </Box>
-                }
+                 <Box display='flex' gap='0.625rem' alignItems='center'>
+                    { value === 1 ? ( <Button variant='text'>
+                        Continue without suggestions
+                    </Button> ) : value === 2 && (<>
+                    <Typography sx={{
+                        color: gray500,
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        lineHeight: '150%',
+                    }}>
+                        37/120 column headers still unmapped
+                    </Typography>
+
+                    <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
+
+                    <Button variant='contained'>
+                        Save mapping
+                    </Button></>)}
+                </Box>
             </Box>
-            <CustomTabPanel value={value} index={0}>
-                <StepOne />
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
-                <StepTwo />
-            </CustomTabPanel>
-            <CustomTabPanel value={value} index={2}>
-                Item Three
-            </CustomTabPanel>
+            {tabsArr?.map((_tab, index) => (
+                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index)}</CustomTabPanel>
+            ))}
         </ModalLayout>
     );
 }

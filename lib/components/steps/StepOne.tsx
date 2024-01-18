@@ -15,14 +15,15 @@ function StepOne() {
 
     return (
         <>
-            <Box 
-                overflow='auto' 
+            <Box
+                overflow='auto'
                 display='flex'
                 justifyContent='center'
                 alignItems='center'
-                maxHeight='calc(100vh - (3.9375rem + 3.5625rem + 4.4375rem + 2rem + 2rem))' 
-                p='1.5rem' 
-                pt={6} 
+                height={1}
+                // maxHeight='calc(100vh - (3.9375rem + 3.5625rem + 4.4375rem + 2rem + 2rem))'
+                p='1.5rem'
+                pt={6}
                 pb={6}
             >
                 <Stack spacing={6} sx={{ width: 'max-content' }}>
