@@ -30,14 +30,19 @@ const rows = [
     createData('sub2', 'Mouse', 'C57BL167', 'Male', '6 weeks', 'sharing'),
 ];
 
-export const StyledTable = () => {
+interface StyledTableProps {
+    tableMaxWidth: string;
+    tableCellMinWidth: string;
+}
+
+export const StyledTable = ({tableMaxWidth, tableCellMinWidth}:StyledTableProps) => {
 
     return (
         <TableContainer 
             component={Paper} 
             elevation={0}
             sx={{
-                maxWidth: 650,
+                maxWidth: tableMaxWidth,
                 border: `0.0625rem solid ${gray100}`,
                 borderBottom: 0
             }}
@@ -60,7 +65,7 @@ export const StyledTable = () => {
                         padding: '0.75rem 1.5rem !important',
                         fontSize: '0.875rem',
                         borderBottom: `0.0625rem solid ${gray200}`,
-                        minWidth: '7.5rem',
+                        minWidth: tableCellMinWidth,
                         minHeight: '2.75rem',
                         lineHeight: '1.25rem'
                     }

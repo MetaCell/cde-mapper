@@ -5,6 +5,7 @@ import {useCdeContext} from "../CdeContext.tsx";
 import {STEPS} from "../models.ts";
 import Modal from './common/Modal.tsx'
 import MappingStep from './steps/MappingStep.tsx';
+import TemplateStep from './steps/TemplateStep.tsx';
 
 const CdeModal: FC = () => {
     const {step, errorMessage,
@@ -27,7 +28,7 @@ const CdeModal: FC = () => {
                 return <MappingStep/>;
             // Add cases for other steps
             default:
-                return <div>Unknown step</div>;
+                return <TemplateStep/>
         }
     };
 

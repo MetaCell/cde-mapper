@@ -90,7 +90,7 @@ function Home() {
                             <Chip size="small" label="83 unmapped, 13 suggestions available" color="default" icon={<CircleChipDefault/>} />
                         </Box>
                     </Box>
-                    <StyledTable />
+                    <StyledTable tableMaxWidth="650px" tableCellMinWidth='7.5rem' />
                 </Box>
 
                 <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>

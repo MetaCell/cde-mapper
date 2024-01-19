@@ -333,7 +333,8 @@ theme = createTheme({
         },
 
         startIcon: {
-          margin: 0
+          margin: 0,
+          marginRight: '0.5rem'
         },
 
         containedPrimary: {

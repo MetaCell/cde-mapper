@@ -28,7 +28,7 @@ const styles = {
 }
 
 const Header = () => {
-  const { handleClose, setInfoOpen, infoOpen } = useCdeContext();
+  const { handleClose, setInfoOpen, infoOpen, step } = useCdeContext();
 
   return (
     <>
@@ -45,7 +45,7 @@ const Header = () => {
           </IconButton>
           <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
           <Typography>
-            Map selected dataset
+            {step === -1 ? "Create template" : "Map selected dataset"}
           </Typography>
         </Box>
 
