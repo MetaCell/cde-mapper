@@ -1,4 +1,4 @@
-import { init } from '../lib/main.tsx';
+import { init } from './cde-mapper.js';
 
 export function mapAndInit(cdeFile, datasetFile) {
     const dictionaryReader = new FileReader();

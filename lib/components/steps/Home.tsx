@@ -1,15 +1,14 @@
 import {Box, Button, Typography, Chip} from '@mui/material';
 import {useCdeContext} from "../../CdeContext.tsx";
-import {STEPS} from "../../models.ts";
 import {StyledTable} from '../common/StyledTable.tsx';
 import {CircleChipDefault, CircleChipSuccess} from '../../icons/index.tsx';
 import {vars} from '../../theme/variables.ts';
+import {STEPS} from "../../models.ts";
 
-const {primary600, gray600} = vars;
+const {primary600, gray600, drodownDetailBg} = vars;
 
 function Home() {
     const {
-        name,
         setStep,
         datasetSample,
     } = useCdeContext();
@@ -17,7 +16,7 @@ function Home() {
 
     return (
         <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
-            background: '#FCFCFD'
+            background: drodownDetailBg
         }}>
             <Typography sx={{marginBottom: '0.5rem'}} variant='h3'>
                 Create mapping(s) with selected dataset?
@@ -26,7 +25,7 @@ function Home() {
                 maxWidth: '31.25rem',
                 textAlign: 'center',
             }}>
-                {`You’ve selected column headers from the ${name}’s dataset on ODC’s website to map.`}
+                You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
             </Typography>
             <Box my={6}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} width={1}>
@@ -34,7 +33,7 @@ function Home() {
                         display="flex"
                         alignItems="center"
                         sx={{
-                            borderLeft: `2px solid ${primary600}`,
+                            borderLeft: `0.125rem solid ${primary600}`,
                             '& .MuiTypography-h6': {
                                 fontSize: '1.125rem',
                                 color: primary600,

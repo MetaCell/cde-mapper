@@ -1,5 +1,5 @@
-import { styled } from '@mui/material/styles';
-import { IconButton, IconButtonProps } from '@mui/material';
+import {styled} from '@mui/material/styles';
+import {IconButton, IconButtonProps} from '@mui/material';
 
 interface IStyledIconButton extends IconButtonProps {
     variant?: 'text' | 'outlined';
@@ -7,7 +7,7 @@ interface IStyledIconButton extends IconButtonProps {
 
 const StyledIconButton = styled(IconButton, {
     shouldForwardProp: prop => prop !== 'variant',
-})<IStyledIconButton>(({ variant, theme }) => ({
+})<IStyledIconButton>(({variant, theme}) => ({
     borderRadius: '0.5rem',
     padding: '0.5rem',
     ...(variant === 'outlined'

@@ -2,7 +2,7 @@ import {Box, Button, Divider, IconButton, Link, Typography} from "@mui/material"
 import {CloseIcon} from "../../icons";
 import {vars} from "../../theme/variables";
 
-const {gray700, gray600, primary600, gray400} = vars;
+const {baseWhite, gray700, gray600, primary600, gray400} = vars;
 
 const styles = {
     backdrop: {
@@ -23,7 +23,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         transition: 'all ease-in-out .3s',
-        background: '#fff',
+        background: baseWhite,
         boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)',
     },
 
