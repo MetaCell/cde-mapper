@@ -13,7 +13,13 @@ export interface CDE {
     InterLexID: string;
 }
 
-export interface Repository {
+export interface CustomDictionaryField {
+    VariableName: string;
+    Title: string;
+    [key: string]: string;
+}
+
+export interface Collection {
     name: string;
     fetch: (query: string) => Promise<CDE[]>;
 }
@@ -23,25 +29,34 @@ export interface Config {
     width: string; // in %
 }
 
+export type StringTable = string[][]
+
 export interface InitParams {
-    mappings: InputMappingRow[];
-    datasetSample: string[][];
-    callback: (cdeFileMapping: File | null) => void;
-    repositories: Repository[];
+    // First row should be the header.
+    // The header should have the columns in the following order:
+    // Variable Name; Abbreviation; InterlexId; Any other column.
+    // The names can vary, but the content should match with what is said above.
+    datasetMapping: StringTable;
+    // List of files in the same format as the above.
+    // The content will be used in the suggestions algorithm, order in the list may be used to break ties.
+    additionalDatasetMappings: StringTable[];
+    // First row should be the headers
+    datasetSample: StringTable;
+
+    collections: Collection[];
     config: Config;
-    labName: string
+    name: string
+    callback: (cdeFileMapping: DatasetMapping) => void;
+
 }
 
-export interface InputMappingRow {
-    // Mandatory fields
-    variableName: string;
-    abbreviation: string;
-    interlexID: string;
-    // Any optional fields
-    [key: string]: string;
-}
 
 // Internal
+
+export type DatasetRow = string[]
+
+export type DatasetSample = DatasetRow[]
+
 
 export enum CDEType {
     CDE = 'CDE',
@@ -53,16 +68,13 @@ export enum CDEStatus {
     Unmapped = 'unmapped'
 }
 
-export interface MappingRow extends InputMappingRow {
-    cdeStatus: CDEStatus;
-    cdeType: CDEType;
-}
+export type DatasetMappingRow = string[];
 
-export interface CDEMapping {
-    [variableName: string]: MappingRow; // Key is the column name from the dataset
+export interface DatasetMapping {
+    [variableName: string]: DatasetMappingRow;
 }
 
 export enum STEPS {
     HOME,
-    REPOSITORY
+    COLLECTION,
 }

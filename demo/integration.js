@@ -1,10 +1,10 @@
-import { init } from '../dist/cde-mapper.js';
+import { init } from '../lib/main.tsx';
 
 export function mapAndInit(cdeFile, datasetFile) {
     const dictionaryReader = new FileReader();
     const datasetReader = new FileReader();
 
-    let dictionaryRows = [];
+    let datasetMappings = [];
     let datasetSample = [];
 
     dictionaryReader.onload = function(event) {
@@ -15,19 +15,21 @@ export function mapAndInit(cdeFile, datasetFile) {
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                dictionaryRows = results.data.map(row => ({
-                    variableName: row['Variable Name (UI)'],
-                    abbreviation: row['Abbreviation'],
-                    interlexID: row['InterLex ID'],
-                    // Map other fields as needed
-                }));
+                // The first row is the header
+                const headers = Object.keys(results.data[0]);
+                datasetMappings.push(headers);
+
+                // Subsequent rows are the data
+                results.data.forEach(row => {
+                    const rowData = headers.map(header => row[header] || '');
+                    datasetMappings.push(rowData);
+                });
 
                 // After processing the dictionary, process the dataset file
                 datasetReader.readAsText(datasetFile);
             },
             error: function(error) {
                 console.error('Error parsing CDE CSV file:', error.message);
-                // Handle the error as needed
             }
         });
     };
@@ -47,12 +49,13 @@ export function mapAndInit(cdeFile, datasetFile) {
 
                 // Then call the 'init' function from the library
                 init({
-                    mappings: dictionaryRows,
+                    datasetMapping: datasetMappings,
+                    additionalDatasetMappings: [],
                     datasetSample: datasetSample,
-                    callback: (data) => console.log(data),
-                    repositories: [],
+                    collections: [],
                     config: { width: '60%', height: '80%' },
-                    labName: 'TestLabName'
+                    name: 'TestLabName',
+                    callback: (cdeFileMapping) => console.log(cdeFileMapping)
                 });
             },
             error: function(error) {

@@ -1,19 +1,33 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
-import {Config, CDEMapping, InitParams, InputMappingRow, STEPS, DatasetRow} from "./models.ts";
+import {
+    CDE,
+    Collection,
+    Config,
+    CustomDictionaryField,
+    DatasetMapping,
+    DatasetSample,
+    InitParams,
+    STEPS
+} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
+import {
+    validateDatasetMapping,
+    validateDatasetSample
+} from "./services/validatorsService.ts";
+import {mapDatasetSample, mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
+import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 
 export const CdeContext = createContext<{
-    // Inputs Module
-    labName: string;
-    config: Config;
-    mappings: InputMappingRow[];
-    datasetSample: DatasetRow[];
 
-    // Data Module
-    cdeMapping: CDEMapping;
-    setCDEMapping: (mapping: CDEMapping) => void;
+    name: string;
+    datasetSample: DatasetSample;
+    datasetMapping: DatasetMapping;
+    datasetMappingHeader: string[];
+    collections: Collection[]
+    config: Config
+
 
     // UI Module
     step: number;
@@ -22,70 +36,124 @@ export const CdeContext = createContext<{
     setLoadingMessage: (loadingMessage: string | null) => void;
     errorMessage: string | null;
     setErrorMessage: (errorMessage: string | null) => void;
-    isOpen: boolean;
     handleClose: () => void;
-    infoOpen: boolean;
-    setInfoOpen: (open: boolean) => void;
 }>({
-    labName: '',
+
+    name: '',
+    datasetSample: [],
+    datasetMapping: {},
+    datasetMappingHeader: [],
+    collections: [],
     config: {
         width: "100%",
         height: "100%",
     },
-    datasetSample: [],
-    mappings: [],
-    cdeMapping: {} as CDEMapping,
-    setCDEMapping: () => {},
+
     step: 0,
-    setStep: () => {},
+    setStep: () => {
+    },
     loadingMessage: null,
-    setLoadingMessage: () => {},
+    setLoadingMessage: () => {
+    },
     errorMessage: null,
-    setErrorMessage: () => {},
-    isOpen: true,
-    handleClose: () => { },
-    infoOpen: false,
-    setInfoOpen: () => {}
+    setErrorMessage: () => {
+    },
+    handleClose: () => {
+    },
 });
 
 export const useCdeContext = () => useContext(CdeContext);
 
-export const CdeContextProvider = ({children, labName, callback, mappings, datasetSample, config}: PropsWithChildren<InitParams>) => {
-    const [cdeMapping, setCDEMapping] = useState<CDEMapping>({});
-    const [step, setStep] = useState<number>(STEPS.HOME);
+export const CdeContextProvider = ({
+                                       datasetSample: rawDatasetSample,
+                                       datasetMapping: rawDatasetMapping,
+                                       additionalDatasetMappings: rawAdditionalDatasetMappings,
+                                       collections,
+                                       config,
+                                       name,
+                                       callback,
+                                       children
+                                   }: PropsWithChildren<InitParams>) => {
+
+    let datasetSample;
+    // Process and validate datasetSample
+    try {
+        validateDatasetSample(rawDatasetSample);
+        datasetSample = mapDatasetSample(rawDatasetSample);
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'An unknown error occurred';
+        // TODO: Check if it's fine to throw or should we show an error in the UI
+        throw new Error(`Invalid dataset sample: ${message}`);
+    }
+
+    // Process and validate datasetMapping
+    let initialDatasetMapping;
+    let initialDatasetMappingHeader;
+    try {
+        validateDatasetMapping(rawDatasetMapping);
+        const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping);
+        initialDatasetMapping = datasetMappingData[0]
+        initialDatasetMappingHeader = datasetMappingData[1]
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'An unknown error occurred';
+        throw new Error(`Invalid dataset mapping: ${message}`);
+    }
+
+    const additionalDatasetMappings: DatasetMapping[] = [];
+    rawAdditionalDatasetMappings.forEach((additionalMapping, index) => {
+        try {
+            validateDatasetMapping(additionalMapping);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [mappedAdditionalMapping, _] = mapStringTableToDatasetMapping(additionalMapping);
+            additionalDatasetMappings.push(mappedAdditionalMapping);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: ${error.message}`);
+            } else {
+                console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: Unknown error`);
+            }
+        }
+    });
+
+    const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
+    const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
+
+    const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [isOpen, setIsOpen] = useState<boolean>(true)
-    const [infoOpen, setInfoOpen] = useState<boolean>(false)
-
-
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const handleClose = () => {
-        callback(null);
-        setIsOpen(false)
+        setErrorMessage(null);
+        setLoadingMessage(null);
+        callback(datasetMapping)
     };
 
+    const handleUpdateDatasetMappingRow = (key: string, newData: CDE | CustomDictionaryField) => {
+        updateDatasetMappingRow(
+            key,
+            newData,
+            datasetMapping,
+            datasetMappingHeader,
+            setDatasetMapping,
+            setDatasetMappingHeader
+        );
+    };
 
-    // Context value
     const contextValue = {
+        name,
+        datasetSample,
+        datasetMapping,
+        datasetMappingHeader,
+        handleUpdateDatasetMappingRow,
+        collections,
         config,
-        labName,
-        mappings: mappings,
-        datasetSample: datasetSample,
         step,
         setStep,
         loadingMessage,
         setLoadingMessage,
         errorMessage,
         setErrorMessage,
-        cdeMapping,
-        setCDEMapping,
-        isOpen,
-        handleClose,
-        infoOpen,
-        setInfoOpen
+        handleClose
     };
-
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>

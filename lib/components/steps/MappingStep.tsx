@@ -1,6 +1,5 @@
-import { Box, Button, Tab, Tabs, Tooltip, Typography } from '@mui/material';
-import { ModalLayout } from "../layout/ModalLayout.tsx";
-import React, { ReactNode } from 'react';
+import {Box, Button, Tab, Tabs, Tooltip, Typography} from '@mui/material';
+import React, {Fragment, ReactNode} from 'react';
 import PropTypes from 'prop-types';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
@@ -31,7 +30,7 @@ const tabsArr = [
 ];
 
 function CustomTabPanel(props: { children: ReactNode; value: number; index: number; }) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
@@ -61,7 +60,7 @@ function MappingStep() {
     };
 
     return (
-        <ModalLayout>
+        <Fragment>
             <Box sx={{
                 borderBottom: '0.0625rem solid #ECEDEE',
                 padding: '0 1.5rem',
@@ -102,15 +101,15 @@ function MappingStep() {
                 }
             </Box>
             <CustomTabPanel value={value} index={0}>
-                <StepOne />
+                <StepOne/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
-                <StepTwo />
+                <StepTwo/>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
                 Item Three
             </CustomTabPanel>
-        </ModalLayout>
+        </Fragment>
     );
 }
 
