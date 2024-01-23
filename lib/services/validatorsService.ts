@@ -16,6 +16,6 @@ export const validateDatasetMapping = (datasetMapping: StringTable): void => {
     }
     const headers = datasetMapping[0];
     if (headers.length < 3) {
-        throw new Error("Dataset mapping must have at least 3 headers (Variable Name, Abbreviation, InterlexId).");
+        throw new Error("Dataset mapping must have the at least 3 columns (VariableName, PreciseAbbreviation, InterlexId).");
     }
 };

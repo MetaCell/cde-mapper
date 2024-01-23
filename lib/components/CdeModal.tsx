@@ -35,7 +35,7 @@ const CdeModal: FC = () => {
                 return <Home/>;
             case STEPS.COLLECTION:
                 return <MappingStep/>;
-            // Add cases for other steps with commonProps
+            // Add cases for other steps
             default:
                 return <div>Unknown step</div>;
         }
