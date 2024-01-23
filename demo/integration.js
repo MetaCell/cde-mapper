@@ -1,13 +1,13 @@
 import { init } from './cde-mapper.js';
 
 export function mapAndInit(cdeFile, datasetFile) {
-    const dictionaryReader = new FileReader();
+    const datasetMappingReader = new FileReader();
     const datasetReader = new FileReader();
 
     let datasetMappings = [];
     let datasetSample = [];
 
-    dictionaryReader.onload = function(event) {
+    datasetMappingReader.onload = function(event) {
         const text = event.target.result;
 
         // eslint-disable-next-line no-undef
@@ -25,7 +25,7 @@ export function mapAndInit(cdeFile, datasetFile) {
                     datasetMappings.push(rowData);
                 });
 
-                // After processing the dictionary, process the dataset file
+                // After processing the dataset mapping, process the dataset file
                 datasetReader.readAsText(datasetFile);
             },
             error: function(error) {
@@ -65,7 +65,7 @@ export function mapAndInit(cdeFile, datasetFile) {
         });
     };
 
-    dictionaryReader.onerror = function(event) {
+    datasetMappingReader.onerror = function(event) {
         console.error('Error reading CDE CSV file:', event.target.error);
         // Handle the error as needed
     };
@@ -75,5 +75,5 @@ export function mapAndInit(cdeFile, datasetFile) {
         // Handle the error as needed
     };
 
-    dictionaryReader.readAsText(cdeFile);
+    datasetMappingReader.readAsText(cdeFile);
 }
