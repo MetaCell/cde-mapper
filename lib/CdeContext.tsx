@@ -14,9 +14,8 @@ import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
 import {
     validateDatasetMapping,
-    validateDatasetSample
 } from "./services/validatorsService.ts";
-import {mapDatasetSample, mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
+import {mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
 import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 
 export const CdeContext = createContext<{
@@ -65,7 +64,7 @@ export const CdeContext = createContext<{
 export const useCdeContext = () => useContext(CdeContext);
 
 export const CdeContextProvider = ({
-                                       datasetSample: rawDatasetSample,
+                                       datasetSample,
                                        datasetMapping: rawDatasetMapping,
                                        additionalDatasetMappings: rawAdditionalDatasetMappings,
                                        collections,
@@ -75,16 +74,6 @@ export const CdeContextProvider = ({
                                        children
                                    }: PropsWithChildren<InitParams>) => {
 
-    let datasetSample;
-    // Process and validate datasetSample
-    try {
-        validateDatasetSample(rawDatasetSample);
-        datasetSample = mapDatasetSample(rawDatasetSample);
-    } catch (error) {
-        const message = error instanceof Error ? error.message : 'An unknown error occurred';
-        // TODO: Check if it's fine to throw or should we show an error in the UI
-        throw new Error(`Invalid dataset sample: ${message}`);
-    }
 
     // Process and validate datasetMapping
     let initialDatasetMapping;
@@ -96,7 +85,9 @@ export const CdeContextProvider = ({
         initialDatasetMappingHeader = datasetMappingData[1]
     } catch (error) {
         const message = error instanceof Error ? error.message : 'An unknown error occurred';
-        throw new Error(`Invalid dataset mapping: ${message}`);
+        const errorMessage = `Invalid dataset mapping: ${message}`
+        console.error(errorMessage);
+        throw new Error(errorMessage);
     }
 
     const additionalDatasetMappings: DatasetMapping[] = [];

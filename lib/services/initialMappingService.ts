@@ -1,10 +1,7 @@
 // Mapper for datasetSample
-import {DatasetMapping, DatasetSample, StringTable} from "../models.ts";
+import {DatasetMapping, StringTable} from "../models.ts";
 import {VARIABLE_NAME_INDEX} from "../settings.ts";
 
-export const mapDatasetSample = (stringTable: StringTable): DatasetSample => {
-    return stringTable as DatasetSample;
-};
 // Mapper for datasetMapping
 export const mapStringTableToDatasetMapping = (rawMapping: StringTable): [DatasetMapping, string[]] => {
     if (rawMapping.length < 2) return [{}, []];
