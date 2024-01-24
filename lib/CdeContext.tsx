@@ -7,6 +7,7 @@ import {validateDatasetMapping,} from "./services/validatorsService.ts";
 import {mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
 import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 import ErrorPage from "./components/ErrorPage.tsx";
+import {ABBREVIATION_INDEX, INTERLEX_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 
 export const CdeContext = createContext<{
 
@@ -57,6 +58,11 @@ export const CdeContextProvider = ({
                                        datasetSample,
                                        datasetMapping: rawDatasetMapping,
                                        additionalDatasetMappings: rawAdditionalDatasetMappings = [],
+                                       headerMapping = {
+                                           variableNameIndex: VARIABLE_NAME_INDEX,
+                                           preciseAbbreviationIndex: ABBREVIATION_INDEX,
+                                           interlexIdIndex: INTERLEX_INDEX,
+                                       },
                                        collections,
                                        config,
                                        name,
@@ -82,7 +88,7 @@ export const CdeContextProvider = ({
             console.error(errorMessage);
             areFilesValid = false;
         }
-        const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping);
+        const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping, headerMapping);
         initialDatasetMapping = datasetMappingData[0]
         initialDatasetMappingHeader = datasetMappingData[1]
     }
@@ -98,7 +104,7 @@ export const CdeContextProvider = ({
             }
             return null;
         }
-        const mappedAdditionalMappingData = mapStringTableToDatasetMapping(additionalMapping);
+        const mappedAdditionalMappingData = mapStringTableToDatasetMapping(additionalMapping, headerMapping);
         return mappedAdditionalMappingData[0];
     }).filter(mapping => mapping !== null) as DatasetMapping[];
     console.log(additionalDatasetMappings)
@@ -129,6 +135,7 @@ export const CdeContextProvider = ({
         datasetMapping,
         datasetMappingHeader,
         handleUpdateDatasetMappingRow,
+        headerMapping,
         collections,
         config,
         step,

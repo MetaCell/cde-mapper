@@ -28,7 +28,8 @@ export function mapAndInit(cdeFile, datasetFile) {
                         collections: [],
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
-                        callback: (cdeFileMapping) => console.log(cdeFileMapping)
+                        callback: (cdeFileMapping) => console.log(cdeFileMapping),
+                        headerMapping: {variableNameIndex: 0, preciseAbbreviationIndex: 1, interlexIdIndex: 11}
                     });
                 },
                 error: function (error) {

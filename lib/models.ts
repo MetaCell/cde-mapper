@@ -30,6 +30,12 @@ export interface Config {
     width: string; // in %
 }
 
+export interface HeaderMapping {
+    variableNameIndex: number;
+    preciseAbbreviationIndex: number;
+    interlexIdIndex: number;
+}
+
 export interface InitParams {
     // First row should be the header.
     // The header should have the columns in the following order:
@@ -41,7 +47,7 @@ export interface InitParams {
     additionalDatasetMappings?: string[][][];
     // First row should be the headers
     datasetSample: string[][];
-
+    headerMapping?: HeaderMapping;
     collections: Collection[];
     config: Config;
     name: string

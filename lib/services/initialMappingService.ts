@@ -1,17 +1,15 @@
-// Mapper for datasetSample
-import {DatasetMapping} from "../models.ts";
-import {VARIABLE_NAME_INDEX} from "../settings.ts";
+import {DatasetMapping, HeaderMapping} from "../models.ts";
 
 // Mapper for datasetMapping
-export const mapStringTableToDatasetMapping = (rawMapping: string[][]): [DatasetMapping, string[]] => {
+export const mapStringTableToDatasetMapping = (rawMapping: string[][], headerMapping: HeaderMapping): [DatasetMapping, string[]] => {
     if (rawMapping.length < 2) return [{}, []];
+
 
     const [headers, ...rows] = rawMapping;
     const datasetMapping: DatasetMapping = {};
 
-
     rows.forEach((row) => {
-        const variableNameValue = row[VARIABLE_NAME_INDEX];
+        const variableNameValue = row[headerMapping.variableNameIndex];
 
         // Key the mapping by the variableName value
         datasetMapping[variableNameValue] = row;
@@ -19,5 +17,4 @@ export const mapStringTableToDatasetMapping = (rawMapping: string[][]): [Dataset
 
     return [datasetMapping, headers];
 };
-
 
