@@ -16,6 +16,7 @@ export interface CDE {
 export interface CustomDictionaryField {
     VariableName: string;
     Title: string;
+
     [key: string]: string;
 }
 
@@ -29,19 +30,17 @@ export interface Config {
     width: string; // in %
 }
 
-export type StringTable = string[][]
-
 export interface InitParams {
     // First row should be the header.
     // The header should have the columns in the following order:
     // Variable Name; Abbreviation; InterlexId; Any other column.
     // The names can vary, but the content should match with what is said above.
-    datasetMapping: StringTable;
+    datasetMapping: string[][];
     // List of files in the same format as the above.
     // The content will be used in the suggestions algorithm, order in the list may be used to break ties.
-    additionalDatasetMappings: StringTable[];
+    additionalDatasetMappings: string[][][];
     // First row should be the headers
-    datasetSample: StringTable;
+    datasetSample: string[][];
 
     collections: Collection[];
     config: Config;
@@ -53,11 +52,6 @@ export interface InitParams {
 
 // Internal
 
-export type DatasetRow = string[]
-
-export type DatasetSample = DatasetRow[]
-
-
 export enum CDEType {
     CDE = 'CDE',
     CustomDataDictionary = 'CustomDataDictionary'
@@ -68,10 +62,8 @@ export enum CDEStatus {
     Unmapped = 'unmapped'
 }
 
-export type DatasetMappingRow = string[];
-
 export interface DatasetMapping {
-    [variableName: string]: DatasetMappingRow;
+    [variableName: string]: string[];
 }
 
 export enum STEPS {

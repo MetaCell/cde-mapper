@@ -1,9 +1,6 @@
 
-import {StringTable} from "../models.ts";
-
-
 // Validator for datasetMapping
-export const validateDatasetMapping = (datasetMapping: StringTable): void => {
+export const validateDatasetMapping = (datasetMapping: string[][]): void => {
     if (datasetMapping.length === 0) {
         throw new Error("Dataset mapping is empty.");
     }

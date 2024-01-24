@@ -5,7 +5,6 @@ import {
     Config,
     CustomDictionaryField,
     DatasetMapping,
-    DatasetSample,
     InitParams,
     STEPS
 } from "./models.ts";
@@ -21,7 +20,7 @@ import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 export const CdeContext = createContext<{
 
     name: string;
-    datasetSample: DatasetSample;
+    datasetSample: string[][];
     datasetMapping: DatasetMapping;
     datasetMappingHeader: string[];
     collections: Collection[]
@@ -78,6 +77,7 @@ export const CdeContextProvider = ({
     // Process and validate datasetMapping
     let initialDatasetMapping;
     let initialDatasetMappingHeader;
+    // TODO: initialDatasetMapping can be optional
     try {
         validateDatasetMapping(rawDatasetMapping);
         const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping);
@@ -87,6 +87,7 @@ export const CdeContextProvider = ({
         const message = error instanceof Error ? error.message : 'An unknown error occurred';
         const errorMessage = `Invalid dataset mapping: ${message}`
         console.error(errorMessage);
+        // TODO: No throw, just move to a exit step
         throw new Error(errorMessage);
     }
 

@@ -1,3 +1,5 @@
 export const VARIABLE_NAME_INDEX = 0
 export const ABBREVIATION_INDEX = 1
 export const INTERLEX_INDEX = 2
+
+// TODO: Replace with data coming from init
