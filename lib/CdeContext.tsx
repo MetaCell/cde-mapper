@@ -1,21 +1,12 @@
 import {createContext, PropsWithChildren, useContext, useState} from 'react';
-import {
-    CDE,
-    Collection,
-    Config,
-    CustomDictionaryField,
-    DatasetMapping,
-    InitParams,
-    STEPS
-} from "./models.ts";
+import {CDE, Collection, Config, CustomDictionaryField, DatasetMapping, InitParams, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
-import {
-    validateDatasetMapping,
-} from "./services/validatorsService.ts";
+import {validateDatasetMapping,} from "./services/validatorsService.ts";
 import {mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
 import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
+import ErrorPage from "./components/ErrorPage.tsx";
 
 export const CdeContext = createContext<{
 
@@ -73,6 +64,10 @@ export const CdeContextProvider = ({
                                        children
                                    }: PropsWithChildren<InitParams>) => {
 
+    const [step, setStep] = useState(STEPS.HOME);
+    const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    let areFilesValid = true;
 
     // Process and validate datasetMapping
     let initialDatasetMapping: DatasetMapping = {};
@@ -85,8 +80,7 @@ export const CdeContextProvider = ({
             const message = error instanceof Error ? error.message : 'An unknown error occurred';
             const errorMessage = `Invalid dataset mapping: ${message}`
             console.error(errorMessage);
-            // TODO: No throw, just move to a exit step
-            throw new Error(errorMessage);
+            areFilesValid = false;
         }
         const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping);
         initialDatasetMapping = datasetMappingData[0]
@@ -112,9 +106,6 @@ export const CdeContextProvider = ({
     const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
     const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
 
-    const [step, setStep] = useState(STEPS.HOME);
-    const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const handleClose = () => {
         setErrorMessage(null);
         setLoadingMessage(null);
@@ -151,9 +142,12 @@ export const CdeContextProvider = ({
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>
-            <CdeContext.Provider value={contextValue}>
-                {children}
-            </CdeContext.Provider>
+            {areFilesValid ? (
+                <CdeContext.Provider value={contextValue}>
+                    {children}
+                </CdeContext.Provider>
+            ) : <ErrorPage/>}
+
         </ThemeProvider>
 
     );
