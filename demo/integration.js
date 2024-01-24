@@ -1,79 +1,86 @@
-import { init } from './cde-mapper.js';
+import {init} from './cde-mapper.js';
 
 export function mapAndInit(cdeFile, datasetFile) {
-    const datasetMappingReader = new FileReader();
     const datasetReader = new FileReader();
 
     let datasetMappings = [];
     let datasetSample = [];
 
-    datasetMappingReader.onload = function(event) {
-        const text = event.target.result;
+    const processDatasetFile = () => {
+        datasetReader.onload = function (event) {
+            const text = event.target.result;
 
-        // eslint-disable-next-line no-undef
-        Papa.parse(text, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                // The first row is the header
-                const headers = Object.keys(results.data[0]);
-                datasetMappings.push(headers);
+            // eslint-disable-next-line no-undef
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    datasetSample.push(results.meta.fields); // First element is the header array
+                    results.data.slice(0, 10).forEach(row => {
+                        datasetSample.push(results.meta.fields.map(field => row[field]));
+                    });
 
-                // Subsequent rows are the data
-                results.data.forEach(row => {
-                    const rowData = headers.map(header => row[header] || '');
-                    datasetMappings.push(rowData);
-                });
+                    // Then call the 'init' function from the library
+                    init({
+                        datasetMapping: datasetMappings,
+                        additionalDatasetMappings: [],
+                        datasetSample: datasetSample,
+                        collections: [],
+                        config: {width: '60%', height: '80%'},
+                        name: 'TestLabName',
+                        callback: (cdeFileMapping) => console.log(cdeFileMapping)
+                    });
+                },
+                error: function (error) {
+                    console.error('Error parsing Dataset CSV file:', error.message);
+                }
+            });
+        };
 
-                // After processing the dataset mapping, process the dataset file
-                datasetReader.readAsText(datasetFile);
-            },
-            error: function(error) {
-                console.error('Error parsing CDE CSV file:', error.message);
-            }
-        });
+        datasetReader.onerror = function (event) {
+            console.error('Error reading Dataset CSV file:', event.target.error);
+        };
+
+        datasetReader.readAsText(datasetFile);
     };
 
-    datasetReader.onload = function(event) {
-        const text = event.target.result;
+    if (cdeFile) {
+        const datasetMappingReader = new FileReader();
 
-        // eslint-disable-next-line no-undef
-        Papa.parse(text, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                datasetSample.push(results.meta.fields); // First element is the header array
-                results.data.slice(0, 10).forEach(row => {
-                    datasetSample.push(results.meta.fields.map(field => row[field]));
-                });
+        datasetMappingReader.onload = function (event) {
+            const text = event.target.result;
 
-                // Then call the 'init' function from the library
-                init({
-                    datasetMapping: datasetMappings,
-                    additionalDatasetMappings: [],
-                    datasetSample: datasetSample,
-                    collections: [],
-                    config: { width: '60%', height: '80%' },
-                    name: 'TestLabName',
-                    callback: (cdeFileMapping) => console.log(cdeFileMapping)
-                });
-            },
-            error: function(error) {
-                console.error('Error parsing Dataset CSV file:', error.message);
-                // Handle the error as needed
-            }
-        });
-    };
+            // eslint-disable-next-line no-undef
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    // The first row is the header
+                    const headers = Object.keys(results.data[0]);
+                    datasetMappings.push(headers);
 
-    datasetMappingReader.onerror = function(event) {
-        console.error('Error reading CDE CSV file:', event.target.error);
-        // Handle the error as needed
-    };
+                    // Subsequent rows are the data
+                    results.data.forEach(row => {
+                        const rowData = headers.map(header => row[header] || '');
+                        datasetMappings.push(rowData);
+                    });
 
-    datasetReader.onerror = function(event) {
-        console.error('Error reading Dataset CSV file:', event.target.error);
-        // Handle the error as needed
-    };
+                    // After processing the dataset mapping, process the dataset file
+                    processDatasetFile();
+                },
+                error: function (error) {
+                    console.error('Error parsing CDE CSV file:', error.message);
+                    // Handle the error as needed
+                }
+            });
+        };
 
-    datasetMappingReader.readAsText(cdeFile);
+        datasetMappingReader.onerror = function (event) {
+            console.error('Error reading CDE CSV file:', event.target.error);
+        };
+
+        datasetMappingReader.readAsText(cdeFile);
+    } else {
+        processDatasetFile();
+    }
 }

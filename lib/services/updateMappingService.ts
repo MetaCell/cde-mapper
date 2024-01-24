@@ -10,11 +10,14 @@ export const updateDatasetMappingRow = (
     setDatasetMapping: React.Dispatch<React.SetStateAction<DatasetMapping>>,
     setDatasetMappingHeader: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
-    if (!datasetMapping[key]) {
-        throw Error(`No entry found for key: ${key}`);
+
+    let updatedRow = datasetMapping[key];
+
+    if (!updatedRow) {
+        // If the key doesn't exist, create a new row initialized with empty strings
+        updatedRow = Array(datasetMappingHeader.length).fill('');
     }
 
-    const updatedRow = datasetMapping[key];
     let headersAddedCount = 0;
 
     Object.entries(newData).forEach(([dataKey, value]) => {

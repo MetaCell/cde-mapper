@@ -10,8 +10,6 @@ interface ModalProps extends Omit<DialogProps, 'children'> {
     isInfoOpen: boolean;
 }
 
-// TODO: This component should use the config height and width values
-
 const Modal: React.FC<ModalProps> = ({
                                          maxWidth = "xs",
                                          open,

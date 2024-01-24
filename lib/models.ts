@@ -35,10 +35,10 @@ export interface InitParams {
     // The header should have the columns in the following order:
     // Variable Name; Abbreviation; InterlexId; Any other column.
     // The names can vary, but the content should match with what is said above.
-    datasetMapping: string[][];
+    datasetMapping?: string[][];
     // List of files in the same format as the above.
     // The content will be used in the suggestions algorithm, order in the list may be used to break ties.
-    additionalDatasetMappings: string[][][];
+    additionalDatasetMappings?: string[][][];
     // First row should be the headers
     datasetSample: string[][];
 
@@ -46,7 +46,6 @@ export interface InitParams {
     config: Config;
     name: string
     callback: (cdeFileMapping: DatasetMapping) => void;
-
 }
 
 

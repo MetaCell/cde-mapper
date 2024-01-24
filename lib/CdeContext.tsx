@@ -65,7 +65,7 @@ export const useCdeContext = () => useContext(CdeContext);
 export const CdeContextProvider = ({
                                        datasetSample,
                                        datasetMapping: rawDatasetMapping,
-                                       additionalDatasetMappings: rawAdditionalDatasetMappings,
+                                       additionalDatasetMappings: rawAdditionalDatasetMappings = [],
                                        collections,
                                        config,
                                        name,
@@ -75,37 +75,39 @@ export const CdeContextProvider = ({
 
 
     // Process and validate datasetMapping
-    let initialDatasetMapping;
-    let initialDatasetMappingHeader;
-    // TODO: initialDatasetMapping can be optional
-    try {
-        validateDatasetMapping(rawDatasetMapping);
+    let initialDatasetMapping: DatasetMapping = {};
+    let initialDatasetMappingHeader: string[] = [];
+
+    if (rawDatasetMapping && rawDatasetMapping.length > 0) {
+        try {
+            validateDatasetMapping(rawDatasetMapping);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred';
+            const errorMessage = `Invalid dataset mapping: ${message}`
+            console.error(errorMessage);
+            // TODO: No throw, just move to a exit step
+            throw new Error(errorMessage);
+        }
         const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping);
         initialDatasetMapping = datasetMappingData[0]
         initialDatasetMappingHeader = datasetMappingData[1]
-    } catch (error) {
-        const message = error instanceof Error ? error.message : 'An unknown error occurred';
-        const errorMessage = `Invalid dataset mapping: ${message}`
-        console.error(errorMessage);
-        // TODO: No throw, just move to a exit step
-        throw new Error(errorMessage);
     }
 
-    const additionalDatasetMappings: DatasetMapping[] = [];
-    rawAdditionalDatasetMappings.forEach((additionalMapping, index) => {
+    const additionalDatasetMappings: DatasetMapping[] = rawAdditionalDatasetMappings.map((additionalMapping, index) => {
         try {
             validateDatasetMapping(additionalMapping);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const [mappedAdditionalMapping, _] = mapStringTableToDatasetMapping(additionalMapping);
-            additionalDatasetMappings.push(mappedAdditionalMapping);
         } catch (error) {
             if (error instanceof Error) {
                 console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: ${error.message}`);
             } else {
                 console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: Unknown error`);
             }
+            return null;
         }
-    });
+        const mappedAdditionalMappingData = mapStringTableToDatasetMapping(additionalMapping);
+        return mappedAdditionalMappingData[0];
+    }).filter(mapping => mapping !== null) as DatasetMapping[];
+    console.log(additionalDatasetMappings)
 
     const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
     const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
