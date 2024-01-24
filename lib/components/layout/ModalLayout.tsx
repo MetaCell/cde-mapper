@@ -4,8 +4,6 @@ import {useCdeContext} from "../../CdeContext.tsx";
 import Header from "../common/Header";
 import { CommonCircularProgress } from '../common/CommonCircularProgress.tsx';
 
-// const { baseWhite } = vars
-
 interface IMainProps {
     footerNode?: React.ReactNode;
     footerTopElement?: React.ReactNode;
@@ -33,7 +31,7 @@ export const ModalLayout = ({
                     width: '100%',
                     padding: '0.75rem 1.5rem',
                     backgroundColor: baseWhite,
-                    borderTop: `1px solid grey`,
+                    borderTop: `0.0625rem solid grey`,
                 },
             }}
         >
