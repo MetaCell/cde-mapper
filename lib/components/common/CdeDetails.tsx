@@ -1,6 +1,7 @@
 import {Box, Typography, Grid, Link} from "@mui/material";
 import {LinkIcon} from "../../icons";
 import {vars} from "../../theme/variables";
+import {FC} from "react";
 
 const {
     gray700,
@@ -10,7 +11,18 @@ const {
     primary500
 } = vars;
 
-const DEFAULT_DATA = [
+interface CdeDetailItem {
+    heading: string;
+    text: string;
+    link?: boolean;
+}
+
+interface CdeDetailsProps {
+    heading?: string;
+    data?: CdeDetailItem[];
+}
+
+const DEFAULT_DATA: CdeDetailItem[] = [
     {
         heading: 'CDE Abbrev',
         text: 'SmallSpeciesStrainTyp'
@@ -46,7 +58,7 @@ const DEFAULT_DATA = [
     }
 ]
 
-const CdeDetails = ({heading = 'CDE Details', data = DEFAULT_DATA}: any) => {
+const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = DEFAULT_DATA}) => {
     return (
         <Box sx={{
             border: `0.0625rem solid ${gray200}`,
@@ -65,8 +77,8 @@ const CdeDetails = ({heading = 'CDE Details', data = DEFAULT_DATA}: any) => {
 
             <Box p="0.875rem">
                 <Grid container spacing='1.5rem'>
-                    {data.map((item: any) => (
-                        <Grid item md={3}>
+                    {data.map((item, index) => (
+                        <Grid item md={3} key={index}>
                             <Typography sx={{
                                 color: gray500,
                                 fontWeight: 400,

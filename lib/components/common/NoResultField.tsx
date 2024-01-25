@@ -1,11 +1,14 @@
+import React from "react";
 import {Button, Typography, Box} from '@mui/material';
 import {vars} from "../../theme/variables";
 
 const {titleFontColor} = vars;
 
-const NoResultField = ({
-                           noResultReason
-                       }: any) => {
+interface NoResultFieldProps {
+    noResultReason: string | undefined;
+}
+
+const NoResultField: React.FC<NoResultFieldProps> = ({noResultReason}) => {
     return (
         <Box
             width={1}

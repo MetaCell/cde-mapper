@@ -75,3 +75,4 @@ export enum STEPS {
     HOME,
     COLLECTION,
 }
+

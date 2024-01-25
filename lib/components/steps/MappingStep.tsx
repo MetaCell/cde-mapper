@@ -1,12 +1,11 @@
-import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider} from '@mui/material';
-import {useCdeContext} from "../../CdeContext.tsx";
+import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
 import React, {Fragment} from 'react';
-import PropTypes from 'prop-types';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
+import {useCdeContext} from "../../CdeContext.ts";
 
 const {
     baseWhite,
@@ -53,9 +52,14 @@ const renderTabComponent = (step: number) => {
     }
 };
 
-function CustomTabPanel(props: { [x: string]: any; children: any; value: any; index: any; }) {
-    const {children, value, index, ...other} = props;
+interface CustomTabPanelProps extends BoxProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
 
+
+const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, ...other}) => {
     return (
         <Box
             height={1}
@@ -68,13 +72,8 @@ function CustomTabPanel(props: { [x: string]: any; children: any; value: any; in
             {value === index && children}
         </Box>
     );
-}
-
-CustomTabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
 };
+
 
 function MappingStep() {
     const {datasetMapping} = useCdeContext();

@@ -1,29 +1,48 @@
 import {Stack, Typography, Box} from '@mui/material';
 import {vars} from '../../theme/variables';
+import {Option} from "./CustomMappingDropdown.tsx";
 
 const {
     gray400,
     gray700
 } = vars;
 
-const DefaultBody = ({entity}: any) => (
-    <Stack spacing={2} flexGrow={1}>
-        {entity?.content?.map((detail: any, i: number) => <Stack spacing={1} sx={{mt: i !== 0 ? 3 : 0}}>
-            <Typography variant="body1">
-                {detail?.title}
-            </Typography>
-            <Typography variant="body2">{detail?.value}</Typography>
-        </Stack>)}
-    </Stack>
-);
 
-const HoveredOptionContent = ({
-                                  entity,
-                                  HeaderComponent,
-                                  BodyComponent,
-                                  FooterComponent,
-                                  padding
-                              }: any) => {
+type ComponentType = React.FC<{ entity: Option }>;
+
+interface HoveredOptionContentProps {
+    entity: Option;
+    HeaderComponent?: ComponentType;
+    BodyComponent?: ComponentType;
+    FooterComponent?: ComponentType;
+    padding?: number | string;
+}
+
+interface DefaultBodyProps {
+    entity: Option;
+}
+const DefaultBody: React.FC<DefaultBodyProps> = ({ entity }) => {
+    return (
+        <Stack spacing={2} flexGrow={1}>
+            {entity?.content?.map((detail, i) => (
+                <Stack spacing={1} sx={{ mt: i !== 0 ? 3 : 0 }} key={detail.title}>
+                    <Typography variant="body1">
+                        {detail.title}
+                    </Typography>
+                    <Typography variant="body2">{detail.value}</Typography>
+                </Stack>
+            ))}
+        </Stack>
+    );
+};
+
+const HoveredOptionContent: React.FC<HoveredOptionContentProps> = ({
+                                                                       entity,
+                                                                       HeaderComponent,
+                                                                       BodyComponent,
+                                                                       FooterComponent,
+                                                                       padding
+                                                                   }) => {
     return (
         <Box
             width={1}
@@ -75,7 +94,7 @@ const HoveredOptionContent = ({
             }}
         >
             {HeaderComponent && <HeaderComponent entity={entity}/>}
-            {BodyComponent ? <BodyComponent entity={entity}/> : <DefaultBody entity={entity}/>}
+            {BodyComponent ? <BodyComponent entity={entity}/> : <DefaultBody entity={entity} />}
             {FooterComponent && <FooterComponent entity={entity}/>}
         </Box>
     );

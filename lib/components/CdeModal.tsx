@@ -1,12 +1,12 @@
 import {FC, ReactElement, useEffect, useState} from 'react';
 import {Snackbar} from '@mui/material';
 import Home from "./steps/Home.tsx";
-import {useCdeContext} from "../CdeContext.tsx";
 import {STEPS} from "../models.ts";
 import Modal from './common/Modal.tsx'
 import MappingStep from './steps/MappingStep.tsx';
 import Header from "./common/Header.tsx";
 import {Loading} from "./common/Loading.tsx";
+import {useCdeContext} from "../CdeContext.ts";
 
 
 const CdeModal: FC = () => {

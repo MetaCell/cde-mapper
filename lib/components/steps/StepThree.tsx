@@ -27,7 +27,7 @@ import {
     SortIcon
 } from "../../icons";
 import React, {useState} from "react";
-import CustomEntitiesDropdown from "../common/CustomMappingDropdown";
+import CustomEntitiesDropdown, {Option} from "../common/CustomMappingDropdown";
 import CdeDetails from "../common/CdeDetails";
 import Filters from "../common/Filters";
 import PreviewTable from "../common/PreviewTable";
@@ -210,9 +210,10 @@ const StepThree = () => {
                 }
             ]
         },
-    ];
+    ] as Option[];
 
-    const searchCDE = () => mockCDE;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const searchCDE = (_: string) => mockCDE;
 
     return (
         <>
@@ -274,13 +275,13 @@ const StepThree = () => {
                                     <ArrowIcon/>
                                 </Box>
                                 <Box sx={styles.col}>
-                                    <CustomEntitiesDropdown options={{
-                                        placeholder: "Choose CDE or Data Dictionary fields...",
-                                        searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                        noResultReason: "We couldn’t find any record with this in the database.",
-                                        onSearch: () => searchCDE(),
-                                        value: mockCDE[1] ?? "",
-                                    }}/>
+                                    <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
+                                                            options={{
+                                                                searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                                                                noResultReason: "We couldn’t find any record with this in the database.",
+                                                                onSearch: (queryString: string) => searchCDE(queryString),
+                                                                value: mockCDE[1] ?? "",
+                                                            }}/>
                                 </Box>
                             </Box>
 
@@ -303,13 +304,13 @@ const StepThree = () => {
                                     <ArrowIcon/>
                                 </Box>
                                 <Box sx={styles.col}>
-                                    <CustomEntitiesDropdown options={{
-                                        placeholder: "Choose CDE or Data Dictionary fields...",
-                                        searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                        noResultReason: "We couldn’t find any record with this in the database.",
-                                        onSearch: () => searchCDE(),
-                                        value: mockCDE[2] ?? "",
-                                    }}/>
+                                    <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
+                                                            options={{
+                                                                searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                                                                noResultReason: "We couldn’t find any record with this in the database.",
+                                                                onSearch: (queryString: string) => searchCDE(queryString),
+                                                                value: mockCDE[2] ?? "",
+                                                            }}/>
                                 </Box>
                             </Box>
 
@@ -332,13 +333,13 @@ const StepThree = () => {
                                     <ArrowIcon/>
                                 </Box>
                                 <Box sx={styles.col}>
-                                    <CustomEntitiesDropdown options={{
-                                        placeholder: "Choose CDE or Data Dictionary fields...",
-                                        searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                        noResultReason: "We couldn’t find any record with this in the database.",
-                                        onSearch: () => searchCDE(),
-                                        value: mockCDE[3] ?? "",
-                                    }}/>
+                                    <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
+                                                            options={{
+                                                                searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                                                                noResultReason: "We couldn’t find any record with this in the database.",
+                                                                onSearch: (queryString: string) => searchCDE(queryString),
+                                                                value: mockCDE[3] ?? "",
+                                                            }}/>
                                 </Box>
                             </Box>
 
@@ -362,13 +363,13 @@ const StepThree = () => {
                                     <ArrowIcon/>
                                 </Box>
                                 <Box sx={styles.col}>
-                                    <CustomEntitiesDropdown options={{
-                                        placeholder: "Choose CDE or Data Dictionary fields...",
-                                        searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                        noResultReason: "We couldn’t find any record with this in the database.",
-                                        onSearch: () => searchCDE(),
-                                        value: mockCDE[0] ?? "",
-                                    }}/>
+                                    <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
+                                                            options={{
+                                                                searchPlaceholder: "Search Spinal Cord Injury (SCI)",
+                                                                noResultReason: "We couldn’t find any record with this in the database.",
+                                                                onSearch: (queryString: string) => searchCDE(queryString),
+                                                                value: mockCDE[0] ?? "",
+                                                            }}/>
                                 </Box>
 
                                 <Box width='100%' mt={1.5}>

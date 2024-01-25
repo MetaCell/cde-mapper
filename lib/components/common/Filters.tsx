@@ -3,9 +3,9 @@ import Checkbox from "../common/CheckBox";
 
 interface FiltersProps {
     anchorEl: Element | null;
-    handleClose: any;
+    handleClose: () => void;
     open: boolean;
-    id: any;
+    id: string | undefined;
 }
 
 const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {

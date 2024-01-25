@@ -6,11 +6,6 @@ import HoveredOptionContent from "./HoveredOptionContent";
 import NoResultField from './NoResultField';
 import {vars} from '../../theme/variables';
 
-type OptionDetail = {
-    title: string; // What to display as the title/label for the property.
-    value: string; // The actual value/content for the property.
-};
-
 const {
     buttonOutlinedBorderColor,
     darkBlue,
@@ -27,14 +22,6 @@ const {
     grey400,
     gray100
 } = vars;
-
-
-type Option = {
-    id: string;
-    label: string;
-    group: string;
-    content: OptionDetail[];
-}
 
 const transition = {
     transition: 'all ease-in-out .3s'
@@ -122,7 +109,7 @@ const styles = {
         zIndex: 9,
         fontSize: '1.25rem',
         color: captionColor
-    },
+    } as const,
 
     placeholder: {
         color: captionColor,
@@ -161,6 +148,35 @@ const styles = {
     }
 }
 
+export type OptionDetail = {
+    title: string; // What to display as the title/label for the property.
+    value: string; // The actual value/content for the property.
+};
+
+export type Option = {
+    id: string;
+    label: string;
+    group: string;
+    content: OptionDetail[];
+}
+
+interface Header {
+    label: string;
+    values: string[];
+}
+
+interface CustomEntitiesDropdownProps {
+    placeholder?: string;
+    options: {
+        errors?: string;
+        searchPlaceholder?: string;
+        noResultReason?: string;
+        onSearch: (searchValue: string) => Option[];
+        value: Option;
+        header?: Header;
+    };
+}
+
 export default function CustomEntitiesDropdown({
                                                    placeholder,
                                                    options: {
@@ -169,9 +185,9 @@ export default function CustomEntitiesDropdown({
                                                        noResultReason,
                                                        onSearch,
                                                        value,
-                                                       header = {}
+                                                       header
                                                    },
-                                               }: any) {
+                                               }: CustomEntitiesDropdownProps) {
     const [searchValue] = useState("");
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [toggleMenu, setToggleMenu] = useState(false);
@@ -201,14 +217,18 @@ export default function CustomEntitiesDropdown({
         setAutocompleteOptions(onSearch(searchValue));
     }, [searchValue, onSearch, autocompleteOptions]);
 
-    const groupedOptions = autocompleteOptions.reduce((grouped: any, option: Option) => {
+    type GroupedOptions = {
+        [group: string]: Option[];
+    };
+
+    const groupedOptions = autocompleteOptions.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
         if (!grouped[group]) {
             grouped[group] = [];
         }
         grouped[group].push(option);
         return grouped;
-    }, {});
+    }, {} as GroupedOptions);
 
     const handleOptionSelection = (option: Option) => {
         const isOptionAlreadySelected = selectedOptions.some((selected) => selected.id === option.id);
@@ -221,7 +241,7 @@ export default function CustomEntitiesDropdown({
     };
 
 
-    const handleInputChange = (event: any) => {
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
     };
 
@@ -303,7 +323,7 @@ export default function CustomEntitiesDropdown({
                     zIndex: 99999
                 }}
             >
-                {header?.values?.length > 0 && (
+                {header && header.values?.length > 0 && (
                     <Box
                         display="flex"
                         alignItems="center"
@@ -318,10 +338,9 @@ export default function CustomEntitiesDropdown({
                         <Typography variant="body2">
                             {header?.label}
                         </Typography>
-                        {header?.values?.map((item: any, index: number) => (
+                        {header?.values?.map((item: string, index: number) => (
                             <Tooltip title={item} placement='top' arrow>
                                 <Chip
-                                    key={item?.id}
                                     sx={{
                                         ...styles.chip,
                                         display: 'flex',
@@ -370,7 +389,12 @@ export default function CustomEntitiesDropdown({
                                 ))}
                             </Box>) : (<Box sx={styles.details}>
                                 <HoveredOptionContent
-                                    entity={'Connections'}
+                                    entity={{
+                                        id: "placeholder",
+                                        label: "Connections",
+                                        group: "placeholder",
+                                        content: [],
+                                    }}
                                     padding={0}
                                     BodyComponent={() => (
                                         <Box p={3}>
