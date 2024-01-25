@@ -15,6 +15,8 @@ jobs:
         uses: super-linter/super-linter@v5.7.2
         env:
           VALIDATE_ALL_CODEBASE: false
+          VALIDATE_TYPESCRIPT_ES: true
+          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.cjs
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FILTER_REGEX_INCLUDE: (.*\.ts$|.*\.tsx$)
