@@ -258,6 +258,45 @@ theme = createTheme({
       },
     },
 
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: {
+          padding: '1.5rem 0 0'
+        }
+      }
+    },
+
+    MuiAccordionSummary: {
+      styleOverrides: {
+        content: {
+          margin: 0,
+          gap: '0.5rem',
+          '&.Mui-expanded': {
+            margin: 0,
+          }
+        },
+        root: {
+          minHeight: '0.0625rem',
+          padding: 0,
+          '&.Mui-expanded': {
+            minHeight: '0.0625rem'
+          }
+        }
+      }
+    },
+
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
+          background: 'transparent',
+          '&:first-of-type': {
+            borderRadius: 0
+          },
+        }
+      }
+    },
+
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
