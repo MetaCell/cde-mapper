@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Chip } from '@mui/material';
+import { Box, Button, Typography, Chip, Paper, TableContainer } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import { STEPS } from "../../models.ts";
 import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
@@ -7,7 +7,7 @@ import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 
-const { primary600, gray600, drodownDetailBg } = vars;
+const { primary600, gray600, drodownDetailBg, gray100 } = vars;
 
 function Home() {
     const {
@@ -36,7 +36,7 @@ function Home() {
             } else {
                 setErrorMessage('Invalid CSV file format.');
             }
-        }  catch (error) {
+        } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
             } else {
@@ -80,17 +80,27 @@ function Home() {
                                     lineHeight: '1.25rem',
                                     fontSize: '0.875rem'
                                 }
-                            }} 
+                            }}
                         >
                             <Typography variant="h6">124</Typography>
                             <Typography variant="body2">total number of column headers</Typography>
                         </Box>
                         <Box display="flex" alignItems="center" gap={1}>
-                            <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess/>} />
-                            <Chip size="small" label="83 unmapped, 13 suggestions available" color="default" icon={<CircleChipDefault/>} />
+                            <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
+                            <Chip size="small" label="83 unmapped, 13 suggestions available" color="default" icon={<CircleChipDefault />} />
                         </Box>
                     </Box>
-                    <StyledTable tableMaxWidth="650px" tableCellMinWidth='7.5rem' />
+                    <TableContainer
+                        component={Paper}
+                        elevation={0}
+                        sx={{
+                            maxWidth: '650px',
+                            border: `0.0625rem solid ${gray100}`,
+                            borderBottom: 0
+                        }}
+                    >
+                        <StyledTable tableCellMinWidth='7.5rem' />
+                    </TableContainer>
                 </Box>
 
                 <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>

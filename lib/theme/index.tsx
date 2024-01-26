@@ -569,6 +569,17 @@ theme = createTheme({
           }
         }
       }
+    },
+
+    MuiBreadcrumbs: {
+      styleOverrides: {
+        separator: {
+          marginLeft: '0.25rem',
+          marginRight: '0.25rem',
+          height: '1.125rem',
+          fontSize: '0.875rem'
+        }
+      }
     }
   }
 });

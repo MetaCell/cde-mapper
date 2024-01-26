@@ -57,15 +57,15 @@ const PreviewBox = () => {
                     overflow: 'auto',
                     maxHeight: '21.25rem',
 
-                    '&:after': {
-                        content: '""',
-                        height: '7.8125rem',
-                        minWidth: '100%',
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)',
-                    }
+                    // '&:after': {
+                    //     content: '""',
+                    //     height: '7.8125rem',
+                    //     minWidth: '100%',
+                    //     position: 'absolute',
+                    //     bottom: 0,
+                    //     left: 0,
+                    //     background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)',
+                    // }
                 }}>
                     <Box display='flex' mb={1} alignItems='center' sx={{
                         '& > div': {
@@ -155,9 +155,7 @@ const PreviewBox = () => {
                             }}>No mapping yet</Typography>
                         </Box>
                     </Box>
-
-                    {/* <PreviewTable /> */}
-                    <StyledTable tableMaxWidth="1100px" tableCellMinWidth='10rem' /> 
+                    <StyledTable tableCellMinWidth='10rem' /> 
                 </Box>
             )}
             {
