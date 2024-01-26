@@ -76,3 +76,8 @@ export enum STEPS {
     COLLECTION,
 }
 
+export interface Suggestion {
+    key: string,
+    value: CDE | CustomDictionaryField,
+    score: number
+}
