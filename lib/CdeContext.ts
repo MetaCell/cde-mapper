@@ -8,7 +8,7 @@ export const CdeContext = createContext<{
     datasetSample: string[][];
     datasetMapping: DatasetMapping;
     datasetMappingHeader: string[];
-    handleUpdateDatasetMappingRow: (key: string, newData: CDE | CustomDictionaryField) => any;
+    handleUpdateDatasetMappingRow: (key: string, newData: CDE | CustomDictionaryField) => void;
     headerMapping: HeaderMapping;
     collections: Collection[];
     config: Config;
