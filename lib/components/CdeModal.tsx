@@ -5,8 +5,8 @@ import {STEPS} from "../models.ts";
 import Modal from './common/Modal.tsx'
 import MappingStep from './steps/MappingStep.tsx';
 import Header from "./common/Header.tsx";
-import {Loading} from "./common/Loading.tsx";
 import {useCdeContext} from "../CdeContext.ts";
+import {CommonCircularProgress} from "./common/CommonCircularProgress.tsx";
 
 
 const CdeModal: FC = () => {
@@ -44,14 +44,8 @@ const CdeModal: FC = () => {
     return (
         <>
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
-                {loadingMessage ? <Loading loadingMessage={loadingMessage}/> :
-                    <>
-                        <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen}/>
-                        {renderStepComponent()}
-                    </>
-                }
-
-
+                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen}/>
+                {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
             </Modal>
             <Snackbar
                 open={!!errorMessage}
