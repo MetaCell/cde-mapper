@@ -1,4 +1,4 @@
-import {PropsWithChildren, useState} from 'react';
+import {PropsWithChildren, useMemo, useState} from 'react';
 import {CDE, CustomDictionaryField, DatasetMapping, InitParams, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
@@ -9,6 +9,7 @@ import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 import ErrorPage from "./components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, INTERLEX_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 import {CdeContext} from './CdeContext.ts';
+import {computeMappingFrequency, getSuggestionsAux} from "./services/suggestionsService.ts";
 
 
 export const CdeContextProvider = ({
@@ -30,25 +31,34 @@ export const CdeContextProvider = ({
     const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    let areFilesValid = true;
 
     // Process and validate datasetMapping
-    let initialDatasetMapping: DatasetMapping = {};
-    let initialDatasetMappingHeader: string[] = [];
+    const [initialDatasetMapping, initialDatasetMappingHeader, areFilesValid] = useMemo(() => {
+        let localDatasetMapping = {};
+        let localDatasetMappingHeader : string[] = [];
+        let localAreFilesValid = true;
 
-    if (rawDatasetMapping && rawDatasetMapping.length > 0) {
-        try {
-            validateDatasetMapping(rawDatasetMapping);
-        } catch (error) {
-            const message = error instanceof Error ? error.message : 'An unknown error occurred';
-            const errorMessage = `Invalid dataset mapping: ${message}`
-            console.error(errorMessage);
-            areFilesValid = false;
+        if (rawDatasetMapping && rawDatasetMapping.length > 0) {
+            try {
+                validateDatasetMapping(rawDatasetMapping);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : 'An unknown error occurred';
+                const errorMessage = `Invalid dataset mapping: ${message}`;
+                console.error(errorMessage);
+                localAreFilesValid = false;
+            }
+            const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping, headerMapping);
+            localDatasetMapping = datasetMappingData[0];
+            localDatasetMappingHeader = datasetMappingData[1]
         }
-        const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping, headerMapping);
-        initialDatasetMapping = datasetMappingData[0]
-        initialDatasetMappingHeader = datasetMappingData[1]
-    }
+
+        return [localDatasetMapping, localDatasetMappingHeader, localAreFilesValid];
+    }, [rawDatasetMapping, headerMapping]);
+
+
+    const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
+    const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
+
 
     const additionalDatasetMappings: DatasetMapping[] = rawAdditionalDatasetMappings.map((additionalMapping, index) => {
         try {
@@ -64,10 +74,15 @@ export const CdeContextProvider = ({
         const mappedAdditionalMappingData = mapStringTableToDatasetMapping(additionalMapping, headerMapping);
         return mappedAdditionalMappingData[0];
     }).filter(mapping => mapping !== null) as DatasetMapping[];
-    console.log(additionalDatasetMappings)
 
-    const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
-    const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
+    const mappingFrequency = useMemo(() => {
+        return computeMappingFrequency(initialDatasetMapping, additionalDatasetMappings, headerMapping);
+    }, [initialDatasetMapping, additionalDatasetMappings, headerMapping]);
+
+    const getSuggestions = (variableName: string) => {
+        return getSuggestionsAux(variableName, mappingFrequency);
+    };
+
 
     const handleClose = () => {
         setErrorMessage(null);
@@ -92,6 +107,7 @@ export const CdeContextProvider = ({
         datasetMapping,
         datasetMappingHeader,
         handleUpdateDatasetMappingRow,
+        getSuggestions,
         headerMapping,
         collections,
         config,

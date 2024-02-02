@@ -62,11 +62,6 @@ export enum CDEType {
     CustomDataDictionary = 'CustomDataDictionary'
 }
 
-export enum CDEStatus {
-    Mapped = 'mapped',
-    Unmapped = 'unmapped'
-}
-
 export interface DatasetMapping {
     [variableName: string]: string[];
 }
@@ -78,6 +73,15 @@ export enum STEPS {
 
 export interface Suggestion {
     key: string,
-    value: CDE | CustomDictionaryField,
+    value: CDE | CustomDictionaryField | string[],
     score: number
+}
+
+export interface MappingFrequency {
+    [variableName: string]: {
+        [mappedTo: string]: {
+            count: number,
+            row: string[]
+        }
+    };
 }
