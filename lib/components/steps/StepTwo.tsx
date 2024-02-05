@@ -1,9 +1,11 @@
 import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
-import React from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {ArrowDropDown, LeftIcon, RightIcon} from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
+import {useCdeContext} from "../../CdeContext.ts";
+import {MAX_SUGGESTIONS} from "../../settings.ts";
 
 const {
     gray100,
@@ -17,6 +19,36 @@ const {
 
 function StepTwo() {
     const [showOtherSuggestions, setShowOtherSuggestions] = React.useState(false);
+    const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
+    const {
+        getSuggestions,
+    } = useCdeContext();
+    const suggestionsMapping = getSuggestions();
+
+    const columnsWithSuggestions = useMemo(() => {
+        return Object.keys(suggestionsMapping).filter(key => Object.keys(suggestionsMapping[key]).length > 0);
+    }, [suggestionsMapping]);
+
+    const handleNext = useCallback(() => {
+        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % columnsWithSuggestions.length);
+    }, [columnsWithSuggestions.length]);
+
+    const handlePrevious = useCallback(() => {
+        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + columnsWithSuggestions.length) % columnsWithSuggestions.length);
+    }, [columnsWithSuggestions.length]);
+
+    if (columnsWithSuggestions.length == 0) {
+        // TODO:
+        return
+    }
+    const column = columnsWithSuggestions[currentKeyIndex];
+    const sortedSuggestions = Object.entries(suggestionsMapping[column])
+        .sort((a, b) => b[1].count - a[1].count);
+
+    const shouldShowOtherSuggestionsButton = sortedSuggestions.length > MAX_SUGGESTIONS;
+    const visibleSuggestions = shouldShowOtherSuggestionsButton ? sortedSuggestions.slice(0, MAX_SUGGESTIONS) : sortedSuggestions;
+    const otherSuggestions = shouldShowOtherSuggestionsButton ? sortedSuggestions.slice(MAX_SUGGESTIONS) : [];
+
 
     return (
         <>
@@ -52,7 +84,7 @@ function StepTwo() {
                     fontWeight: 400,
                     marginBottom: '3rem'
                 }}>
-                    Strain
+                    {column}
                 </Typography>
 
                 <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
@@ -71,34 +103,41 @@ function StepTwo() {
                         fontWeight: 400,
                         lineHeight: '150%'
                     }}>
-                        Select only 1 suggestion to map ‘Strain’ with. Suggestions are ordered based on the quality of
+                        Select only 1 suggestion to map {column} with. Suggestions are ordered based on the quality of
                         the suggestion.
                     </Typography>
                 </Box>
 
                 <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
-                    <SuggestionDetailUI/>
-                    <SuggestionDetailUI/>
-                    <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)} disableRipple
-                            sx={{
-                                p: 0, gap: '0.25rem', color: primary600,
+                    {visibleSuggestions.map(([valueKey, suggestion],) => {
+                        return (
+                            <SuggestionDetailUI key={valueKey} row={suggestion.row}/>
+                        );
+                    })}
+                    {shouldShowOtherSuggestionsButton && (
+                        <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)}
+                                disableRipple
+                                sx={{
+                                    p: 0, gap: '0.25rem', color: primary600,
 
-                                '& svg': {
-                                    transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
-                                }
-                            }}>
-                        <ArrowDropDown/>
-                        4 other suggestions available for this column. Expand all suggestions.
-                    </Button>
+                                    '& svg': {
+                                        transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
+                                    }
+                                }}>
+                            <ArrowDropDown/>
+                            {otherSuggestions.length} other suggestions available for this column. Expand all
+                            suggestions.
+                        </Button>
+                    )}
+
                 </Box>
 
 
                 {showOtherSuggestions && (
                     <Box display='flex' alignItems='start' flexDirection='column' mt='3rem' gap='3rem'>
-                        <SuggestionDetailUI/>
-                        <SuggestionDetailUI/>
-                        <SuggestionDetailUI/>
-                        <SuggestionDetailUI/>
+                        {otherSuggestions.map(([valueKey, suggestion],) => (
+                            <SuggestionDetailUI key={valueKey} row={suggestion.row}/>
+                        ))}
                     </Box>
                 )}
             </ModalHeightWrapper>
@@ -107,24 +146,28 @@ function StepTwo() {
                  sx={{background: baseWhite, zIndex: 9}} py='1rem' borderTop={`0.0625rem solid ${gray100}`}>
                 <Box gap='0.75rem' display='flex' alignItems='center'>
                     <Box gap='0.25rem' display='flex' alignItems='center'>
-                        <IconButton disabled sx={{
+                        <IconButton onClick={handlePrevious} sx={{
                             borderRadius: '0.5rem',
                             padding: '0.5rem',
                             border: `0.0625rem solid ${gray200}`,
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                        }}>
-                            <LeftIcon color={gray300}/>
+                        }}
+                                    disabled={currentKeyIndex === 0}
+                        >
+                            <LeftIcon color={currentKeyIndex === 0 ? gray300 : gray500}/>
                         </IconButton>
-                        <IconButton sx={{
+                        <IconButton onClick={handleNext} sx={{
                             borderRadius: '0.5rem',
                             padding: '0.5rem',
                             border: `0.0625rem solid ${gray300}`,
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                        }}>
-                            <RightIcon/>
+                        }} disabled={currentKeyIndex === columnsWithSuggestions.length - 1}>
+                            <RightIcon
+                                color={currentKeyIndex === columnsWithSuggestions.length - 1 ? gray300 : gray500}/>
                         </IconButton>
                     </Box>
-                    <Chip label='Displaying 1/3 suggestions' color='primary'/>
+                    <Chip label={`Displaying ${currentKeyIndex + 1}/${columnsWithSuggestions.length} suggestions`}
+                          color='primary'/>
                 </Box>
 
                 <Box gap='0.5rem' display='flex' alignItems='center'>

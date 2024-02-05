@@ -9,7 +9,7 @@ import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 import ErrorPage from "./components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, INTERLEX_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 import {CdeContext} from './CdeContext.ts';
-import {computeMappingFrequency, getSuggestionsAux} from "./services/suggestionsService.ts";
+import {computeMappingFrequency} from "./services/suggestionsService.ts";
 
 
 export const CdeContextProvider = ({
@@ -79,8 +79,8 @@ export const CdeContextProvider = ({
         return computeMappingFrequency(initialDatasetMapping, additionalDatasetMappings, headerMapping);
     }, [initialDatasetMapping, additionalDatasetMappings, headerMapping]);
 
-    const getSuggestions = (variableName: string) => {
-        return getSuggestionsAux(variableName, mappingFrequency);
+    const getSuggestions = () => {
+        return mappingFrequency
     };
 
 

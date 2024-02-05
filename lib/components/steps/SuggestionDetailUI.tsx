@@ -2,14 +2,28 @@ import {Box, Checkbox, Typography} from '@mui/material';
 import {ArrowIcon, CheckboxDefault, CheckboxSelected, GlobeIcon} from '../../icons/index.tsx';
 import CdeDetails from '../common/CdeDetails.tsx';
 import {vars} from '../../theme/variables.ts';
+import {useCdeContext} from "../../CdeContext.ts";
 
 const {
     gray900,
-    gray500,
     gray200
 } = vars;
 
-function SuggestionDetailUI() {
+type SuggestionDetailUIProps = {
+    row: string[];
+}
+
+function SuggestionDetailUI({row}: SuggestionDetailUIProps) {
+    const {
+        headerMapping,
+        datasetMappingHeader,
+    } = useCdeContext();
+    const preciseAbbreviation = row[headerMapping.preciseAbbreviationIndex];
+
+    const rowContent = datasetMappingHeader.slice(0, 8).map((header, index) => ({
+        heading: header,
+        text: row[index] || '-',
+    }));
 
     return (
         <Box gap='1.5rem' display='flex' alignItems='start'>
@@ -35,19 +49,19 @@ function SuggestionDetailUI() {
                             lineHeight: '142.857%',
                             color: gray900
                         }}>
-                            SmallSpeciesStrainTyp
+                            {preciseAbbreviation}
                         </Typography>
-                        <Typography sx={{
-                            fontSize: '0.875rem',
-                            fontWeight: 400,
-                            lineHeight: '142.857%',
-                            color: gray500
-                        }}>
-                            Strain of the mouse
-                        </Typography>
+                        {/*<Typography sx={{*/}
+                        {/*    fontSize: '0.875rem',*/}
+                        {/*    fontWeight: 400,*/}
+                        {/*    lineHeight: '142.857%',*/}
+                        {/*    color: gray500*/}
+                        {/*}}>*/}
+                        {/*    Strain of the mouse*/}
+                        {/*</Typography>*/}
                     </Box>
                 </Box>
-                <CdeDetails/>
+                <CdeDetails data={rowContent}/>
             </Box>
         </Box>
     );

@@ -1,4 +1,4 @@
-import {DatasetMapping, HeaderMapping, MappingFrequency, Suggestion} from "../models.ts";
+import {DatasetMapping, HeaderMapping, MappingFrequency} from "../models.ts";
 import {getPreciseAbbreviation, isRowMapped} from "../helpers/functions.ts";
 
 export const computeMappingFrequency = (
@@ -29,27 +29,4 @@ export const computeMappingFrequency = (
     });
 
     return mappingFrequency;
-};
-
-export const getSuggestionsAux = (
-    variableName: string,
-    mappingFrequency: MappingFrequency
-): Suggestion[] => {
-    const keySuggestions: Suggestion[] = [];
-    const frequencyMap = mappingFrequency[variableName];
-
-    if (frequencyMap) {
-        for (const [, { count, row }] of Object.entries(frequencyMap)) {
-            keySuggestions.push({
-                key: variableName,
-                value: row, // TODO: Transform this to CDE or CustomDictionaryField as needed.
-                score: count
-            });
-        }
-    }
-
-    // Sort suggestions for this key based on score, descending
-    keySuggestions.sort((a, b) => b.score - a.score);
-
-    return keySuggestions;
 };
