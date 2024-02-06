@@ -37,12 +37,12 @@ const tabsArr = [
     }
 ];
 
-const renderTabComponent = (step: number) => {
+const renderTabComponent = (step: number,  changeToNextTab: () => void) => {
     switch (step) {
         case 0:
             return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
         case 1:
-            return <StepTwo/>;
+            return <StepTwo changeToNextTab={changeToNextTab}/>;
         case 2:
             return <StepThree/>;
         // Add cases for other steps
@@ -79,6 +79,10 @@ function MappingStep() {
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+    };
+
+    const changeToNextTab = () => {
+        setValue((prevValue) => (prevValue + 1) % tabsArr.length);
     };
 
     return (
@@ -135,7 +139,7 @@ function MappingStep() {
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
-                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index)}</CustomTabPanel>
+                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
             ))}
         </Fragment>
     );

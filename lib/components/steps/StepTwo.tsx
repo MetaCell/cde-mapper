@@ -1,5 +1,5 @@
 import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
-import React, {useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {ArrowDropDown, LeftIcon, RightIcon} from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
@@ -17,31 +17,60 @@ const {
     primary600
 } = vars;
 
-function StepTwo() {
-    const [showOtherSuggestions, setShowOtherSuggestions] = React.useState(false);
-    const [currentKeyIndex, setCurrentKeyIndex] = useState(0);
+interface StepTwoProps {
+    changeToNextTab: () => void;
+}
+
+function StepTwo({changeToNextTab}: StepTwoProps) {
+    const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
+    const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
+
     const {
         getSuggestions,
     } = useCdeContext();
+
     const suggestionsMapping = getSuggestions();
 
-    const columnsWithSuggestions = React.useMemo(() => {
-        return Object.keys(suggestionsMapping).filter(key => suggestionsMapping[key].length > 0);
-    }, [suggestionsMapping]);
+    const [activeSuggestions, setActiveSuggestions] = useState<Set<string>>(
+        new Set<string>(Object.keys(suggestionsMapping)
+            .filter(key => suggestionsMapping[key].length > 0)));
 
-    const handleNext = React.useCallback(() => {
-        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % columnsWithSuggestions.length);
-    }, [columnsWithSuggestions.length]);
+    const handleNext = useCallback(() => {
+        const activeSuggestionsArray = Array.from(activeSuggestions);
+        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % activeSuggestionsArray.length);
+    }, [activeSuggestions]);
 
-    const handlePrevious = React.useCallback(() => {
-        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + columnsWithSuggestions.length) % columnsWithSuggestions.length);
-    }, [columnsWithSuggestions.length]);
+    const handlePrevious = useCallback(() => {
+        const activeSuggestionsArray = Array.from(activeSuggestions);
+        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + activeSuggestionsArray.length) % activeSuggestionsArray.length);
+    }, [activeSuggestions]);
 
-    if (columnsWithSuggestions.length === 0) {
-        // TODO: Handle no suggestions case
+    const completeSuggestion = useCallback(() => {
+        const activeSuggestionsArray = Array.from(activeSuggestions);
+        const currentColumn = activeSuggestionsArray[currentKeyIndex];
+        setActiveSuggestions((prevSuggestions) => {
+            const updatedSuggestions = new Set(prevSuggestions);
+            updatedSuggestions.delete(currentColumn);
+            return updatedSuggestions;
+        });
+
+        if (currentKeyIndex == activeSuggestionsArray.length - 1) {
+            setCurrentKeyIndex(0);
+        }
+
+    }, [activeSuggestions, currentKeyIndex]);
+
+    useEffect(() => {
+        if (activeSuggestions.size === 0) {
+            changeToNextTab();
+        }
+    }, [activeSuggestions, changeToNextTab]);
+
+    if (activeSuggestions.size === 0) {
         return <div>No suggestions available.</div>;
     }
 
+    const columnsWithSuggestions = Array.from(activeSuggestions);
     const column = columnsWithSuggestions[currentKeyIndex];
     const sortedSuggestions = suggestionsMapping[column];
 
@@ -171,7 +200,7 @@ function StepTwo() {
                 </Box>
 
                 <Box gap='0.5rem' display='flex' alignItems='center'>
-                    <Button variant='outlined'>Ignore suggestions</Button>
+                    <Button variant='outlined' onClick={completeSuggestion}>Ignore suggestions</Button>
                     <Button variant='contained'>Accept selected mapping</Button>
                 </Box>
             </Box>

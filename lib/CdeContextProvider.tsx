@@ -84,12 +84,12 @@ export const CdeContextProvider = ({
         return mappedAdditionalMappingData[0];
     }).filter(mapping => mapping !== null) as DatasetMapping[];
 
-    const mappingFrequency = useMemo(() => {
+    const suggestions = useMemo(() => {
         return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerMapping);
     }, [initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerMapping]);
 
     const getSuggestions = () => {
-        return mappingFrequency
+        return suggestions
     };
 
 
