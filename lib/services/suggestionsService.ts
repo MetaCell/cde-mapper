@@ -1,32 +1,69 @@
-import {DatasetMapping, HeaderMapping, MappingFrequency} from "../models.ts";
-import {getPreciseAbbreviation, isRowMapped} from "../helpers/functions.ts";
+import {DatasetMapping, Entity, EntityType, HeaderMapping, Suggestions} from "../models.ts";
+import {getEntityFromRow, getPreciseAbbreviation, isRowMapped} from "../helpers/functions.ts";
 
-export const computeMappingFrequency = (
+
+type SortingEntity = {
+    entity: Entity,
+    type: EntityType,
+    count: number,
+    index: number
+};
+
+interface IntermediateResults {
+    [variableName: string]: {
+        [preciseAbbrev: string]: SortingEntity
+    }
+}
+
+export const computeSuggestions = (
     mainDatasetMapping: DatasetMapping,
     additionalDatasetMappings: DatasetMapping[],
+    datasetMappingHeader: string[],
     headerMapping: HeaderMapping
-): MappingFrequency => {
-    const mappingFrequency: MappingFrequency = {};
+): Suggestions => {
+    // Intermediate object to store SortingEntities
+    const intermediateResults: IntermediateResults = {};
 
-    // Initialize mappingFrequency with keys from mainDatasetMapping
-    Object.keys(mainDatasetMapping).forEach(variableName => {
-        mappingFrequency[variableName] = {};
-    });
-
-    // Populate mappingFrequency based on additionalDatasetMappings
-    additionalDatasetMappings.forEach(datasetMapping => {
+    // Populate intermediateResults based on additionalDatasetMappings
+    additionalDatasetMappings.forEach((datasetMapping, index) => {
         Object.entries(datasetMapping).forEach(([variableName, row]) => {
-            if (mappingFrequency[variableName] !== undefined) { // Only consider keys present in mainDatasetMapping
-                const mappedTo = getPreciseAbbreviation(row, headerMapping);
+            if (mainDatasetMapping[variableName] !== undefined) { // Only consider keys present in mainDatasetMapping
                 if (isRowMapped(row, headerMapping)) {
-                    if (!mappingFrequency[variableName][mappedTo]) {
-                        mappingFrequency[variableName][mappedTo] = { count: 0, row: row };
+                    const entity = getEntityFromRow(row, datasetMappingHeader, headerMapping);
+                    const preciseAbbrev = getPreciseAbbreviation(row, headerMapping);
+
+                    if (!intermediateResults[variableName]) {
+                        intermediateResults[variableName] = {};
                     }
-                    mappingFrequency[variableName][mappedTo].count += 1;
+                    if (!intermediateResults[variableName][preciseAbbrev]) {
+                        intermediateResults[variableName][preciseAbbrev] = {
+                            entity,
+                            type: entity.type,
+                            count: 0,
+                            index
+                        };
+                    }
+                    intermediateResults[variableName][preciseAbbrev].count += 1;
                 }
             }
         });
     });
 
-    return mappingFrequency;
+    // Convert intermediateResults to final Suggestions format and sort
+    const suggestions: Suggestions = {};
+    Object.keys(intermediateResults).forEach(variableName => {
+        const entities = Object.values(intermediateResults[variableName]);
+        entities.sort((a, b) => {
+            if (a.type === b.type) {
+                if (a.count === b.count) {
+                    return a.index - b.index; // Prioritize suggestions from additionalDatasetMappings with lower index
+                }
+                return b.count - a.count; // Sort by count, higher first
+            }
+            return a.type === EntityType.CDE ? -1 : 1; // Prioritize 'cde' type
+        });
+        suggestions[variableName] = entities.map(item => item.entity);
+    });
+
+    return suggestions;
 };

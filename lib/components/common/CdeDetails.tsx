@@ -14,7 +14,7 @@ const {
 interface CdeDetailItem {
     heading: string;
     text: string;
-    link?: boolean;
+    link?: string;
 }
 
 interface CdeDetailsProps {
@@ -22,43 +22,8 @@ interface CdeDetailsProps {
     data?: CdeDetailItem[];
 }
 
-const DEFAULT_DATA: CdeDetailItem[] = [
-    {
-        heading: 'CDE Abbrev',
-        text: 'SmallSpeciesStrainTyp'
-    },
-    {
-        heading: 'VariableName',
-        text: 'Strain'
-    },
-    {
-        heading: 'Title',
-        text: 'Strain of the mouse'
-    },
-    {
-        heading: 'Description',
-        text: 'Strain of the mouse'
-    },
-    {
-        heading: 'Unit of measure',
-        text: '-'
-    },
-    {
-        heading: 'Data type',
-        text: 'Alphanumeric'
-    },
-    {
-        heading: 'Comments',
-        text: '-'
-    },
-    {
-        heading: 'InterLex ID',
-        text: 'CDE:0369382',
-        link: true
-    }
-]
 
-const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = DEFAULT_DATA}) => {
+const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = []}) => {
     return (
         <Box sx={{
             border: `0.0625rem solid ${gray200}`,
@@ -103,7 +68,14 @@ const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = DEFAUL
                                     gap: '0.25rem'
                                 }
                             }}>
-                                {item?.link ? <Link>{item.text}<LinkIcon/></Link> : item.text}
+                                {item?.link ? (
+                                    <Link href={item.link} target="_blank" rel="noopener noreferrer">
+                                        {item.text}
+                                        <LinkIcon/>
+                                    </Link>
+                                ) : (
+                                    item.text
+                                )}
                             </Typography>
 
                         </Grid>

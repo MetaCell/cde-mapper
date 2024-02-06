@@ -1,5 +1,5 @@
 import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {ArrowDropDown, LeftIcon, RightIcon} from '../../icons/index.tsx';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
@@ -25,25 +25,25 @@ function StepTwo() {
     } = useCdeContext();
     const suggestionsMapping = getSuggestions();
 
-    const columnsWithSuggestions = useMemo(() => {
-        return Object.keys(suggestionsMapping).filter(key => Object.keys(suggestionsMapping[key]).length > 0);
+    const columnsWithSuggestions = React.useMemo(() => {
+        return Object.keys(suggestionsMapping).filter(key => suggestionsMapping[key].length > 0);
     }, [suggestionsMapping]);
 
-    const handleNext = useCallback(() => {
+    const handleNext = React.useCallback(() => {
         setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % columnsWithSuggestions.length);
     }, [columnsWithSuggestions.length]);
 
-    const handlePrevious = useCallback(() => {
+    const handlePrevious = React.useCallback(() => {
         setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + columnsWithSuggestions.length) % columnsWithSuggestions.length);
     }, [columnsWithSuggestions.length]);
 
-    if (columnsWithSuggestions.length == 0) {
-        // TODO:
-        return
+    if (columnsWithSuggestions.length === 0) {
+        // TODO: Handle no suggestions case
+        return <div>No suggestions available.</div>;
     }
+
     const column = columnsWithSuggestions[currentKeyIndex];
-    const sortedSuggestions = Object.entries(suggestionsMapping[column])
-        .sort((a, b) => b[1].count - a[1].count);
+    const sortedSuggestions = suggestionsMapping[column];
 
     const shouldShowOtherSuggestionsButton = sortedSuggestions.length > MAX_SUGGESTIONS;
     const visibleSuggestions = shouldShowOtherSuggestionsButton ? sortedSuggestions.slice(0, MAX_SUGGESTIONS) : sortedSuggestions;
@@ -109,9 +109,9 @@ function StepTwo() {
                 </Box>
 
                 <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
-                    {visibleSuggestions.map(([valueKey, suggestion],) => {
+                    {visibleSuggestions.map((suggestion, index) => {
                         return (
-                            <SuggestionDetailUI key={valueKey} row={suggestion.row}/>
+                            <SuggestionDetailUI key={index} entity={suggestion}/>
                         );
                     })}
                     {shouldShowOtherSuggestionsButton && (
@@ -135,8 +135,8 @@ function StepTwo() {
 
                 {showOtherSuggestions && (
                     <Box display='flex' alignItems='start' flexDirection='column' mt='3rem' gap='3rem'>
-                        {otherSuggestions.map(([valueKey, suggestion],) => (
-                            <SuggestionDetailUI key={valueKey} row={suggestion.row}/>
+                        {otherSuggestions.map((suggestion, index) => (
+                            <SuggestionDetailUI key={index} entity={suggestion}/>
                         ))}
                     </Box>
                 )}

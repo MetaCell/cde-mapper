@@ -5,7 +5,6 @@ import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
-import {useCdeContext} from "../../CdeContext.ts";
 
 const {
     baseWhite,
@@ -76,15 +75,11 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, 
 
 
 function MappingStep() {
-    const {datasetMapping} = useCdeContext();
-
     const [value, setValue] = React.useState(0);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
-    console.log(datasetMapping)
 
     return (
         <Fragment>

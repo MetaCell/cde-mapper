@@ -2,28 +2,43 @@ import {Box, Checkbox, Typography} from '@mui/material';
 import {ArrowIcon, CheckboxDefault, CheckboxSelected, GlobeIcon} from '../../icons/index.tsx';
 import CdeDetails from '../common/CdeDetails.tsx';
 import {vars} from '../../theme/variables.ts';
-import {useCdeContext} from "../../CdeContext.ts";
+import {Entity} from "../../models.ts";
+import {getCleanUrl} from "../../helpers/functions.ts";
 
 const {
     gray900,
-    gray200
+    gray200,
+    gray500
 } = vars;
 
 type SuggestionDetailUIProps = {
-    row: string[];
+    entity: Entity;
 }
 
-function SuggestionDetailUI({row}: SuggestionDetailUIProps) {
-    const {
-        headerMapping,
-        datasetMappingHeader,
-    } = useCdeContext();
-    const preciseAbbreviation = row[headerMapping.preciseAbbreviationIndex];
 
-    const rowContent = datasetMappingHeader.slice(0, 8).map((header, index) => ({
-        heading: header,
-        text: row[index] || '-',
-    }));
+function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
+
+    // Deconstruct the fixed properties from row
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { variableName, preciseAbbrev, title, interlexId, type, ...otherProps } = entity;
+
+    // Get the first 4 non-empty dynamic attributes
+    const dynamicAttributes = Object.entries(otherProps)
+        .filter(([, value]) => value !== '')
+        .slice(0, 4)
+        .map(([key, value]) => ({
+            heading: key,
+            text: value,
+        }));
+
+    // Combine the fixed and dynamic attributes
+    const rowContent = [
+        { heading: 'Variable Name', text: variableName },
+        { heading: 'Precise Abbreviation', text: preciseAbbrev },
+        { heading: 'Title', text: title },
+        { heading: 'Interlex ID', text: interlexId, link: getCleanUrl(interlexId)},
+        ...dynamicAttributes,
+    ];
 
     return (
         <Box gap='1.5rem' display='flex' alignItems='start'>
@@ -49,16 +64,16 @@ function SuggestionDetailUI({row}: SuggestionDetailUIProps) {
                             lineHeight: '142.857%',
                             color: gray900
                         }}>
-                            {preciseAbbreviation}
+                            {preciseAbbrev}
                         </Typography>
-                        {/*<Typography sx={{*/}
-                        {/*    fontSize: '0.875rem',*/}
-                        {/*    fontWeight: 400,*/}
-                        {/*    lineHeight: '142.857%',*/}
-                        {/*    color: gray500*/}
-                        {/*}}>*/}
-                        {/*    Strain of the mouse*/}
-                        {/*</Typography>*/}
+                        <Typography sx={{
+                            fontSize: '0.875rem',
+                            fontWeight: 400,
+                            lineHeight: '142.857%',
+                            color: gray500
+                        }}>
+                            {title}
+                        </Typography>
                     </Box>
                 </Box>
                 <CdeDetails data={rowContent}/>
