@@ -37,13 +37,20 @@ const tabsArr = [
     }
 ];
 
-const renderTabComponent = (step: number,  changeToNextTab: () => void) => {
+enum TabsEnum {
+    Collection = 0,
+    Suggestions = 1,
+    Mapping = 2,
+}
+
+
+const renderTabComponent = (step: number, changeToNextTab: () => void) => {
     switch (step) {
-        case 0:
+        case TabsEnum.Collection:
             return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
-        case 1:
+        case TabsEnum.Suggestions:
             return <StepTwo changeToNextTab={changeToNextTab}/>;
-        case 2:
+        case TabsEnum.Mapping:
             return <StepThree/>;
         // Add cases for other steps
         default:
@@ -119,9 +126,10 @@ function MappingStep() {
                 </Tabs>
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
-                    {value === 1 ? (<Button variant='text'>
-                        Continue without suggestions
-                    </Button>) : value === 2 && (<>
+                    {value === TabsEnum.Suggestions ? (
+                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)}>
+                            Continue without suggestions
+                        </Button>) : value === TabsEnum.Mapping && (<>
                         <Typography sx={{
                             color: gray500,
                             fontSize: '0.75rem',
@@ -139,7 +147,8 @@ function MappingStep() {
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
-                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
+                <CustomTabPanel key={index} value={value}
+                                index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
             ))}
         </Fragment>
     );
