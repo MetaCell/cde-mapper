@@ -2,7 +2,7 @@
 
 import CdeModal from './components/CdeModal';
 import {InitParams} from "./models.ts";
-import {CdeContextProvider} from "./CdeContext.tsx";
+import {CdeContextProvider} from "./CdeContextProvider.tsx";
 import {createRoot} from "react-dom/client";
 
 export const init = (props: InitParams) => {
