@@ -1,6 +1,12 @@
 import {createContext, useContext} from "react";
-import {CDE, Collection, Config, CustomDictionaryField, DatasetMapping, HeaderMapping} from "./models.ts";
-import {ABBREVIATION_INDEX, INTERLEX_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
+import {
+    Collection,
+    Config,
+    DatasetMapping, Entity,
+    HeaderMapping,
+    Suggestions
+} from "./models.ts";
+import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 
 export const CdeContext = createContext<{
 
@@ -8,7 +14,8 @@ export const CdeContext = createContext<{
     datasetSample: string[][];
     datasetMapping: DatasetMapping;
     datasetMappingHeader: string[];
-    handleUpdateDatasetMappingRow: (key: string, newData: CDE | CustomDictionaryField) => void;
+    handleUpdateDatasetMappingRow: (key: string, newData: Entity) => void;
+    getSuggestions: () => Suggestions;
     headerMapping: HeaderMapping;
     collections: Collection[];
     config: Config;
@@ -30,10 +37,14 @@ export const CdeContext = createContext<{
     datasetMappingHeader: [],
     handleUpdateDatasetMappingRow: () => {
     },
+    getSuggestions: () => {
+        return {}
+    },
     headerMapping: {
         variableNameIndex: VARIABLE_NAME_INDEX,
         preciseAbbreviationIndex: ABBREVIATION_INDEX,
-        interlexIdIndex: INTERLEX_INDEX,
+        titleIndex: TITLE_INDEX,
+        interlexIdIndex: INTERLEX_ID_INDEX,
     },
     collections: [],
     config: {

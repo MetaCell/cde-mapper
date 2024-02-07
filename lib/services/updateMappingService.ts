@@ -1,10 +1,10 @@
-import {CDE, CustomDictionaryField, DatasetMapping} from "../models.ts";
+import {DatasetMapping, Entity} from "../models.ts";
 import React from "react";
 
 // Function to update a specific row in datasetMapping
 export const updateDatasetMappingRow = (
     key: string,
-    newData: CDE | CustomDictionaryField,
+    newData: Entity,
     datasetMapping: DatasetMapping,
     datasetMappingHeader: string[],
     setDatasetMapping: React.Dispatch<React.SetStateAction<DatasetMapping>>,
