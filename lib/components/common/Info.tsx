@@ -118,7 +118,7 @@ const Info = () => {
   const InfoContent = () => (
     <>
       <Box sx={styles.header}>
-        <IconButton onClick={handleClose} sx={{ p: 1, borderRadius: 2, ml: 'auto' }}>
+        <IconButton onClick={handleClose} sx={{ p: 1, borderRadius: 2, ml: 'auto' }} className="sidebar__close-btn">
           <CloseIcon />
         </IconButton>
         <Typography variant="h3">About CDE mapping</Typography>
@@ -188,7 +188,7 @@ const Info = () => {
   return (
     <>
       <Box sx={styles.backdrop} onClick={handleClose} />
-      <Box sx={styles.wrap}>
+      <Box sx={styles.wrap} className="about__info-sidebar">
         {InfoContent()}
       </Box>
     </>
