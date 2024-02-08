@@ -1,4 +1,4 @@
-import { Box, Button, Chip, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material"
 import ModalHeightWrapper from "../common/ModalHeightWrapper"
 import { ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, PairIcon, SearchIcon, SortIcon } from "../../icons";
 import React, { useState } from "react";
@@ -69,7 +69,6 @@ const styles = {
 
 const StepThree = () => {
   const [age, setAge] = React.useState('0');
-  const [togglePairingSuggestions, setTogglePairingSuggestions] = useState(true);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
@@ -346,37 +345,36 @@ const StepThree = () => {
                 </Box>
 
                 <Box width='100%' mt={1.5}>
-                  <Box onClick={() => setTogglePairingSuggestions(!togglePairingSuggestions)} mb={togglePairingSuggestions ? 3 : 0} display='inline-flex' alignItems='center' gap={1} sx={{ cursor: 'pointer', userSelect: 'none' }}>
-                    <PairIcon />
-                    <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
-                    <Tooltip
-                      title={
-                        <>
-                          <Typography sx={{
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              lineHeight: '142.857%',
-                              marginBottom: '0.25rem',
-                              color: '#fff',
-                          }}>This is a Tooltip</Typography>
-                          <Typography sx={{
-                              fontSize: '0.75rem',
-                              fontWeight: 400,
-                              lineHeight: '142.857%',
-                              color: '#fff',
-                          }}>
-                            Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
-                          </Typography>
-                        </>
-                      }
-                    >
-                      <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
-                    </Tooltip>
-                  </Box>
-
-                  {togglePairingSuggestions && (
-                    <>
-                      <Box pl='2.5625rem'>
+                  <Accordion>
+                    <AccordionSummary>
+                      <PairIcon />
+                      <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
+                      <Tooltip
+                        title={
+                          <>
+                            <Typography sx={{
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                lineHeight: '142.857%',
+                                marginBottom: '0.25rem',
+                                color: '#fff',
+                            }}>This is a Tooltip</Typography>
+                            <Typography sx={{
+                                fontSize: '0.75rem',
+                                fontWeight: 400,
+                                lineHeight: '142.857%',
+                                color: '#fff',
+                            }}>
+                              Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
+                            </Typography>
+                          </>
+                        }
+                      >
+                        <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
+                      </Tooltip>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                    <Box pl='2.5625rem'>
                         <Box sx={{
                           position: 'relative',
                           '&:before': {
@@ -585,9 +583,8 @@ const StepThree = () => {
                           <CdeDetails />
                         </Box>
                       </Box>
-                    </>
-                  )}
-
+                    </AccordionDetails>
+                  </Accordion>
                 </Box>
               </Box>
 
