@@ -28,7 +28,7 @@ const styles = {
 }
 
 const Header = () => {
-  const { handleClose, setInfoOpen, infoOpen, tutorialStepIndex, setTutorialStepIndex } = useCdeContext();
+  const { handleClose, setInfoOpen, infoOpen, tutorialStepIndex, setTutorialStepIndex, setRunTutorial } = useCdeContext();
 
   const handleInfoButtonClick = () => {
     setInfoOpen(true);
@@ -55,7 +55,7 @@ const Header = () => {
         </Box>
 
         <Box display='flex' gap={1}>
-          <IconButton sx={{borderRadius: '0.5rem'}}>
+          <IconButton sx={{borderRadius: '0.5rem'}} onClick={() => setRunTutorial(true)}>
             <MapTriFold />
           </IconButton>
           <Button onClick={handleInfoButtonClick} disableRipple variant="outlined" className={infoOpen ? '': 'about__info-btn'}>

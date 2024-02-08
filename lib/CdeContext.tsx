@@ -21,7 +21,9 @@ export const CdeContext = createContext<{
     infoOpen: boolean;
     setInfoOpen: (open: boolean) => void;
     tutorialStepIndex: number;
-    setTutorialStepIndex: (tutorialStepIndex: number) => void
+    setTutorialStepIndex: (tutorialStepIndex: number) => void;
+    runTutorial: boolean;
+    setRunTutorial: (runTutorial: boolean) => void;
 }>({
     labName: '',
     config: {
@@ -42,7 +44,9 @@ export const CdeContext = createContext<{
     infoOpen: false,
     setInfoOpen: () => {},
     tutorialStepIndex: 0,
-    setTutorialStepIndex: () => {}
+    setTutorialStepIndex: () => {},
+    runTutorial: false,
+    setRunTutorial: () => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);
@@ -55,7 +59,7 @@ export const CdeContextProvider = ({children, labName, callback, inputMappings, 
     const [isOpen, setIsOpen] = useState<boolean>(true)
     const [infoOpen, setInfoOpen] = useState<boolean>(false)
     const [tutorialStepIndex, setTutorialStepIndex] = useState<number>(0);
-
+    const [runTutorial, setRunTutorial] = useState<boolean>(false);
 
     const handleClose = () => {
         callback(null);
@@ -82,6 +86,8 @@ export const CdeContextProvider = ({children, labName, callback, inputMappings, 
         setInfoOpen,
         tutorialStepIndex,
         setTutorialStepIndex,
+        runTutorial,
+        setRunTutorial
     };
 
 

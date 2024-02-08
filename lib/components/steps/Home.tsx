@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Typography, Chip, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Button, Typography, Chip } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import { STEPS } from "../../models.ts";
 import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
@@ -8,6 +8,8 @@ import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps, Step } from 'react-joyride';
+import Checkbox from '../common/CheckBox.tsx';
+import { styleOptions } from '../common/tutorial.tsx';
 
 const { primary600, gray600, drodownDetailBg } = vars;
 
@@ -48,8 +50,6 @@ const Tooltip = ({
     skipProps,
     size
 }: TooltipProps) => {
-    console.log("step prop: ", step)
-    console.log("tooltip props: ", tooltipProps)
     return (
         <Box
             className="tooltip"
@@ -65,29 +65,18 @@ const Tooltip = ({
             }
             <Box className='tooltip-content' {...step.styles.tooltipContent}>
                 {step.content}
-                <FormControlLabel
-                    label="Don’t show on startup (accessible on the header)"
-                    control={<Checkbox />}
-                    sx={{
-                        marginTop: '2rem',
-                        '& .MuiCheckbox-root': {
-                            '& .MuiSvgIcon-root': {
-                                width: '1rem',
-                                height: '1rem',
-                                color: '#D6D8DB'
-                            }
-                        },
-                        '& .MuiFormControlLabel-label': {
-                            fontSize: '0.75rem',
-                            color: '#676C74',
-                            fontWeight: 400
-                        }
-                    }}
-                />
+                <Checkbox label='Don’t show on startup (accessible on the header)' sx={{
+                    mt: '2rem',
+                    '& .MuiTypography-root': {
+                        fontSize: '0.75rem',
+                        fontWeight: 400,
+                        color: '#676C74'
+                    }
+                }}/>
             </Box>
             <Box className='tooltip-footer' {...step.styles.tooltipFooter}>
                 <Typography variant='caption' sx={{ color: '#676C74' }}>{index + 1} of {size}</Typography>
-                {continuous && index !== 2 && (
+                {continuous && !step.spotlightClicks && (
                     <Box display="flex" gap={1}>
                         <Button id="back" {...skipProps} sx={{ border: `1px solid #D6D8DB`, '&:hover': { color: '#4F5359' } }}>
                             Skip tutorial
@@ -116,8 +105,9 @@ function Home() {
         setMapping,
         tutorialStepIndex,
         setTutorialStepIndex,
+        runTutorial,
+        setRunTutorial
     } = useCdeContext();
-    const [run, setRun] = React.useState<boolean>(true); // has to be false by default actually
     const [steps, setSteps] = React.useState<Step[]>([
         {
             target: '.stats-content',
@@ -147,24 +137,26 @@ function Home() {
             target: '.sidebar__close-btn',
             title: 'Click to close and continue',
             content: 'Click to close this info sidebar and continue with your mapping.',
-            placement: 'right'
+            placement: 'right',
+            // spotlightClicks: true
         },
         {
             target: '.mapping__start-btn',
             title: 'Ready to start mapping?',
-            content: 'Now that you’ve got all the information that you need, click this button to start mapping. All the information on this screen will be available throughout the process to help guide you.'
+            content: 'Now that you’ve got all the information that you need, click this button to start mapping. All the information on this screen will be available throughout the process to help guide you.',
+            spotlightClicks: true
         },
     ]);
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;
         if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
-            setRun(false);
+            setRunTutorial(false);
         } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
             const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
             setTutorialStepIndex(nextStepIndex);
         } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {
-            setRun(false);
+            setRunTutorial(false);
         }
     };
 
@@ -203,7 +195,7 @@ function Home() {
                 callback={handleJoyrideCallback}
                 continuous={true}
                 hideBackButton={true}
-                run={run}
+                run={runTutorial}
                 stepIndex={tutorialStepIndex}
                 steps={steps}
                 showProgress={false}
