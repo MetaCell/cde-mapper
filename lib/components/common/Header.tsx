@@ -1,42 +1,40 @@
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
-import { vars } from "../../theme/variables";
-import { CloseIcon, MapTriFold } from "../../icons";
+import {Box, Button, Divider, IconButton, Typography} from "@mui/material";
+import {vars} from "../../theme/variables";
+import {CloseIcon, MapTriFold} from "../../icons";
 import Info from "./Info";
-import { useCdeContext } from "../../CdeContext";
 
-const { baseWhite, gray100, gray700 } = vars
+const {baseWhite, gray100, gray700} = vars
 
 const styles = {
-  root: {
-    padding: '0.75rem 1.5rem',
-    gap: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    borderBottom: `0.0625rem solid ${gray100}`,
-    background: baseWhite,
-    position: 'sticky',
-    zIndex: 9,
-    top: 0,
+    root: {
+        padding: '0.75rem 1.5rem',
+        gap: '1.5rem',
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: `0.0625rem solid ${gray100}`,
+        background: baseWhite,
+        position: 'sticky',
+        zIndex: 9,
+        top: 0,
 
-    '& .MuiTypography-root': {
-      fontSize: '0.875rem',
-      fontWeight: 600,
-      lineHeight: '142.857%',
-      color: gray700
+        '& .MuiTypography-root': {
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            lineHeight: '142.857%',
+            color: gray700
+        }
     }
-  }
 }
 
-const Header = () => {
-  const { handleClose, setInfoOpen, infoOpen, step } = useCdeContext();
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void }) => {
+    const {onClose, isInfoOpen, setIsInfoOpen, step} = props
 
-  return (
-    <>
-      <Box sx={styles.root}>
-        <Box display='flex' alignItems='center' flex={1}>
-          <IconButton disableRipple onClick={handleClose} sx={{
-            borderRadius: '0.5rem',
-
+    return (
+        <>
+            <Box sx={styles.root}>
+                <Box display='flex' alignItems='center' flex={1}>
+                    <IconButton disableRipple onClick={onClose} sx={{
+                        borderRadius: '0.5rem',
             '&:hover': {
               background: gray100
             }
@@ -49,19 +47,19 @@ const Header = () => {
           </Typography>
         </Box>
 
-        <Box display='flex' gap={1}>
-          <IconButton sx={{borderRadius: '0.5rem'}}>
-            <MapTriFold />
-          </IconButton>
-          <Button onClick={() => setInfoOpen(true)} disableRipple variant="outlined">
-            Info
-          </Button>
-        </Box>
-      </Box>
+                <Box display='flex' gap={1}>
+                    <IconButton sx={{borderRadius: '0.5rem'}}>
+                        <MapTriFold/>
+                    </IconButton>
+                    <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
+                        Info
+                    </Button>
+                </Box>
+            </Box>
 
-      {infoOpen && <Info />}
-    </>
-  )
- };
+            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen}/>}
+        </>
+    )
+};
 
 export default Header;

@@ -1,27 +1,27 @@
-import { FormControlLabel } from "@mui/material";
+import {FormControlLabel, SxProps, Theme} from "@mui/material";
 import React from "react"
-import { Checkbox as MuiCheckbox } from '@mui/material';
-import { CheckboxDefault, CheckboxSelected } from "../../icons";
+import {Checkbox as MuiCheckbox} from '@mui/material';
+import {CheckboxDefault, CheckboxSelected} from "../../icons";
 
 interface ICheckbox {
-  label: string;
-  sx?: any
+    label: string;
+    sx?: SxProps<Theme>
 }
 
-const Checkbox: React.FC<ICheckbox> = ({ label = '', sx = {} }) => {
-  return (
-    <FormControlLabel
-      sx={sx}
-      control={
-        <MuiCheckbox
-          disableRipple
-          icon={<CheckboxDefault />}
-          checkedIcon={<CheckboxSelected />}
+const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}}) => {
+    return (
+        <FormControlLabel
+            sx={sx}
+            control={
+                <MuiCheckbox
+                    disableRipple
+                    icon={<CheckboxDefault/>}
+                    checkedIcon={<CheckboxSelected/>}
+                />
+            }
+            label={label}
         />
-      }
-      label={label}
-    />
-  )
+    )
 }
 
 export default Checkbox;
