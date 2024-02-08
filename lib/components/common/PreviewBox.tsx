@@ -8,7 +8,7 @@ import { StyledTable } from "./StyledTable";
 
 
 const PreviewBox = () => {
-    const { step } = useCdeContext();
+    const { step, datasetSample } = useCdeContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     return (
@@ -155,7 +155,7 @@ const PreviewBox = () => {
                             }}>No mapping yet</Typography>
                         </Box>
                     </Box>
-                    <StyledTable tableCellMinWidth='10rem' /> 
+                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem' /> 
                 </Box>
             )}
             {

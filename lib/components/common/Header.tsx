@@ -26,7 +26,7 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void }) => {
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number }) => {
     const {onClose, isInfoOpen, setIsInfoOpen, step} = props
 
     return (
@@ -48,9 +48,11 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
         </Box>
 
                 <Box display='flex' gap={1}>
-                    <IconButton sx={{borderRadius: '0.5rem'}}>
+                    {
+                        step!==-1 && <IconButton sx={{borderRadius: '0.5rem'}}>
                         <MapTriFold/>
                     </IconButton>
+                    }
                     <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
                         Info
                     </Button>

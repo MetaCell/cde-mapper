@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Typography, Button, Stack, Tooltip, IconButton, Divider } from '@mui/material';
-import { ModalLayout } from "../layout/ModalLayout.tsx";
 import { vars } from '../../theme/variables.ts';
 import { PlusIcon } from '../../icons/index.tsx';
 import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
@@ -22,7 +21,7 @@ function TemplateStep() {
     const mockCDE = [
         {
             "id": "5304",
-            // "group": 'Origins',
+            "group": 'Origins',
             "label": "GUID",
             "content": [
                 {
@@ -41,7 +40,7 @@ function TemplateStep() {
         },
         {
             "id": "32845",
-            // "group": 'Origins',
+            "group": 'Origins',
             "label": "SmallSpeciesStrainTyp",
             "content": [
                 {
@@ -60,7 +59,7 @@ function TemplateStep() {
         },
         {
             "id": "47428",
-            // "group": 'Origins',
+            "group": 'Origins',
             "label": "StudySpeciesTyp",
             "content": [
                 {
@@ -79,7 +78,7 @@ function TemplateStep() {
         },
         {
             "id": "12822",
-            // "group": 'Origins',
+            "group": 'Origins',
             "label": "Weight",
             "content": [
                 {
@@ -98,7 +97,7 @@ function TemplateStep() {
         },
         {
             "id": "1798",
-            // "group": 'Origins',
+            "group": 'Origins',
             "label": "AgeVal",
             "content": [
                 {
@@ -118,7 +117,7 @@ function TemplateStep() {
     ];
 
     return (
-        <ModalLayout>
+        <Box>
             <ModalHeightWrapper height="15rem">
                 <Box p={1.5} display="flex" flexDirection="column" gap={6}>
                     <Stack>
@@ -134,12 +133,12 @@ function TemplateStep() {
                             dropdowns.map((dropdownIndex) => (
                                 <Box key={dropdownIndex}>
                                     <CustomEntitiesDropdown
+                                        placeholder="Choose CDE or Data Dictionary fields..."
                                         options={{
-                                            placeholder: "Choose CDE or Data Dictionary fields...",
                                             searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                                             noResultReason: "We couldn’t find any record with this in the database.",
                                             onSearch: () => mockCDE,
-                                            value: "",
+                                            value: mockCDE[1],
                                         }}
                                     />
                                     <Box width='100%' mt={1.5}>
@@ -282,7 +281,7 @@ function TemplateStep() {
                 </Box>
             </ModalHeightWrapper>
             <PreviewBox />
-        </ModalLayout>
+        </Box>
     );
 }
 

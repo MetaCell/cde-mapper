@@ -1,7 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material"
 import ModalHeightWrapper from "../common/ModalHeightWrapper"
 import { ArrowIcon, BulletIcon, CheckIcon, CrossIcon, FilterIcon, GlobeIcon, InfoIcon, PairIcon, SearchIcon, SortIcon } from "../../icons";
-import React, { useState } from "react";
+import React from "react";
 import CustomEntitiesDropdown from "../common/CustomMappingDropdown";
 import CdeDetails from "../common/CdeDetails";
 import Filters from "../common/Filters";
@@ -90,7 +90,7 @@ const StepThree = () => {
   const mockCDE = [
     {
       "id": "5304",
-      // "group": 'Origins',
+      "group": 'Origins',
       "label": "GUID",
       "content": [
         {
@@ -109,7 +109,7 @@ const StepThree = () => {
     },
     {
       "id": "32845",
-      // "group": 'Origins',
+      "group": 'Origins',
       "label": "SmallSpeciesStrainTyp",
       "content": [
         {
@@ -128,7 +128,7 @@ const StepThree = () => {
     },
     {
       "id": "47428",
-      // "group": 'Origins',
+      "group": 'Origins',
       "label": "StudySpeciesTyp",
       "content": [
         {
@@ -147,7 +147,7 @@ const StepThree = () => {
     },
     {
       "id": "12822",
-      // "group": 'Origins',
+      "group": 'Origins',
       "label": "Weight",
       "content": [
         {
@@ -166,7 +166,7 @@ const StepThree = () => {
     },
     {
       "id": "1798",
-      // "group": 'Origins',
+      "group": 'Origins',
       "label": "AgeVal",
       "content": [
         {
@@ -247,12 +247,11 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
-                    placeholder: "Choose CDE or Data Dictionary fields...",
+                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options={{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
-                    value: mockCDE[1] ?? "",
+                    value: mockCDE[1],
                   }}/>
                 </Box>  
               </Box>
@@ -276,8 +275,7 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
-                    placeholder: "Choose CDE or Data Dictionary fields...",
+                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options={{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
@@ -305,8 +303,7 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
-                    placeholder: "Choose CDE or Data Dictionary fields...",
+                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options= {{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
@@ -335,8 +332,7 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
-                    placeholder: "Choose CDE or Data Dictionary fields...",
+                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options={{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
