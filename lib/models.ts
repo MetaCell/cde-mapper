@@ -1,21 +1,28 @@
-export interface CDE {
-    VariableName: string;
-    PreciseCDEAbbrev: string;
-    PreciseTBICDETitle: string;
-    UnitOfMeasure: string;
-    Description: string;
-    DataType: string;
-    Comments: string;
-    MultipleValue: string;
-    PermittedValues: string;
-    MinimumValue: string;
-    MaximumValue: string;
-    InterLexID: string;
+export interface InitParams {
+    // First row should be the header.
+    datasetMapping?: string[][];
+    // List of files in the same format as the above.
+    // The content will be used in the suggestions algorithm, order in the list may be used to break ties.
+    additionalDatasetMappings?: string[][][];
+    // First row should be the headers
+    datasetSample: string[][];
+    headerMapping?: HeaderMapping;
+    collections: Collection[];
+    config: Config;
+    name: string
+    callback: (cdeFileMapping: DatasetMapping) => void;
 }
 
-export interface Repository {
+export interface HeaderMapping {
+    variableNameIndex: number;
+    preciseAbbreviationIndex: number;
+    titleIndex: number;
+    interlexIdIndex: number;
+}
+
+export interface Collection {
     name: string;
-    fetch: (query: string) => Promise<CDE[]>;
+    fetch: (query: string) => Promise<Entity[]>;
 }
 
 export interface Config {
@@ -23,46 +30,33 @@ export interface Config {
     width: string; // in %
 }
 
-export interface InitParams {
-    inputMappings: InputMapping[][];
-    datasetSample: File;
-    callback: (cdeFileMapping: File | null) => void;
-    repositories: Repository[];
-    config: Config;
-    labName: string
-}
+// Internal
 
-
-export interface InputMapping {
+export interface Entity {
     variableName: string;
-    abbreviation: string;
-    interlexID: string;
+    preciseAbbrev: string;
+    title: string;
+    interlexId: string;
+    type: EntityType;
+
     [key: string]: string;
 }
 
-// Internal
-
-export enum CDEType {
+export enum EntityType {
     CDE = 'CDE',
     CustomDataDictionary = 'CustomDataDictionary'
 }
 
-export enum CDEStatus {
-    Mapped = 'mapped',
-    Unmapped = 'unmapped'
-}
-export interface DatasetCDEEntry {
-    type: CDEType;
-    status: CDEStatus;
-    // Include other optional string attributes as needed
-    [key: string]: string;
+export interface Suggestions {
+    [column: string]: Entity[]
 }
 
-export interface DatasetCDEMapping {
-    [variableName: string]: DatasetCDEEntry;// Key is the column name from the dataset
+export interface DatasetMapping {
+    [variableName: string]: string[];
 }
 
 export enum STEPS {
     HOME,
-    REPOSITORY
+    COLLECTION,
 }
+

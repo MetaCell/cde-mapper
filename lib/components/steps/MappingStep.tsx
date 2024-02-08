@@ -1,13 +1,10 @@
-import { Box, Button, Tab, Tabs, Tooltip, Typography, Divider } from '@mui/material';
-import { ModalLayout } from "../layout/ModalLayout.tsx";
-import { useCdeContext } from "../../CdeContext.tsx";
-import React from 'react';
-import PropTypes from 'prop-types';
+import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
+import React, {Fragment} from 'react';
 import StepOne from './StepOne.tsx';
 import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { vars } from '../../theme/variables.ts';
+import {vars} from '../../theme/variables.ts';
 
 const {
     baseWhite,
@@ -40,56 +37,63 @@ const tabsArr = [
     }
 ];
 
-const renderTabComponent = (step: number) => {
-  switch (step) {
-      case 0:
-          return <ModalHeightWrapper height="11.5rem"><StepOne /></ModalHeightWrapper>;
-      case 1:
-          return <StepTwo />;
-      case 2:
-          return <StepThree />;
-      // Add cases for other steps
-      default:
-          return <div>Unknown step</div>;
-  }
-};
-
-function CustomTabPanel(props: { [x: string]: any; children: any; value: any; index: any; }) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Box
-    height={1}
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && children}
-    </Box>
-  );
+enum TabsEnum {
+    Collection = 0,
+    Suggestions = 1,
+    Mapping = 2,
 }
 
-CustomTabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
+
+const renderTabComponent = (step: number, changeToNextTab: () => void) => {
+    switch (step) {
+        case TabsEnum.Collection:
+            return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
+        case TabsEnum.Suggestions:
+            return <StepTwo changeToNextTab={changeToNextTab}/>;
+        case TabsEnum.Mapping:
+            return <StepThree/>;
+        // Add cases for other steps
+        default:
+            return <div>Unknown step</div>;
+    }
 };
 
-function MappingStep() {
-    const { mapping } = useCdeContext();
+interface CustomTabPanelProps extends BoxProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+}
 
+
+const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, ...other}) => {
+    return (
+        <Box
+            height={1}
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && children}
+        </Box>
+    );
+};
+
+
+function MappingStep() {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
-    console.log(mapping)
+    const changeToNextTab = () => {
+        setValue((prevValue) => (prevValue + 1) % tabsArr.length);
+    };
 
     return (
-        <ModalLayout>
+        <Fragment>
             <Box sx={{
                 borderBottom: `0.0625rem solid ${gray100}`,
                 padding: '0 1.5rem',
@@ -121,30 +125,32 @@ function MappingStep() {
                     ))}
                 </Tabs>
 
-                 <Box display='flex' gap='0.625rem' alignItems='center'>
-                    { value === 1 ? ( <Button variant='text'>
-                        Continue without suggestions
-                    </Button> ) : value === 2 && (<>
-                    <Typography sx={{
-                        color: gray500,
-                        fontSize: '0.75rem',
-                        fontWeight: 500,
-                        lineHeight: '150%',
-                    }}>
-                        37/120 column headers still unmapped
-                    </Typography>
+                <Box display='flex' gap='0.625rem' alignItems='center'>
+                    {value === TabsEnum.Suggestions ? (
+                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)}>
+                            Continue without suggestions
+                        </Button>) : value === TabsEnum.Mapping && (<>
+                        <Typography sx={{
+                            color: gray500,
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            lineHeight: '150%',
+                        }}>
+                            37/120 column headers still unmapped
+                        </Typography>
 
-                    <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
+                        <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
 
-                    <Button variant='contained'>
-                        Save mapping
-                    </Button></>)}
+                        <Button variant='contained'>
+                            Save mapping
+                        </Button></>)}
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
-                <CustomTabPanel key={index} value={value} index={index}>{renderTabComponent(index)}</CustomTabPanel>
+                <CustomTabPanel key={index} value={value}
+                                index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
             ))}
-        </ModalLayout>
+        </Fragment>
     );
 }
 

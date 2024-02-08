@@ -5,36 +5,19 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { vars } from '../../theme/variables';
+import Tooltip from '@mui/material/Tooltip';
+import {vars} from '../../theme/variables';
 
-const { gray50, gray100, gray200, baseWhite } = vars;
+const {gray50, gray100, gray200, baseWhite} = vars;
 
-function createData(
-    subject: string,
-    species: string,
-    strain: string,
-    sex: string,
-    age: string,
-    groups: string
-) {
-    return { subject, species, strain, sex, age, groups };
-}
 
-const columns = ['Subject', 'Species', 'Strain', 'Sex', 'Age', 'Groups']
-
-const rows = [
-    createData('sub1', 'Mouse', 'C57BL167', 'Male', '6 weeks', 'sharing'),
-    createData('sub1', 'Mouse', 'C57BL167', 'Male', '6 weeks', 'sharing'),
-    createData('sub7', 'Mouse', 'C57BL167', 'Female', '6 weeks', 'sharing'),
-    createData('sub7', 'Mouse', 'C57BL167', 'Female', '6 weeks', 'sharing'),
-    createData('sub2', 'Mouse', 'C57BL167', 'Male', '6 weeks', 'sharing'),
-];
-
-export const StyledTable = () => {
+export const StyledTable = (props: { sample: string[][] }) => {
+    const columns = props.sample[0]
+    const rows = props.sample.slice(1, 6)
 
     return (
-        <TableContainer 
-            component={Paper} 
+        <TableContainer
+            component={Paper}
             elevation={0}
             sx={{
                 maxWidth: 650,
@@ -69,38 +52,40 @@ export const StyledTable = () => {
             >
                 <TableHead sx={{
                     '& .MuiTableCell-root': {
-                        fontSize: '0.75rem'
+                        fontSize: '0.75rem',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '7.5rem'
                     }
                 }}>
                     <TableRow>
                         {
-                            columns.map(column => (
-                                <TableCell
-                                    key={column}
-                                    align="left"
-                                    sx={{
-                                        backgroundColor: gray50
-                                    }}
-                                >
-                                    {column}
-                                </TableCell>
+                            columns.map((column, columnIndex) => (
+                                <Tooltip key={columnIndex} title={column} placement='top'>
+                                    <TableCell
+                                        align="left"
+                                        sx={{
+                                            backgroundColor: gray50
+                                        }}
+                                    >
+                                        {column}
+                                    </TableCell>
+                                </Tooltip>
                             ))
                         }
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row, index) => (
+                    {rows.map((row, rowIndex) => (
                         <TableRow
-                            key={index}
+                            key={rowIndex}
                         >
-                            <TableCell component="th" scope="row">
-                                {row.subject}
-                            </TableCell>
-                            <TableCell align="left">{row.species}</TableCell>
-                            <TableCell align="left">{row.strain}</TableCell>
-                            <TableCell align="left">{row.sex}</TableCell>
-                            <TableCell align="left">{row.age}</TableCell>
-                            <TableCell align="left">{row.groups}</TableCell>
+                            {
+                                row.map((cell, cellIndex) => (
+                                    <TableCell key={cellIndex} align="left">{cell}</TableCell>
+                                ))
+                            }
                         </TableRow>
                     ))}
                 </TableBody>

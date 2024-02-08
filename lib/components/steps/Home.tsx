@@ -2,16 +2,14 @@ import React from 'react';
 import { Box, Button, Typography, Chip } from '@mui/material';
 import { useCdeContext } from "../../CdeContext.tsx";
 import { STEPS } from "../../models.ts";
-import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
-import { ModalLayout } from "../layout/ModalLayout.tsx";
+// import { validateInputMappings, processInputMappings } from '../../services/mappingService.ts';
 import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
-import { vars } from '../../theme/variables.ts';
 import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps, Step } from 'react-joyride';
 import Checkbox from '../common/CheckBox.tsx';
-import { styleOptions } from '../common/tutorial.tsx';
+import {vars} from '../../theme/variables.ts';
 
-const { primary600, gray600, drodownDetailBg } = vars;
+const {primary600, gray600, drodownDetailBg} = vars;
 
 const buttonBase = {
     backgroundColor: 'transparent',
@@ -99,14 +97,10 @@ const Tooltip = ({
 function Home() {
     const {
         setStep,
-        inputMappings,
-        setLoadingMessage,
-        setErrorMessage,
-        setMapping,
-        tutorialStepIndex,
-        setTutorialStepIndex,
+        datasetSample,
         runTutorial,
-        setRunTutorial
+        setRunTutorial,
+        setTutorialStepIndex
     } = useCdeContext();
     const [steps, setSteps] = React.useState<Step[]>([
         {
@@ -160,187 +154,59 @@ function Home() {
         }
     };
 
-    const handleStartMapping = async () => {
-        if (inputMappings.length == 0) {
-            setErrorMessage('Mapping file not found')
-            return
-        }
-
-        setLoadingMessage('Validating and processing file...');
-
-        try {
-            const isValid = validateInputMappings(inputMappings);
-            if (isValid) {
-                const mapping = processInputMappings(inputMappings);
-                setMapping(mapping);
-                setStep(STEPS.REPOSITORY);
-                console.log(mapping)
-            } else {
-                setErrorMessage('Invalid CSV file format.');
-            }
-        } catch (error) {
-            if (error instanceof Error) {
-                setErrorMessage(error.message);
-            } else {
-                setErrorMessage('An unknown error occurred');
-            }
-        }
-
-        setLoadingMessage(null);
-    };
 
     return (
-        <ModalLayout>
-            <Joyride
-                callback={handleJoyrideCallback}
-                continuous={true}
-                hideBackButton={true}
-                run={runTutorial}
-                stepIndex={tutorialStepIndex}
-                steps={steps}
-                showProgress={false}
-                showSkipButton={true}
-                tooltipComponent={Tooltip}
-                styles={{
-                    options: {
-                        width: 350,
-                        arrowColor: '#fff',
-                        backgroundColor: '#fff',
-                        primaryColor: '#19418F',
-                        zIndex: 10000,
-                    },
-                    spotlight: {
-                        borderRadius: '0.5rem'
-                    },
-                    beaconOuter: {
-                        filter: 'none',
-                        willChange: 'unset'
-                    },
-                    tooltip: {
-                        padding: 0,
-                        borderRadius: '0.25rem'
-                    },
-                    tooltipTitle: {
-                        color: '#070808',
-                        fontSize: '14px',
-                        padding: '24px 24px 12px 24px',
-                        fontWeight: 600,
-                    },
-                    tooltipContent: {
-                        fontSize: '14px',
-                        padding: '0 24px 12px 24px',
-                        color: '#4F5359',
-                    },
-                    tooltipContainer: {
-                        textAlign: 'left',
-                        lineHeight: '20px',
-                    },
-                    tooltipFooter: {
-                        justifyContent: 'space-between',
-                        marginTop: 0,
-                        padding: '12px 24px 12px 24px',
-                        borderTop: `1px solid #ecedee`
-                    },
-                    buttonNext: {
-                        ...buttonBase,
-                        backgroundColor: '#19418F',
-                        color: '#fff',
-                    },
-                    buttonBack: {
-                        ...buttonBase,
-                        color: '#676C74',
-                        border: '1px solid #D6D8DB',
-                        background: '#fff',
-                    },
-                    buttonClose: {
-                        ...buttonBase,
-                        height: 14,
-                        padding: 0,
-                        paddingRight: '24px',
-                        paddingTop: '24px',
-                        position: 'absolute' as const,
-                        right: 0,
-                        top: 0,
-                        width: 14,
-                        boxShadow: 'none',
-                        border: 'none',
-                        minWidth: 'auto',
-                    },
-                    buttonSkip: {
-                        ...buttonBase,
-                        color: '#676C74',
-                        border: '1px solid #D6D8DB',
-                        background: '#fff',
-                    },
-                }}
-                locale={{
-                    skip: 'Skip tutorial',
-                    next: 'Next',
-                }}
-                floaterProps={{
-                    disableAnimation: true,
-                    styles: {
-                        floater: {
-                            filter: 'none',
-                        },
-                        wrapperPosition: {
-                            willChange: 'unset',
-                        },
-                    }
-                }}
-            />
-            <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
-                background: drodownDetailBg
+        <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
+            background: drodownDetailBg
+        }}>
+            <Typography sx={{marginBottom: '0.5rem'}} variant='h3'>
+                Create mapping(s) with selected dataset?
+            </Typography>
+            <Typography variant='body2' sx={{
+                maxWidth: '31.25rem',
+                textAlign: 'center',
             }}>
-                <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
-                    Create mapping(s) with selected dataset?
-                </Typography>
-                <Typography variant='body2' sx={{
-                    maxWidth: '31.25rem',
-                    textAlign: 'center',
-                }}>
-                    You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
-                </Typography>
-                <Box my={6}>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" className="stats-content" mb={4} width={1}>
-                        <Box
-                            display="flex"
-                            alignItems="center"
-                            sx={{
-                                borderLeft: `0.125rem solid ${primary600}`,
-                                '& .MuiTypography-h6': {
-                                    fontSize: '1.125rem',
-                                    color: primary600,
-                                    lineHeight: '1.75rem',
-                                    marginLeft: '0.75rem',
-                                    marginRight: '0.5rem'
-                                },
-                                '& .MuiTypography-body2': {
-                                    color: gray600,
-                                    lineHeight: '1.25rem',
-                                    fontSize: '0.875rem'
-                                }
-                            }}
-                        >
-                            <Typography variant="h6">124</Typography>
-                            <Typography variant="body2">total number of column headers</Typography>
-                        </Box>
-                        <Box display="flex" alignItems="center" gap={1}>
-                            <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
-                            <Chip size="small" label="83 unmapped, 13 suggestions available" color="default" icon={<CircleChipDefault />} />
-                        </Box>
+                You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
+            </Typography>
+            <Box my={6}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} width={1}>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{
+                            borderLeft: `0.125rem solid ${primary600}`,
+                            '& .MuiTypography-h6': {
+                                fontSize: '1.125rem',
+                                color: primary600,
+                                lineHeight: '1.75rem',
+                                marginLeft: '0.75rem',
+                                marginRight: '0.5rem'
+                            },
+                            '& .MuiTypography-body2': {
+                                color: gray600,
+                                lineHeight: '1.25rem',
+                                fontSize: '0.875rem'
+                            }
+                        }}
+                    >
+                        <Typography variant="h6">124</Typography>
+                        <Typography variant="body2">total number of column headers</Typography>
                     </Box>
-                    <Box className='dataset-table'>
-                        <StyledTable />
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess/>}/>
+                        <Chip size="small" label="83 unmapped, 13 suggestions available" color="default"
+                              icon={<CircleChipDefault/>}/>
                     </Box>
                 </Box>
-
-                <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
-                    <Button variant='contained' onClick={handleStartMapping} className='mapping__start-btn'>Start mapping</Button>
-                    <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs instead </Button>
-                </Box>
+                <StyledTable sample={datasetSample}/>
             </Box>
-        </ModalLayout>
+
+            <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
+                <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)}>Start mapping</Button>
+                <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
+                    instead </Button>
+            </Box>
+        </Box>
     );
 }
 
