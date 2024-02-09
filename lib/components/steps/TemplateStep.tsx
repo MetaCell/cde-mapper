@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, Typography, Button, Stack, Tooltip, IconButton, Divider } from '@mui/material';
+import React, { Fragment } from 'react';
+import { Box, Typography, Button, Stack, Tooltip, IconButton, Divider, 
+    Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { vars } from '../../theme/variables.ts';
 import { PlusIcon } from '../../icons/index.tsx';
 import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
@@ -11,7 +12,6 @@ const { gray100, gray500, gray600 } = vars
 
 function TemplateStep() {
     const [dropdowns, setDropdowns] = React.useState([1]);
-    const [togglePairingSuggestions, setTogglePairingSuggestions] = React.useState(true);
 
     const addAnotherField = () => {
         setDropdowns(prevDropdowns => {
@@ -131,7 +131,7 @@ function TemplateStep() {
                         </Box>
                         {
                             dropdowns.map((dropdownIndex) => (
-                                <Box key={dropdownIndex}>
+                                <Fragment key={dropdownIndex}>
                                     <CustomEntitiesDropdown
                                         placeholder="Choose CDE or Data Dictionary fields..."
                                         options={{
@@ -142,36 +142,35 @@ function TemplateStep() {
                                         }}
                                     />
                                     <Box width='100%' mt={1.5}>
-                                        <Box onClick={() => setTogglePairingSuggestions(!togglePairingSuggestions)} mb={togglePairingSuggestions ? 3 : 0} display='inline-flex' alignItems='center' gap={1} sx={{ cursor: 'pointer', userSelect: 'none' }}>
-                                            <PairIcon />
-                                            <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
-                                            <Tooltip
-                                                title={
-                                                    <>
-                                                        <Typography sx={{
-                                                            fontSize: '0.75rem',
-                                                            fontWeight: 600,
-                                                            lineHeight: '142.857%',
-                                                            marginBottom: '0.25rem',
-                                                            color: '#fff',
-                                                        }}>This is a Tooltip</Typography>
-                                                        <Typography sx={{
-                                                            fontSize: '0.75rem',
-                                                            fontWeight: 400,
-                                                            lineHeight: '142.857%',
-                                                            color: '#fff',
-                                                        }}>
-                                                            Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
-                                                        </Typography>
-                                                    </>
-                                                }
-                                            >
-                                                <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
-                                            </Tooltip>
-                                        </Box>
-
-                                        {togglePairingSuggestions && (
-                                            <>
+                                        <Accordion>
+                                            <AccordionSummary>
+                                                <PairIcon />
+                                                <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
+                                                <Tooltip
+                                                    title={
+                                                        <>
+                                                            <Typography sx={{
+                                                                fontSize: '0.75rem',
+                                                                fontWeight: 600,
+                                                                lineHeight: '142.857%',
+                                                                marginBottom: '0.25rem',
+                                                                color: '#fff',
+                                                            }}>This is a Tooltip</Typography>
+                                                            <Typography sx={{
+                                                                fontSize: '0.75rem',
+                                                                fontWeight: 400,
+                                                                lineHeight: '142.857%',
+                                                                color: '#fff',
+                                                            }}>
+                                                                Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
+                                                            </Typography>
+                                                        </>
+                                                    }
+                                                >
+                                                    <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
+                                                </Tooltip>
+                                            </AccordionSummary>
+                                            <AccordionDetails>
                                                 <Box pl='2.5625rem'>
                                                     <Box sx={{
                                                         position: 'relative',
@@ -203,7 +202,7 @@ function TemplateStep() {
                                                                 left: '-1.375rem',
                                                                 top: '50%',
                                                                 transform: 'translateY(-50%)',
-                                                                width: '1.125rem',
+                                                                width: '0.75rem',
                                                                 height: '0.125rem',
                                                                 background: '#ECEDEE',
                                                                 borderTopRightRadius: '3.125rem',
@@ -260,12 +259,11 @@ function TemplateStep() {
                                                         <CdeDetails />
                                                     </Box>
                                                 </Box>
-                                            </>
-                                        )}
-
-                                        <Divider sx={{ color: gray100, marginTop: '1.5rem' }}/>
+                                            </AccordionDetails>
+                                        </Accordion>
                                     </Box>
-                                </Box>
+                                    <Divider sx={{ color: gray100, marginTop: '1.5rem' }}/>
+                                </Fragment>
                             ))
                         }
 

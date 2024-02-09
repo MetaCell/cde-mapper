@@ -8,7 +8,7 @@ import { StyledTable } from "./StyledTable";
 
 
 const PreviewBox = () => {
-    const { step, datasetSample } = useCdeContext();
+    const { step, datasetSample, setStep } = useCdeContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     return (
@@ -159,8 +159,8 @@ const PreviewBox = () => {
                 </Box>
             )}
             {
-                step === -1 && <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '1px solid #ECEDEE' }}>
-                    <Button variant='text'>Cancel</Button>
+                step === -1 && <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '2px solid #ECEDEE' }}>
+                    <Button variant='text' onClick={() => setStep(0)}>Cancel</Button>
                     <Button variant='contained'>Create template</Button>
                 </Box>
             }
