@@ -1,6 +1,7 @@
 import {Box, Button, Divider, IconButton, Link, Typography} from "@mui/material";
 import {CloseIcon} from "../../icons";
 import {vars} from "../../theme/variables";
+import { useCdeContext } from "../../CdeContext";
 
 const {baseWhite, gray700, gray600, primary600, gray400} = vars;
 
@@ -110,15 +111,23 @@ const styles = {
 
 const Info = (props: { setIsInfoOpen: (b: boolean) => void }) => {
     const {setIsInfoOpen} = props
+    const { setTutorialSteps } = useCdeContext();
 
     const handleClose = () => {
-        setIsInfoOpen(false)
+        setIsInfoOpen(false);
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            ["home"]: {
+                ...prevTutorialSteps["home"],
+                stepIndex: prevTutorialSteps["home"].stepIndex+=1
+            }
+        }));
     }
 
     const InfoContent = () => (
-        <>
+        <Box className="about-info__sidebar">
             <Box sx={styles.header}>
-                <IconButton onClick={handleClose} sx={{p: 1, borderRadius: 2, ml: 'auto'}}>
+                <IconButton onClick={handleClose} sx={{p: 1, borderRadius: 2, ml: 'auto'}} className="sidebar__close-button">
                     <CloseIcon/>
                 </IconButton>
                 <Typography variant="h3">About CDE mapping</Typography>
@@ -192,7 +201,7 @@ const Info = (props: { setIsInfoOpen: (b: boolean) => void }) => {
                     </Typography>
                 </Box>
             </Box>
-        </>
+        </Box>
     )
 
     return (

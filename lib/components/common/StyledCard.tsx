@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Radio from '@mui/material/Radio';
 import {useRadioGroup} from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useCdeContext } from '../../CdeContext';
 import {vars} from '../../theme/variables';
 
 const {baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700} = vars
@@ -19,6 +20,7 @@ interface StyledCardProps {
 }
 
 const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange}) => {
+    const { setTutorialSteps } = useCdeContext();
 
     const radioGroup = useRadioGroup();
     let checked = false;
@@ -31,6 +33,13 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
         if (value !== selectedValue) {
             onChange(value);
         }
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            ["collection"]: {
+                ...prevTutorialSteps["collection"],
+                stepIndex: prevTutorialSteps["collection"].stepIndex+=1
+            }
+        }));
     };
 
     return (

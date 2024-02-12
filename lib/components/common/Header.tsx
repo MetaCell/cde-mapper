@@ -2,6 +2,7 @@ import {Box, Button, Divider, IconButton, Typography} from "@mui/material";
 import {vars} from "../../theme/variables";
 import {CloseIcon, MapTriFold} from "../../icons";
 import Info from "./Info";
+import { useCdeContext } from "../../CdeContext";
 
 const {baseWhite, gray100, gray700} = vars
 
@@ -28,7 +29,28 @@ const styles = {
 
 const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void }) => {
     const {onClose, isInfoOpen, setIsInfoOpen} = props
+    const { tutorialStep, setTutorialSteps } = useCdeContext();
 
+    const handleInfoBtnClick = () => {
+        setIsInfoOpen(true);
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            [tutorialStep]: {
+                ...prevTutorialSteps[tutorialStep],
+                stepIndex: prevTutorialSteps[tutorialStep].stepIndex+=1
+            }
+        }));
+    };
+
+    const handleStartTutorial = () => {
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            [tutorialStep]: {
+                ...prevTutorialSteps[tutorialStep],
+                run: true
+            }
+        }));
+    }
     return (
         <>
             <Box sx={styles.root}>
@@ -49,10 +71,10 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 </Box>
 
                 <Box display='flex' gap={1}>
-                    <IconButton sx={{borderRadius: '0.5rem'}}>
+                    <IconButton sx={{borderRadius: '0.5rem'}} onClick={handleStartTutorial}>
                         <MapTriFold/>
                     </IconButton>
-                    <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
+                    <Button onClick={handleInfoBtnClick} disableRipple variant="outlined" className="about-info__btn">
                         Info
                     </Button>
                 </Box>

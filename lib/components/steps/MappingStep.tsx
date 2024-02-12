@@ -5,6 +5,7 @@ import StepTwo from './StepTwo.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
+import { useCdeContext } from '../../CdeContext.ts';
 
 const {
     baseWhite,
@@ -28,7 +29,8 @@ const tabsArr = [
     {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
-        description: 'Suggestions are based on what was previously mapped before.'
+        description: 'Suggestions are based on what was previously mapped before.',
+        className: 'suggestions-tab'
     },
     {
         label: 'Map the rest of the dataset',
@@ -83,6 +85,7 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, 
 
 function MappingStep() {
     const [value, setValue] = React.useState(0);
+    const { setTutorialStep } = useCdeContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -91,6 +94,16 @@ function MappingStep() {
     const changeToNextTab = () => {
         setValue((prevValue) => (prevValue + 1) % tabsArr.length);
     };
+
+    React.useEffect(()=>{
+        if(value===0){
+            setTutorialStep('collection')
+        }else if(value===1){
+            setTutorialStep('suggestions')
+        }else{
+            setTutorialStep('mapping')
+        }
+    },[value])
 
     return (
         <Fragment>
@@ -120,14 +133,14 @@ function MappingStep() {
                                 </>
                             }
                         >
-                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} />
+                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} className={`${tab?.className}`} />
                         </Tooltip>
                     ))}
                 </Tabs>
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {value === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)}>
+                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : value === TabsEnum.Mapping && (<>
                         <Typography sx={{

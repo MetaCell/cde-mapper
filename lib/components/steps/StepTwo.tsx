@@ -83,7 +83,7 @@ function StepTwo({changeToNextTab}: StepTwoProps) {
         <>
             <ModalHeightWrapper>
                 <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
-                     alignItems='center' justifyContent='space-between'>
+                     alignItems='center' justifyContent='space-between' className='column-header'>
                     <Typography sx={{
                         color: gray500,
                         fontSize: '0.875rem',
@@ -117,7 +117,7 @@ function StepTwo({changeToNextTab}: StepTwoProps) {
                 </Typography>
 
                 <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
-                     alignItems='center' justifyContent='space-between'>
+                     alignItems='center' justifyContent='space-between' className='cde-suggestions__content'>
                     <Typography sx={{
                         color: gray500,
                         fontSize: '0.875rem',
@@ -146,6 +146,7 @@ function StepTwo({changeToNextTab}: StepTwoProps) {
                     {shouldShowOtherSuggestionsButton && (
                         <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)}
                                 disableRipple
+                                className='suggestions__expand-btn'
                                 sx={{
                                     p: 0, gap: '0.25rem', color: primary600,
 
@@ -173,7 +174,7 @@ function StepTwo({changeToNextTab}: StepTwoProps) {
 
             <Box width='calc(100% - 3rem)' mx='auto' justifyContent='space-between' display='flex' alignItems='center'
                  sx={{background: baseWhite, zIndex: 9}} py='1rem' borderTop={`0.0625rem solid ${gray100}`}>
-                <Box gap='0.75rem' display='flex' alignItems='center'>
+                <Box gap='0.75rem' display='flex' alignItems='center' className="suggestions__navigation-block">
                     <Box gap='0.25rem' display='flex' alignItems='center'>
                         <IconButton onClick={handlePrevious} sx={{
                             borderRadius: '0.5rem',
@@ -199,7 +200,7 @@ function StepTwo({changeToNextTab}: StepTwoProps) {
                           color='primary'/>
                 </Box>
 
-                <Box gap='0.5rem' display='flex' alignItems='center'>
+                <Box gap='0.5rem' display='flex' alignItems='center' className='suggestions__button-block'>
                     <Button variant='outlined' onClick={completeSuggestion}>Ignore suggestions</Button>
                     <Button variant='contained'>Accept selected mapping</Button>
                 </Box>

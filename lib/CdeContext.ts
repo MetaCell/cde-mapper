@@ -1,4 +1,4 @@
-import {createContext, useContext} from "react";
+import {createContext, useContext, Dispatch, SetStateAction} from "react";
 import {
     Collection,
     Config,
@@ -7,6 +7,7 @@ import {
     Suggestions
 } from "./models.ts";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
+import { TutorialSteps } from "./components/common/tutorial.tsx";
 
 export const CdeContext = createContext<{
 
@@ -29,6 +30,10 @@ export const CdeContext = createContext<{
     errorMessage: string | null;
     setErrorMessage: (errorMessage: string | null) => void;
     handleClose: () => void;
+    tutorialSteps: TutorialSteps,
+    setTutorialSteps: Dispatch<SetStateAction<TutorialSteps>>;
+    tutorialStep: keyof TutorialSteps;
+    setTutorialStep: Dispatch<SetStateAction<keyof TutorialSteps>>;
 }>({
 
     name: '',
@@ -63,6 +68,33 @@ export const CdeContext = createContext<{
     },
     handleClose: () => {
     },
+    tutorialSteps: {
+        home: {
+            run: false,
+            stepIndex: 0,
+            steps: []
+        },
+        collection: {
+            run: false,
+            stepIndex: 0,
+            steps: []
+        },
+        suggestions: {
+            run: false,
+            stepIndex: 0,
+            steps: []
+        },
+        mapping: {
+            run: false,
+            stepIndex: 0,
+            steps: []
+        }
+    },
+    setTutorialSteps: () => {
+    },
+    tutorialStep: 'home',
+    setTutorialStep: () => {
+    }
 });
 
 export const useCdeContext = () => useContext(CdeContext);

@@ -10,6 +10,7 @@ import ErrorPage from "./components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 import {CdeContext} from './CdeContext.ts';
 import {computeSuggestions} from "./services/suggestionsService.ts";
+import { tutorial, TutorialSteps } from './components/common/tutorial.tsx';
 
 
 const defaultHeaderMapping = {
@@ -34,6 +35,8 @@ export const CdeContextProvider = ({
     const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [tutorialSteps, setTutorialSteps] = useState(tutorial);
+    const [tutorialStep, setTutorialStep] = useState<keyof TutorialSteps>("home");
 
     const headerMapping = useMemo(() => ({
         ...defaultHeaderMapping,
@@ -126,7 +129,11 @@ export const CdeContextProvider = ({
         setLoadingMessage,
         errorMessage,
         setErrorMessage,
-        handleClose
+        handleClose,
+        tutorialSteps,
+        setTutorialSteps,
+        tutorialStep,
+        setTutorialStep
     };
     return (
         <ThemeProvider theme={theme}>

@@ -5,7 +5,6 @@ import StyledCard from '../common/StyledCard.tsx';
 function StepOne() {
     const [selectedRadioValue, setSelectedRadioValue] = useState("Spinal Cord Injury (SCI)");
 
-
     const handleRadioChange = (value: string) => {
         setSelectedRadioValue(value);
     };
@@ -32,7 +31,7 @@ function StepOne() {
                             This can be changed at any time during the process.
                         </Typography>
                     </Stack>
-                    <Stack direction="row" spacing={1.5}>
+                    <Stack direction="row" spacing={1.5} className='repository-cards'>
                         <StyledCard value={"Spinal Cord Injury (SCI)"} isSuggested={true}
                                     selectedValue={selectedRadioValue} onChange={handleRadioChange}/>
                         <StyledCard value={"Trauma Brain Injury (TBI)"} selectedValue={selectedRadioValue}
@@ -43,6 +42,7 @@ function StepOne() {
                             <Button
                                 disableRipple
                                 variant="contained"
+                                className='repository__select-btn'
                             >
                                 Select repository
                             </Button>

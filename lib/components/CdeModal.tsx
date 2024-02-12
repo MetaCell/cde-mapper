@@ -7,6 +7,7 @@ import MappingStep from './steps/MappingStep.tsx';
 import Header from "./common/Header.tsx";
 import {useCdeContext} from "../CdeContext.ts";
 import {CommonCircularProgress} from "./common/CommonCircularProgress.tsx";
+import CommonWalkthrough from './common/CommonWalkthrough.tsx';
 
 
 const CdeModal: FC = () => {
@@ -46,6 +47,7 @@ const CdeModal: FC = () => {
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
                 <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
+                <CommonWalkthrough/>
             </Modal>
             <Snackbar
                 open={!!errorMessage}

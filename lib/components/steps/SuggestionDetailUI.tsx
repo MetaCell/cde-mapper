@@ -41,7 +41,7 @@ function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
     ];
 
     return (
-        <Box gap='1.5rem' display='flex' alignItems='start'>
+        <Box gap='1.5rem' display='flex' alignItems='start' className='suggestion-details'>
             <Box height='2.625rem' display='flex' alignItems='center'>
                 <Checkbox sx={{mt: '0rem'}} disableRipple icon={<CheckboxDefault/>} checkedIcon={<CheckboxSelected/>}/>
             </Box>
