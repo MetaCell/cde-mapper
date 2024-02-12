@@ -261,8 +261,8 @@ function TemplateStep() {
                                                 </Box>
                                             </AccordionDetails>
                                         </Accordion>
+                                        <Divider sx={{ color: gray100, marginTop: '1.5rem' }}/>
                                     </Box>
-                                    <Divider sx={{ color: gray100, marginTop: '1.5rem' }}/>
                                 </Fragment>
                             ))
                         }
