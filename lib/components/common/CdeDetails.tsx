@@ -22,8 +22,44 @@ interface CdeDetailsProps {
     data?: CdeDetailItem[];
 }
 
+const PLACEHOLDER_DATA: CdeDetailItem[] = [
+    {
+        heading: 'CDE Abbrev',
+        text: 'SmallSpeciesStrainTyp'
+    },
+    {
+        heading: 'VariableName',
+        text: 'Strain'
+    },
+    {
+        heading: 'Title',
+        text: 'Strain of the mouse'
+    },
+    {
+        heading: 'Description',
+        text: 'Strain of the mouse'
+    },
+    {
+        heading: 'Unit of measure',
+        text: '-'
+    },
+    {
+        heading: 'Data type',
+        text: 'Alphanumeric'
+    },
+    {
+        heading: 'Comments',
+        text: '-'
+    },
+    {
+        heading: 'InterLex ID',
+        text: 'CDE:0369382',
+        link: ''
+    }
+]
 
-const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = []}) => {
+
+const CdeDetails: FC<CdeDetailsProps> = ({heading = 'CDE Details', data = PLACEHOLDER_DATA}) => {
     return (
         <Box sx={{
             border: `0.0625rem solid ${gray200}`,

@@ -26,8 +26,8 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void }) => {
-    const {onClose, isInfoOpen, setIsInfoOpen} = props
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number }) => {
+    const {onClose, isInfoOpen, setIsInfoOpen, step} = props
 
     return (
         <>
@@ -35,23 +35,24 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 <Box display='flex' alignItems='center' flex={1}>
                     <IconButton disableRipple onClick={onClose} sx={{
                         borderRadius: '0.5rem',
-
-                        '&:hover': {
-                            background: gray100
-                        }
-                    }}>
-                        <CloseIcon/>
-                    </IconButton>
-                    <Divider sx={{borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem'}}/>
-                    <Typography>
-                        Map selected dataset
-                    </Typography>
-                </Box>
+            '&:hover': {
+              background: gray100
+            }
+          }}>
+            <CloseIcon />
+          </IconButton>
+          <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
+          <Typography>
+            {step === -1 ? "Create template" : "Map selected dataset"}
+          </Typography>
+        </Box>
 
                 <Box display='flex' gap={1}>
-                    <IconButton sx={{borderRadius: '0.5rem'}}>
+                    {
+                        step!==-1 && <IconButton sx={{borderRadius: '0.5rem'}}>
                         <MapTriFold/>
                     </IconButton>
+                    }
                     <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
                         Info
                     </Button>

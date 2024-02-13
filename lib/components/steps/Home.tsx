@@ -1,24 +1,23 @@
-import {Box, Button, Typography, Chip} from '@mui/material';
-import {StyledTable} from '../common/StyledTable.tsx';
-import {CircleChipDefault, CircleChipSuccess} from '../../icons/index.tsx';
-import {vars} from '../../theme/variables.ts';
-import {STEPS} from "../../models.ts";
-import {useCdeContext} from "../../CdeContext.ts";
+import { Box, Button, Typography, Chip, TableContainer, Paper } from '@mui/material';
+import { StyledTable } from '../common/StyledTable.tsx';
+import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
+import { vars } from '../../theme/variables.ts';
+import { STEPS } from "../../models.ts";
+import { useCdeContext } from "../../CdeContext.ts";
 
-const {primary600, gray600, drodownDetailBg} = vars;
+const { primary600, gray600, drodownDetailBg, gray200 } = vars;
 
 function Home() {
     const {
         setStep,
-        datasetSample,
+        datasetSample
     } = useCdeContext();
-
 
     return (
         <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
             background: drodownDetailBg
         }}>
-            <Typography sx={{marginBottom: '0.5rem'}} variant='h3'>
+            <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
                 Create mapping(s) with selected dataset?
             </Typography>
             <Typography variant='body2' sx={{
@@ -52,12 +51,22 @@ function Home() {
                         <Typography variant="body2">total number of column headers</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess/>}/>
+                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
                         <Chip size="small" label="83 unmapped, 13 suggestions available" color="default"
-                              icon={<CircleChipDefault/>}/>
+                            icon={<CircleChipDefault />} />
                     </Box>
                 </Box>
-                <StyledTable sample={datasetSample}/>
+                <TableContainer
+                    component={Paper}
+                    elevation={0}
+                    sx={{
+                        maxWidth: '650px',
+                        borderRight: `0.0625rem solid ${gray200}`,
+                        borderBottom: 0
+                    }}
+                >
+                    <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem'/>
+                </TableContainer>
             </Box>
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
