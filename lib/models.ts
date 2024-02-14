@@ -21,8 +21,10 @@ export interface HeaderMapping {
 }
 
 export interface Collection {
+    id: string;
     name: string;
-    fetch: (query: string) => Promise<Entity[]>;
+    fetch: (queryString: string) => Promise<Entity[]>;
+    suggested: boolean;
 }
 
 export interface Config {

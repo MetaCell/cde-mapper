@@ -17,7 +17,7 @@ export const CdeContext = createContext<{
     handleUpdateDatasetMappingRow: (key: string, newData: Entity) => void;
     getSuggestions: () => Suggestions;
     headerMapping: HeaderMapping;
-    collections: Collection[];
+    collections: { [key: string]: Collection };
     config: Config;
 
 
@@ -46,7 +46,7 @@ export const CdeContext = createContext<{
         titleIndex: TITLE_INDEX,
         interlexIdIndex: INTERLEX_ID_INDEX,
     },
-    collections: [],
+    collections: {},
     config: {
         width: "100%",
         height: "100%",

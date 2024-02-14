@@ -67,7 +67,11 @@ const styles = {
   }
 }
 
-const StepThree = () => {
+interface MappingProps {
+  defaultCollection: string;
+}
+
+const MappingTab = ({ defaultCollection }: MappingProps) => {
   const [age, setAge] = React.useState('0');
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -187,6 +191,7 @@ const StepThree = () => {
 
   const searchCDE = () => mockCDE;
 
+  console.log(defaultCollection)
   return (
     <>
       <ModalHeightWrapper pb={10} height='15rem'>
@@ -665,4 +670,4 @@ const StepThree = () => {
   )
 }
 
-export default StepThree;
+export default MappingTab;

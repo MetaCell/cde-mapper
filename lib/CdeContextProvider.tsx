@@ -1,5 +1,5 @@
 import {PropsWithChildren, useMemo, useState} from 'react';
-import {DatasetMapping, Entity, InitParams, STEPS} from "./models.ts";
+import {Collection, DatasetMapping, Entity, InitParams, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
@@ -24,7 +24,7 @@ export const CdeContextProvider = ({
                                        datasetMapping: rawDatasetMapping,
                                        additionalDatasetMappings: rawAdditionalDatasetMappings = [],
                                        headerMapping: providedHeaderMapping = defaultHeaderMapping,
-                                       collections,
+                                       collections: rawCollections,
                                        config,
                                        name,
                                        callback,
@@ -92,6 +92,12 @@ export const CdeContextProvider = ({
         return suggestions
     };
 
+    const collectionsDictionary = useMemo(() => {
+        return rawCollections.reduce((acc, collection) => {
+            acc[collection.id] = collection;
+            return acc;
+        }, {} as { [key: string]: Collection });
+    }, [rawCollections]);
 
     const handleClose = () => {
         setErrorMessage(null);
@@ -118,7 +124,7 @@ export const CdeContextProvider = ({
         handleUpdateDatasetMappingRow,
         getSuggestions,
         headerMapping,
-        collections,
+        collections: collectionsDictionary,
         config,
         step,
         setStep,
@@ -128,10 +134,12 @@ export const CdeContextProvider = ({
         setErrorMessage,
         handleClose
     };
+
+    const hasErrors = areFilesValid || rawCollections.length == 0
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>
-            {areFilesValid ? (
+            {hasErrors ? (
                 <CdeContext.Provider value={contextValue}>
                     {children}
                 </CdeContext.Provider>

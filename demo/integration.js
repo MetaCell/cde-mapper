@@ -1,5 +1,6 @@
 import {init} from './cde-mapper.js';
 
+
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
     let datasetMappings = [];
     let additionalDatasetMappings = [];
@@ -64,7 +65,7 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         datasetMapping: datasetMappings,
                         additionalDatasetMappings: additionalDatasetMappings,
                         datasetSample: datasetSample,
-                        collections: [],
+                        collections: getCollections(),
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
                         callback: (cdeFileMapping) => console.log(cdeFileMapping),
@@ -95,4 +96,20 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
     };
 
     startProcessing();
+}
+
+function getCollections() {
+    return [
+        {
+            id: 'global',
+            name: "Global",
+            fetch: fetch,
+            suggested: true,
+        }
+    ]
+}
+
+function fetch(queryString) {
+    console.log(queryString)
+    return []
 }

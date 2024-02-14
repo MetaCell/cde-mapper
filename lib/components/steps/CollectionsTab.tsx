@@ -1,13 +1,30 @@
 import {useState} from 'react';
 import {Stack, Typography, Box, Button, Link} from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
+import {useCdeContext} from "../../CdeContext.ts";
 
-function StepOne() {
-    const [selectedRadioValue, setSelectedRadioValue] = useState("Spinal Cord Injury (SCI)");
 
+interface CollectionsProps {
+    changeToNextTab: () => void;
+    setDefaultCollection: (collectionId: string) => void
+}
+
+function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProps) {
+    const {
+        collections,
+    } = useCdeContext();
+
+    const collectionKeys = Object.keys(collections);
+
+    const [selectedCollection, setSelectedCollection] = useState<string>(collectionKeys.length > 0 ? collectionKeys[0] : '');
 
     const handleRadioChange = (value: string) => {
-        setSelectedRadioValue(value);
+        setSelectedCollection(value);
+    };
+
+    const handleConfirm = () => {
+        setDefaultCollection(selectedCollection);
+        changeToNextTab();
     };
 
     return (
@@ -18,7 +35,6 @@ function StepOne() {
                 justifyContent='center'
                 alignItems='center'
                 height={1}
-                // maxHeight='calc(100vh - (3.9375rem + 3.5625rem + 4.4375rem + 2rem + 2rem))'
                 p='1.5rem'
                 pt={6}
                 pb={6}
@@ -33,16 +49,22 @@ function StepOne() {
                         </Typography>
                     </Stack>
                     <Stack direction="row" spacing={1.5}>
-                        <StyledCard value={"Spinal Cord Injury (SCI)"} isSuggested={true}
-                                    selectedValue={selectedRadioValue} onChange={handleRadioChange}/>
-                        <StyledCard value={"Trauma Brain Injury (TBI)"} selectedValue={selectedRadioValue}
-                                    onChange={handleRadioChange}/>
+                        {collectionKeys.map(key => (
+                            <StyledCard
+                                key={key}
+                                value={collections[key].name}
+                                isSuggested={collections[key].suggested}
+                                selectedValue={selectedCollection === key ? collections[key].name : ""}
+                                onChange={() => handleRadioChange(key)}
+                            />
+                        ))}
                     </Stack>
                     <Stack alignItems="center" sx={{width: '100%'}}>
                         <Box>
                             <Button
                                 disableRipple
                                 variant="contained"
+                                onClick={() => handleConfirm()}
                             >
                                 Select repository
                             </Button>
@@ -57,4 +79,4 @@ function StepOne() {
     );
 }
 
-export default StepOne;
+export default CollectionsTab;
