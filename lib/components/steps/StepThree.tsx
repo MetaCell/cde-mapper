@@ -99,19 +99,6 @@ const StepThree = () => {
   const open = Boolean(anchorEl);
   const id = open ? 'filter-popover' : undefined;
 
-  const handlePreviewToggle = () => {
-    setTogglePreview(!togglePreview)
-    if (tutorialSteps['mapping'].run) {
-      setTutorialSteps(prevTutorialSteps => ({
-        ...prevTutorialSteps,
-        ["mapping"]: {
-          ...prevTutorialSteps["mapping"],
-          stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
-        }
-      }));
-    }
-  }
-
   const mockCDE = [
     {
       "id": "5304",

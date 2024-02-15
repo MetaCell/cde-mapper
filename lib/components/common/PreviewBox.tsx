@@ -8,11 +8,24 @@ import { StyledTable } from "./StyledTable";
 
 
 const PreviewBox = () => {
-    const { step, datasetSample, setStep } = useCdeContext();
+    const { step, datasetSample, setStep, tutorialSteps, setTutorialSteps } = useCdeContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
+    const handlePreviewToggle = () => {
+        setTogglePreview(!togglePreview)
+        if (tutorialSteps['mapping'].run) {
+            setTutorialSteps(prevTutorialSteps => ({
+                ...prevTutorialSteps,
+                ["mapping"]: {
+                    ...prevTutorialSteps["mapping"],
+                    stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
+                }
+            }));
+        }
+    }
+
     return (
-        <Box sx={{
+        <Box className="preview__toggle" sx={{
             position: 'absolute',
             background: '#fff',
             zIndex: 9999999999,
@@ -23,7 +36,7 @@ const PreviewBox = () => {
             borderRadius: '0.75rem 0.75rem 0 0',
             border: '0.0625rem solid #ECEDEE',
         }}>
-            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={() => setTogglePreview(!togglePreview)}>
+            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={handlePreviewToggle} className="preview__toggle_false">
                 <Typography sx={{
                     flex: 1,
                     color: '#676C74',
@@ -155,7 +168,7 @@ const PreviewBox = () => {
                             }}>No mapping yet</Typography>
                         </Box>
                     </Box>
-                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem' /> 
+                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem' />
                 </Box>
             )}
             {

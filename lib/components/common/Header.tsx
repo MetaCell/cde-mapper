@@ -73,11 +73,11 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
 
                 <Box display='flex' gap={1}>
                     {
-                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }}>
+                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }} onClick={handleStartTutorial}>
                             <MapTriFold />
                         </IconButton>
                     }
-                    <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
+                    <Button onClick={handleInfoBtnClick} disableRipple variant="outlined" className="about-info__btn">
                         Info
                     </Button>
                 </Box>

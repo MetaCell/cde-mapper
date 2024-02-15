@@ -74,6 +74,7 @@ function Home() {
                 <TableContainer
                     component={Paper}
                     elevation={0}
+                    className='dataset-table'
                     sx={{
                         maxWidth: '650px',
                         borderRight: `0.0625rem solid ${gray200}`,
