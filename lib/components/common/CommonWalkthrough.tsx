@@ -1,6 +1,5 @@
-import React from 'react';
 import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps } from 'react-joyride';
-import { Box, Typography, Button, IconButton, Stack, } from '@mui/material';
+import { Box, Typography, Button, IconButton } from '@mui/material';
 import Checkbox from './CheckBox';
 import { useCdeContext } from '../../CdeContext';
 import { TutorialCloseIcon } from '../../icons';
@@ -65,7 +64,7 @@ const Tooltip = ({
             )}
             <Box className='tooltip-content' {...tooltipContent}>
                 {step.content}
-                <Checkbox
+                {index > 0 && <Checkbox
                     label='Dont show on startup (accessible on the header)'
                     sx={{
                         mt: step.content !== '' ? '2rem' : 0,
@@ -75,7 +74,7 @@ const Tooltip = ({
                             color: gray500
                         }
                     }}
-                />
+                />}
             </Box>
             <Box className='tooltip-footer' {...tooltipFooter}>
                 <Typography variant='caption' sx={{ color: gray500 }}>{index + 1} of {size}</Typography>
@@ -105,45 +104,6 @@ const Tooltip = ({
             </Box>
         </Box>
     );
-}
-
-export const WalkthroughStartDialog = () => {
-    const [isSkipped, setIsSkipped] = React.useState(false)
-    const {setTutorialSteps} = useCdeContext();
-
-    const handleSkipButtonClick = () => {
-        setIsSkipped(true)
-    };
-
-    const handleNextButtonClick = () => {
-        setTutorialSteps(prevTutorialSteps => ({
-            ...prevTutorialSteps,
-            ["home"]: {
-                ...prevTutorialSteps["home"],
-                run: true
-            }
-        }));
-    };
-
-    return !isSkipped && (
-        <Box sx={{
-            position: 'absolute',
-            bottom: 0,
-            margin: '0.75rem',
-            padding: '1.5rem',
-            maxWidth: 320,
-            background: baseWhite,
-            borderRadius: '0.25rem',
-            boxShadow: tooltipBoxShadow
-        }}>
-            <Typography variant='subtitle2' fontWeight={600} sx={{color: gray900}}>Get started with mapping</Typography>
-            <Typography variant='subtitle2' fontWeight={400} mt={1.5} sx={{color: gray600}}>Would you like a quick tour of the basics of mapping your dataset?</Typography>
-            <Stack direction="row" mt={3} justifyContent="space-between">
-                <Button sx={{ minWidth: '8.5rem', '&:hover': { color: gray600 } }} onClick={handleSkipButtonClick}>Skip tutorial</Button>
-                <Button sx={{ minWidth: '8.5rem', backgroundColor: primary600, color: baseWhite, '&:hover': { backgroundColor: primary700, color: baseWhite } }} onClick={handleNextButtonClick}>Next</Button>
-            </Stack>
-        </Box>
-    )
 }
 
 const CommonWalkthrough = () => {
@@ -179,10 +139,7 @@ const CommonWalkthrough = () => {
             }));
         }
     };
-    console.log("tutorial step: ", tutorialStep)
-    console.log("tutorialStep[].run: ", tutorialSteps[tutorialStep].run)
-    console.log("tutorialSteps[].stepIndex: ", tutorialSteps[tutorialStep].stepIndex)
-
+   
     return (
         <Joyride
             callback={handleJoyrideCallback}

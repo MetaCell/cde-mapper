@@ -85,7 +85,7 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, 
 
 function MappingStep() {
     const [value, setValue] = React.useState(0);
-    const { setTutorialStep } = useCdeContext();
+    const { setTutorialStep, setTutorialSteps } = useCdeContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -94,6 +94,17 @@ function MappingStep() {
     const changeToNextTab = () => {
         setValue((prevValue) => (prevValue + 1) % tabsArr.length);
     };
+
+    const handleContinueButtonClick = () => {
+        setValue(TabsEnum.Mapping)
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            ["suggestions"]: {
+              ...prevTutorialSteps["suggestions"],
+              run: false
+            }
+        }));
+    }
 
     React.useEffect(()=>{
         if(value===0){
@@ -140,7 +151,7 @@ function MappingStep() {
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {value === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
+                        <Button variant='text' onClick={handleContinueButtonClick} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : value === TabsEnum.Mapping && (<>
                         <Typography sx={{

@@ -260,7 +260,7 @@ const StepThree = () => {
                 <Box sx={styles.col}>
                   <ArrowIcon />
                 </Box>
-                <Box sx={styles.col}>
+                <Box sx={styles.col} className="cde-fields__item-first">
                   <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options={{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
