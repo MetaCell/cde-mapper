@@ -111,21 +111,23 @@ const styles = {
 
 const Info = (props: { setIsInfoOpen: (b: boolean) => void }) => {
     const {setIsInfoOpen} = props
-    const { setTutorialSteps } = useCdeContext();
+    const { tutorialSteps, setTutorialSteps } = useCdeContext();
 
     const handleClose = () => {
         setIsInfoOpen(false);
-        setTutorialSteps(prevTutorialSteps => ({
-            ...prevTutorialSteps,
-            ["home"]: {
-                ...prevTutorialSteps["home"],
-                stepIndex: prevTutorialSteps["home"].stepIndex+=1
-            }
-        }));
+        if(tutorialSteps['home'].run){
+            setTutorialSteps(prevTutorialSteps => ({
+                ...prevTutorialSteps,
+                ["home"]: {
+                    ...prevTutorialSteps["home"],
+                    stepIndex: prevTutorialSteps["home"].stepIndex+=1
+                }
+            }));
+        }
     }
 
     const InfoContent = () => (
-        <Box className="about-info__sidebar">
+        <Box>
             <Box sx={styles.header}>
                 <IconButton onClick={handleClose} sx={{p: 1, borderRadius: 2, ml: 'auto'}} className="sidebar__close-button">
                     <CloseIcon/>
@@ -207,7 +209,7 @@ const Info = (props: { setIsInfoOpen: (b: boolean) => void }) => {
     return (
         <>
             <Box sx={styles.backdrop} onClick={handleClose}/>
-            <Box sx={styles.wrap}>
+            <Box sx={styles.wrap} className="about-info__sidebar">
                 {InfoContent()}
             </Box>
         </>

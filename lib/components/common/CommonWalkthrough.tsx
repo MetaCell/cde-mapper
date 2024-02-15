@@ -1,20 +1,12 @@
+import React from 'react';
 import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps } from 'react-joyride';
-import { Box, Typography, Button, } from '@mui/material';
+import { Box, Typography, Button, IconButton, Stack, } from '@mui/material';
 import Checkbox from './CheckBox';
 import { useCdeContext } from '../../CdeContext';
+import { TutorialCloseIcon } from '../../icons';
+import { vars } from '../../theme/variables';
 
-const buttonBase = {
-    backgroundColor: 'transparent',
-    borderRadius: 8,
-    cursor: 'pointer',
-    fontSize: 14,
-    lineHeight: '20px',
-    padding: '8px 14px',
-    boxShadow: '0px 1px 2px 0px rgba(7, 8, 8, 0.05)',
-    minWidth: '8.5rem',
-    fontWeight: 600,
-    WebkitAppearance: 'none' as const,
-};
+const {baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900} = vars;
 
 interface TooltipProps {
     continuous: boolean,
@@ -41,56 +33,117 @@ const Tooltip = ({
     skipProps,
     size
 }: TooltipProps) => {
+    const {
+        styles: {
+            tooltip: tooltipStyle,
+            tooltipTitle,
+            tooltipContent,
+            tooltipFooter
+        },
+        placement,
+        spotlightClicks,
+        hideBackButton,
+        hideCloseButton,
+        hideFooter
+    } = step;
+
     return (
         <Box
             className="tooltip"
             {...tooltipProps}
-            {...step.styles.tooltip}
-            {...step.placement}
-            {...step.spotlightClicks}
+            {...tooltipStyle}
+            {...placement}
+            {...spotlightClicks}
         >
-            {
-                step.title && <Box className='tooltip-title' {...step.styles.tooltipTitle}>
+            {step.title && (
+                <Box className='tooltip-title' {...tooltipTitle}>
                     {step.title}
+                    <IconButton {...skipProps} sx={{ padding: 0, margin: 0, '&:hover': { background: 'transparent' } }}>
+                        <TutorialCloseIcon />
+                    </IconButton>
                 </Box>
-            }
-            <Box className='tooltip-content' {...step.styles.tooltipContent}>
+            )}
+            <Box className='tooltip-content' {...tooltipContent}>
                 {step.content}
-                <Checkbox label='Dont show on startup (accessible on the header)' sx={{
-                    mt: '2rem',
-                    '& .MuiTypography-root': {
-                        fontSize: '0.75rem',
-                        fontWeight: 400,
-                        color: '#676C74'
-                    }
-                }} />
+                <Checkbox
+                    label='Dont show on startup (accessible on the header)'
+                    sx={{
+                        mt: step.content !== '' ? '2rem' : 0,
+                        '& .MuiTypography-root': {
+                            fontSize: '0.75rem',
+                            fontWeight: 400,
+                            color: gray500
+                        }
+                    }}
+                />
             </Box>
-            <Box className='tooltip-footer' {...step.styles.tooltipFooter}>
-                <Typography variant='caption' sx={{ color: '#676C74' }}>{index + 1} of {size}</Typography>
-                <>
-                    {continuous && !step.spotlightClicks && (
-                        <Box display="flex" gap={1}>
-                            {index > 0 ? (
-                                <Button id="back" {...backProps} sx={{ border: `1px solid #D6D8DB`, '&:hover': { color: '#4F5359' } }}>
-                                    Back
-                                </Button>
-                            ) : <Button id="skip" {...skipProps} sx={{ border: `1px solid #D6D8DB`, '&:hover': { color: '#4F5359' } }}>
+            <Box className='tooltip-footer' {...tooltipFooter}>
+                <Typography variant='caption' sx={{ color: gray500 }}>{index + 1} of {size}</Typography>
+                {continuous && !hideFooter && (
+                    <Box display="flex" gap={1}>
+                        {index > 0 && !hideBackButton ? (
+                            <Button id="back" {...backProps} sx={{ border: `1px solid ${gray300}`, '&:hover': { color: gray600 } }}>
+                                Back
+                            </Button>
+                        ) : (
+                            <Button id="skip" {...skipProps} sx={{ border: `1px solid ${gray300}`, '&:hover': { color: gray600 } }}>
                                 Skip tutorial
-                            </Button>}
-                            {!isLastStep && <Button id="next" {...primaryProps} sx={{ backgroundColor: '#19418F', color: '#fff', '&:hover': { backgroundColor: '#122E64', color: 'white' } }}>
+                            </Button>
+                        )}
+                        {!isLastStep && (
+                            <Button id="next" {...primaryProps} sx={{ backgroundColor: primary600, color: baseWhite, '&:hover': { backgroundColor: primary700, color: baseWhite } }}>
                                 Next
-                            </Button>}
-                        </Box>
-                    )}
-                    {isLastStep && (
-                        <Button id="close" {...closeProps} sx={{ backgroundColor: '#19418F', color: '#fff', '&:hover': { backgroundColor: '#122E64', color: 'white' } }}>
-                            Close tutorial
-                        </Button>
-                    )}
-                </>
+                            </Button>
+                        )}
+                        {isLastStep && !hideCloseButton && (
+                            <Button id="close" {...closeProps} sx={{ backgroundColor: primary600, color: baseWhite, '&:hover': { backgroundColor: primary700, color: baseWhite } }}>
+                                Close tutorial
+                            </Button>
+                        )}
+                    </Box>
+                )}
             </Box>
         </Box>
     );
+}
+
+export const WalkthroughStartDialog = () => {
+    const [isSkipped, setIsSkipped] = React.useState(false)
+    const {setTutorialSteps} = useCdeContext();
+
+    const handleSkipButtonClick = () => {
+        setIsSkipped(true)
+    };
+
+    const handleNextButtonClick = () => {
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            ["home"]: {
+                ...prevTutorialSteps["home"],
+                run: true
+            }
+        }));
+    };
+
+    return !isSkipped && (
+        <Box sx={{
+            position: 'absolute',
+            bottom: 0,
+            margin: '0.75rem',
+            padding: '1.5rem',
+            maxWidth: 320,
+            background: baseWhite,
+            borderRadius: '0.25rem',
+            boxShadow: tooltipBoxShadow
+        }}>
+            <Typography variant='subtitle2' fontWeight={600} sx={{color: gray900}}>Get started with mapping</Typography>
+            <Typography variant='subtitle2' fontWeight={400} mt={1.5} sx={{color: gray600}}>Would you like a quick tour of the basics of mapping your dataset?</Typography>
+            <Stack direction="row" mt={3} justifyContent="space-between">
+                <Button sx={{ minWidth: '8.5rem', '&:hover': { color: gray600 } }} onClick={handleSkipButtonClick}>Skip tutorial</Button>
+                <Button sx={{ minWidth: '8.5rem', backgroundColor: primary600, color: baseWhite, '&:hover': { backgroundColor: primary700, color: baseWhite } }} onClick={handleNextButtonClick}>Next</Button>
+            </Stack>
+        </Box>
+    )
 }
 
 const CommonWalkthrough = () => {
@@ -120,17 +173,21 @@ const CommonWalkthrough = () => {
                 ...prevTutorialSteps,
                 [tutorialStep]: {
                     ...prevTutorialSteps[tutorialStep],
-                    run: false
+                    run: false,
+                    stepIndex: 0
                 }
             }));
         }
     };
+    console.log("tutorial step: ", tutorialStep)
+    console.log("tutorialStep[].run: ", tutorialSteps[tutorialStep].run)
+    console.log("tutorialSteps[].stepIndex: ", tutorialSteps[tutorialStep].stepIndex)
 
     return (
         <Joyride
             callback={handleJoyrideCallback}
             continuous={true}
-            hideBackButton={true}
+            disableOverlayClose={true}
             run={tutorialSteps[tutorialStep].run}
             stepIndex={tutorialSteps[tutorialStep].stepIndex}
             steps={tutorialSteps[tutorialStep].steps}
@@ -140,13 +197,16 @@ const CommonWalkthrough = () => {
             styles={{
                 options: {
                     width: 350,
-                    arrowColor: '#fff',
-                    backgroundColor: '#fff',
-                    primaryColor: '#19418F',
-                    zIndex: 10000,
+                    arrowColor: baseWhite,
+                    backgroundColor: baseWhite,
+                    primaryColor: primary600,
+                    zIndex: 10000
                 },
                 spotlight: {
                     borderRadius: '0.5rem'
+                },
+                overlay: {
+                    background: tutorialOverlayColor
                 },
                 beaconOuter: {
                     filter: 'none',
@@ -154,46 +214,48 @@ const CommonWalkthrough = () => {
                 },
                 tooltip: {
                     padding: 0,
-                    borderRadius: '0.25rem'
+                    borderRadius: '0.25rem',
+                    boxShadow: tooltipBoxShadow
                 },
                 tooltipTitle: {
-                    color: '#070808',
-                    fontSize: '14px',
-                    padding: '24px 24px 12px 24px',
+                    color: gray900,
+                    fontSize: '0.875rem',
+                    padding: '1.5rem 1.5rem 0.75rem 1.5rem',
                     fontWeight: 600,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
                 },
                 tooltipContent: {
-                    fontSize: '14px',
-                    padding: '0 24px 12px 24px',
-                    color: '#4F5359',
+                    fontSize: '0.875rem',
+                    padding: '0 1.5rem 0.75rem 1.5rem',
+                    color: gray600,
                 },
                 tooltipContainer: {
                     textAlign: 'left',
-                    lineHeight: '20px',
+                    lineHeight: '1.25rem',
                 },
                 tooltipFooter: {
                     justifyContent: 'space-between',
                     marginTop: 0,
-                    padding: '12px 24px 12px 24px',
-                    borderTop: `1px solid #ECEDEE`
+                    padding: '0.75rem 1.5rem 0.75rem 1.5rem',
+                    borderTop: `1px solid ${gray100}`,
+                    minHeight: '3.75rem'
                 },
                 buttonNext: {
-                    ...buttonBase,
-                    backgroundColor: '#19418F',
-                    color: '#fff',
+                    backgroundColor: primary600,
+                    color: baseWhite,
                 },
                 buttonBack: {
-                    ...buttonBase,
-                    color: '#676C74',
-                    border: '1px solid #D6D8DB',
-                    background: '#fff',
+                    color: gray500,
+                    border: `1px solid ${gray300}`,
+                    background: baseWhite,
                 },
                 buttonClose: {
-                    ...buttonBase,
                     height: 14,
                     padding: 0,
-                    paddingRight: '24px',
-                    paddingTop: '24px',
+                    paddingRight: '1.5rem',
+                    paddingTop: '1.5rem',
                     position: 'absolute' as const,
                     right: 0,
                     top: 0,
@@ -203,10 +265,9 @@ const CommonWalkthrough = () => {
                     minWidth: 'auto',
                 },
                 buttonSkip: {
-                    ...buttonBase,
-                    color: '#676C74',
-                    border: '1px solid #D6D8DB',
-                    background: '#fff',
+                    color: gray500,
+                    border: `1px solid ${gray300}`,
+                    background: baseWhite,
                 },
             }}
             locale={{

@@ -5,6 +5,7 @@ import {AddIcon, CheckIcon, ChevronDown, DownIcon, GlobeIcon, MagicWandIcon, Mag
 import HoveredOptionContent from "./HoveredOptionContent";
 import NoResultField from './NoResultField';
 import {vars} from '../../theme/variables';
+import { useCdeContext } from '../../CdeContext';
 
 const {
     buttonOutlinedBorderColor,
@@ -192,6 +193,7 @@ export default function CustomEntitiesDropdown({
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [toggleMenu, setToggleMenu] = useState(false);
     const [age, setAge] = React.useState('0');
+    const {tutorialSteps, setTutorialSteps} = useCdeContext();
 
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value as string);
@@ -199,6 +201,15 @@ export default function CustomEntitiesDropdown({
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
+        if (tutorialSteps['mapping'].run) {
+            setTutorialSteps(prevTutorialSteps => ({
+              ...prevTutorialSteps,
+              ["mapping"]: {
+                ...prevTutorialSteps["mapping"],
+                stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
+              }
+            }));
+          }
     };
 
     const open = Boolean(anchorEl);
@@ -310,6 +321,7 @@ export default function CustomEntitiesDropdown({
                 open={open}
                 placement='bottom-end'
                 anchorEl={anchorEl}
+                className='cde-field__popper'
                 sx={{
                     height: "21.875rem",
                     borderRadius: '0.5rem',

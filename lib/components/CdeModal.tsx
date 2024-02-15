@@ -7,14 +7,14 @@ import MappingStep from './steps/MappingStep.tsx';
 import Header from "./common/Header.tsx";
 import {useCdeContext} from "../CdeContext.ts";
 import {CommonCircularProgress} from "./common/CommonCircularProgress.tsx";
-import CommonWalkthrough from './common/CommonWalkthrough.tsx';
+import CommonWalkthrough, {WalkthroughStartDialog} from './common/CommonWalkthrough.tsx';
 
 
 const CdeModal: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose} = useCdeContext();
+    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose, tutorialStep, tutorialSteps} = useCdeContext();
 
     const onClose = () => {
         setIsModalOpen(false)
@@ -48,6 +48,7 @@ const CdeModal: FC = () => {
                 <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
                 <CommonWalkthrough/>
+                {!tutorialSteps["home"].run && tutorialStep==="home" ? <WalkthroughStartDialog/> : <></>}
             </Modal>
             <Snackbar
                 open={!!errorMessage}

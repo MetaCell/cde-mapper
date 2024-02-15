@@ -3,7 +3,7 @@ import {Stack, Typography, Box, Button, Link} from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
 
 function StepOne() {
-    const [selectedRadioValue, setSelectedRadioValue] = useState("Spinal Cord Injury (SCI)");
+    const [selectedRadioValue, setSelectedRadioValue] = useState('');
 
     const handleRadioChange = (value: string) => {
         setSelectedRadioValue(value);

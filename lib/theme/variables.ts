@@ -39,4 +39,6 @@ export const vars = {
   badgeBg: '#C6D9F6',
   drodownDetailBg: '#FCFCFD',
   bodyBgColor: '#F2F4F7',
+  tutorialOverlayColor: 'rgba(0, 0, 0, 0.25)',
+  tooltipBoxShadow: '0px 2px 4px -2px rgba(7, 8, 8, 0.06), 0px 4px 8px -2px rgba(7, 8, 8, 0.10)'
 };

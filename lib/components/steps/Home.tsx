@@ -1,23 +1,38 @@
-import {Box, Button, Typography, Chip} from '@mui/material';
-import {StyledTable} from '../common/StyledTable.tsx';
-import {CircleChipDefault, CircleChipSuccess} from '../../icons/index.tsx';
-import {vars} from '../../theme/variables.ts';
-import {STEPS} from "../../models.ts";
-import {useCdeContext} from "../../CdeContext.ts";
+import { Box, Button, Typography, Chip } from '@mui/material';
+import { StyledTable } from '../common/StyledTable.tsx';
+import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
+import { vars } from '../../theme/variables.ts';
+import { STEPS } from "../../models.ts";
+import { useCdeContext } from "../../CdeContext.ts";
 
-const {primary600, gray600, drodownDetailBg} = vars;
+const { primary600, gray600, drodownDetailBg } = vars;
 
 function Home() {
     const {
         setStep,
         datasetSample,
+        tutorialSteps,
+        setTutorialSteps
     } = useCdeContext();
 
+    const handleStartMappingClick = () => {
+        setStep(STEPS.COLLECTION);
+        if (tutorialSteps["home"].run) {
+            setTutorialSteps(prevTutorialSteps => ({
+                ...prevTutorialSteps,
+                ["home"]: {
+                    ...prevTutorialSteps["home"],
+                    run: false
+                }
+            }));
+        }
+    }
+
     return (
-        <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
+        <Box display='flex' alignItems='center' flexDirection='column' className="home-step" px={3} py={6} sx={{
             background: drodownDetailBg
         }}>
-            <Typography sx={{marginBottom: '0.5rem'}} variant='h3'>
+            <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
                 Create mapping(s) with selected dataset?
             </Typography>
             <Typography variant='body2' sx={{
@@ -51,21 +66,22 @@ function Home() {
                         <Typography variant="body2">total number of column headers</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess/>}/>
+                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
                         <Chip size="small" label="83 unmapped, 13 suggestions available" color="default"
-                              icon={<CircleChipDefault/>}/>
+                            icon={<CircleChipDefault />} />
                     </Box>
                 </Box>
                 <Box className="dataset-table">
-                    <StyledTable sample={datasetSample}/>
+                    <StyledTable sample={datasetSample} />
                 </Box>
             </Box>
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
-                <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className="mapping__start-btn">Start mapping</Button>
+                <Button variant='contained' onClick={handleStartMappingClick} className="mapping__start-btn">Start mapping</Button>
                 <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
                     instead </Button>
             </Box>
+
         </Box>
     );
 }

@@ -148,7 +148,7 @@ function MappingStep() {
                             fontSize: '0.75rem',
                             fontWeight: 500,
                             lineHeight: '150%',
-                        }}>
+                        }} className='mapping-header__indicator'>
                             37/120 column headers still unmapped
                         </Typography>
 

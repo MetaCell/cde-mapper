@@ -6,6 +6,7 @@ import CustomEntitiesDropdown from "../common/CustomMappingDropdown";
 import CdeDetails from "../common/CdeDetails";
 import Filters from "../common/Filters";
 import PreviewTable from "../common/PreviewTable";
+import { useCdeContext } from "../../CdeContext";
 
 const styles = {
   root: {
@@ -70,6 +71,7 @@ const styles = {
 const StepThree = () => {
   const [togglePreview, setTogglePreview] = useState(false);
   const [age, setAge] = React.useState('0');
+  const { tutorialSteps, setTutorialSteps } = useCdeContext();
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
@@ -79,6 +81,16 @@ const StepThree = () => {
 
   const filterToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+
+    if (tutorialSteps['mapping'].run) {
+      setTutorialSteps(prevTutorialSteps => ({
+        ...prevTutorialSteps,
+        ["mapping"]: {
+          ...prevTutorialSteps["mapping"],
+          stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
+        }
+      }));
+    }
   };
 
   const handleClose = () => {
@@ -87,6 +99,19 @@ const StepThree = () => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'filter-popover' : undefined;
+
+  const handlePreviewToggle = () => {
+    setTogglePreview(!togglePreview)
+    if (tutorialSteps['mapping'].run) {
+      setTutorialSteps(prevTutorialSteps => ({
+        ...prevTutorialSteps,
+        ["mapping"]: {
+          ...prevTutorialSteps["mapping"],
+          stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
+        }
+      }));
+    }
+  }
 
   const mockCDE = [
     {
@@ -189,13 +214,14 @@ const StepThree = () => {
   const searchCDE = () => mockCDE;
 
   return (
-    <>
+    <Box className="mapping-step">
       <ModalHeightWrapper pb={10} height='15rem'>
         <Box alignItems='center' display='flex' gap={1.5} mb={3}>
           <TextField
             fullWidth
             variant="outlined"
             placeholder="Search column headers or mapped CDEs..."
+            className="mapping__search-input"
             InputProps={{
               startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>
             }}
@@ -204,6 +230,7 @@ const StepThree = () => {
             variant="outlined"
             aria-describedby={id}
             onClick={filterToggle}
+            className="mapping__filter-btn"
           >
             <FilterIcon />
             Filter
@@ -216,7 +243,7 @@ const StepThree = () => {
           <Box sx={styles.root}>
             <Box sx={styles.head}>
               <Box sx={styles.col}>
-                <SortIcon />
+                <SortIcon className="mapping__sort-icon"/>
               </Box>
               <Box sx={styles.col}>
                 <Typography>Column headers from dataset</Typography>
@@ -230,14 +257,14 @@ const StepThree = () => {
             </Box>
             <Box sx={styles.wrap}>
               <Box sx={styles.row}>
-                <Box sx={styles.col}>
+                <Box sx={styles.col} className="mapping-chip">
                   <Chip
                     label={'Unmapped'}
                     size="small"
                     icon={<BulletIcon color={'#676C74'} />}
                   />
                 </Box>
-                <Box sx={styles.col}>
+                <Box sx={styles.col} className="mapping__column-header">
                   <TextField
                     disabled
                     fullWidth
@@ -247,15 +274,15 @@ const StepThree = () => {
                 <Box sx={styles.col}>
                   <ArrowIcon />
                 </Box>
-                <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
+                <Box sx={styles.col} className="cde-fields__item-first">
+                  <CustomEntitiesDropdown options={{
                     placeholder: "Choose CDE or Data Dictionary fields...",
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
                     value: mockCDE[1] ?? "",
-                  }}/>
-                </Box>  
+                  }} />
+                </Box>
               </Box>
 
               <Box sx={styles.row}>
@@ -277,14 +304,14 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
+                  <CustomEntitiesDropdown options={{
                     placeholder: "Choose CDE or Data Dictionary fields...",
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
                     value: mockCDE[2] ?? "",
-                  }}/>
-                </Box>  
+                  }} />
+                </Box>
               </Box>
 
               <Box sx={styles.row}>
@@ -306,14 +333,14 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
+                  <CustomEntitiesDropdown options={{
                     placeholder: "Choose CDE or Data Dictionary fields...",
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
                     value: mockCDE[3] ?? "",
-                  }}/>
-                </Box>  
+                  }} />
+                </Box>
               </Box>
 
               <Box sx={styles.row}>
@@ -336,13 +363,13 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col}>
-                  <CustomEntitiesDropdown options= {{
+                  <CustomEntitiesDropdown options={{
                     placeholder: "Choose CDE or Data Dictionary fields...",
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
                     value: mockCDE[0] ?? "",
-                  }}/>
+                  }} />
                 </Box>
 
                 <Box width='100%' mt={1.5}>
@@ -354,17 +381,17 @@ const StepThree = () => {
                         title={
                           <>
                             <Typography sx={{
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                                lineHeight: '142.857%',
-                                marginBottom: '0.25rem',
-                                color: '#fff',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              lineHeight: '142.857%',
+                              marginBottom: '0.25rem',
+                              color: '#fff',
                             }}>This is a Tooltip</Typography>
                             <Typography sx={{
-                                fontSize: '0.75rem',
-                                fontWeight: 400,
-                                lineHeight: '142.857%',
-                                color: '#fff',
+                              fontSize: '0.75rem',
+                              fontWeight: 400,
+                              lineHeight: '142.857%',
+                              color: '#fff',
                             }}>
                               Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
                             </Typography>
@@ -375,7 +402,7 @@ const StepThree = () => {
                       </Tooltip>
                     </AccordionSummary>
                     <AccordionDetails>
-                    <Box pl='2.5625rem'>
+                      <Box pl='2.5625rem'>
                         <Box sx={{
                           position: 'relative',
                           '&:before': {
@@ -414,24 +441,24 @@ const StepThree = () => {
                             }
                           }} mb={1.5}>
                             <Box sx={{ width: '18.75rem' }}>
-                            <FormControl fullWidth>
-                              <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={age}
-                                placeholder=""
-                                onChange={handleChange}
-                              >
-                                <MenuItem disabled value={0} sx={{
-                                  color: '#A9ACB2'
-                                }}>
-                                  <em>Choose column header to map...</em>
-                                </MenuItem>
-                                <MenuItem value={1}>MotorFoceApplied</MenuItem>
-                                <MenuItem value={2}>Subject</MenuItem>
-                                <MenuItem value={3}>Age</MenuItem>
-                              </Select>
-                            </FormControl>
+                              <FormControl fullWidth>
+                                <Select
+                                  labelId="demo-simple-select-label"
+                                  id="demo-simple-select"
+                                  value={age}
+                                  placeholder=""
+                                  onChange={handleChange}
+                                >
+                                  <MenuItem disabled value={0} sx={{
+                                    color: '#A9ACB2'
+                                  }}>
+                                    <em>Choose column header to map...</em>
+                                  </MenuItem>
+                                  <MenuItem value={1}>MotorFoceApplied</MenuItem>
+                                  <MenuItem value={2}>Subject</MenuItem>
+                                  <MenuItem value={3}>Age</MenuItem>
+                                </Select>
+                              </FormControl>
                             </Box>
                             <Box><ArrowIcon /></Box>
                             <Box display='flex' gap={1.5} flex={1}>
@@ -465,16 +492,16 @@ const StepThree = () => {
 
                               <Box display='flex' gap={0.5}>
                                 <IconButton sx={{
-                                    borderRadius: '0.5rem',
-                                    padding: '0.4375rem',
+                                  borderRadius: '0.5rem',
+                                  padding: '0.4375rem',
                                 }}>
                                   <CrossIcon />
                                 </IconButton>
                                 <IconButton sx={{
-                                    borderRadius: '0.5rem',
-                                    padding: '0.4375rem',
-                                    border: '0.0625rem solid #D6D8DB',
-                                    boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                  borderRadius: '0.5rem',
+                                  padding: '0.4375rem',
+                                  border: '0.0625rem solid #D6D8DB',
+                                  boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                                 }}>
                                   <CheckIcon />
                                 </IconButton>
@@ -514,22 +541,22 @@ const StepThree = () => {
                             }
                           }} mb={1.5}>
                             <Box sx={{ width: '18.75rem' }}>
-                            <FormControl fullWidth>
-                              <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={age}
-                                placeholder=""
-                                onChange={handleChange}
-                              >
-                                <MenuItem disabled value={0}>
-                                  Choose column header to map...
-                                </MenuItem>
-                                <MenuItem value={1}>Ten</MenuItem>
-                                <MenuItem value={2}>Twenty</MenuItem>
-                                <MenuItem value={3}>Thirty</MenuItem>
-                              </Select>
-                            </FormControl>
+                              <FormControl fullWidth>
+                                <Select
+                                  labelId="demo-simple-select-label"
+                                  id="demo-simple-select"
+                                  value={age}
+                                  placeholder=""
+                                  onChange={handleChange}
+                                >
+                                  <MenuItem disabled value={0}>
+                                    Choose column header to map...
+                                  </MenuItem>
+                                  <MenuItem value={1}>Ten</MenuItem>
+                                  <MenuItem value={2}>Twenty</MenuItem>
+                                  <MenuItem value={3}>Thirty</MenuItem>
+                                </Select>
+                              </FormControl>
                             </Box>
                             <Box><ArrowIcon /></Box>
                             <Box display='flex' gap={1.5} flex={1}>
@@ -563,20 +590,20 @@ const StepThree = () => {
 
                               <Box display='flex' gap={0.5}>
                                 <IconButton sx={{
-                                    borderRadius: '0.5rem',
-                                    padding: '0.4375rem',
-                                    // border: '0.0625rem solid #E4E5E7',
-                                    // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                  borderRadius: '0.5rem',
+                                  padding: '0.4375rem',
+                                  // border: '0.0625rem solid #E4E5E7',
+                                  // boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                                 }}>
-                                    <CrossIcon />
+                                  <CrossIcon />
                                 </IconButton>
                                 <IconButton sx={{
-                                    borderRadius: '0.5rem',
-                                    padding: '0.4375rem',
-                                    border: '0.0625rem solid #D6D8DB',
-                                    boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
+                                  borderRadius: '0.5rem',
+                                  padding: '0.4375rem',
+                                  border: '0.0625rem solid #D6D8DB',
+                                  boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                                 }}>
-                                    <CheckIcon />
+                                  <CheckIcon />
                                 </IconButton>
                               </Box>
                             </Box>
@@ -675,8 +702,8 @@ const StepThree = () => {
         boxSizing: 'border-box',
         borderRadius: '0.75rem 0.75rem 0 0',
         border: '0.0625rem solid #ECEDEE',
-      }}>
-        <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={() => setTogglePreview(!togglePreview)}>
+      }} className="preview__toggle">
+        <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={handlePreviewToggle} className="preview__toggle_false">
           <Typography sx={{
             flex: 1,
             color: '#676C74',
@@ -813,7 +840,7 @@ const StepThree = () => {
           </Box>
         )}
       </Box>
-    </>
+    </Box>
   )
 }
 
