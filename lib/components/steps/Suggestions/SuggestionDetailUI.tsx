@@ -1,10 +1,10 @@
 import {Box, Typography} from '@mui/material';
-import {ArrowIcon, GlobeIcon} from '../../icons/index.tsx';
-import CdeDetails from '../common/CdeDetails.tsx';
-import {vars} from '../../theme/variables.ts';
-import {Entity} from "../../models.ts";
-import {getCleanUrl} from "../../helpers/functions.ts";
-import StyledRadio from '../common/StyledRadio.tsx';
+import {ArrowIcon, GlobeIcon} from '../../../icons';
+import CdeDetails from '../../common/CdeDetails.tsx';
+import {vars} from '../../../theme/variables.ts';
+import {Entity} from "../../../models.ts";
+import {getCleanUrl} from "../../../helpers/functions.ts";
+import StyledRadio from '../../common/StyledRadio.tsx';
 
 const {
     gray900,
