@@ -93,8 +93,11 @@ export const CdeContextProvider = ({
     };
 
     const collectionsDictionary = useMemo(() => {
-        return rawCollections.reduce((acc, collection) => {
-            acc[collection.id] = collection;
+        return rawCollections.reduce((acc, collection, index) => {
+            acc[collection.id] = {
+                ...collection,
+                suggested: index === 0 // Set 'suggested' to true for the first collection, false for others
+            };
             return acc;
         }, {} as { [key: string]: Collection });
     }, [rawCollections]);

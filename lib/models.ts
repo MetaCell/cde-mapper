@@ -24,7 +24,7 @@ export interface Collection {
     id: string;
     name: string;
     fetch: (queryString: string) => Promise<Entity[]>;
-    suggested: boolean;
+    suggested: boolean | null
 }
 
 export interface Config {
