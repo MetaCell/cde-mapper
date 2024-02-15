@@ -104,7 +104,6 @@ function getCollections() {
             id: 'global',
             name: "Global",
             fetch: fetch,
-            suggested: true,
         }
     ]
 }

@@ -1,7 +1,7 @@
 import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
 import React, {Fragment} from 'react';
 import CollectionsTab from './CollectionsTab.tsx';
-import StepTwo from './StepTwo.tsx';
+import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
@@ -91,7 +91,7 @@ function MappingStep() {
                     </ModalHeightWrapper>
                 );
             case TabsEnum.Suggestions:
-                return <StepTwo changeToNextTab={changeToNextTab}/>;
+                return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
             case TabsEnum.Mapping:
                 return <MappingTab defaultCollection={defaultCollection}/>;
             default:
