@@ -45,6 +45,10 @@ theme = createTheme({
       lineHeight: '150%',
       color: gray700,
     },
+    h6: {
+      fontSize: '1.125rem',
+      color: gray700
+    },
     body2: {
       fontSize: '1rem',
       fontWeight: 400,
@@ -368,7 +372,8 @@ theme = createTheme({
         },
 
         startIcon: {
-          margin: 0
+          margin: 0,
+          marginRight: '0.5rem'
         },
 
         containedPrimary: {
@@ -601,6 +606,17 @@ theme = createTheme({
           "&:hover": {
             color: gray700
           }
+        }
+      }
+    },
+
+    MuiBreadcrumbs: {
+      styleOverrides: {
+        separator: {
+          marginLeft: '0.25rem',
+          marginRight: '0.25rem',
+          height: '1.125rem',
+          fontSize: '0.875rem'
         }
       }
     }

@@ -1,11 +1,11 @@
-import { Box, Button, Typography, Chip } from '@mui/material';
+import { Box, Button, Typography, Chip, TableContainer, Paper } from '@mui/material';
 import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 import { STEPS } from "../../models.ts";
 import { useCdeContext } from "../../CdeContext.ts";
 
-const { primary600, gray600, drodownDetailBg } = vars;
+const { primary600, gray600, drodownDetailBg, gray200 } = vars;
 
 function Home() {
     const {
@@ -71,9 +71,17 @@ function Home() {
                             icon={<CircleChipDefault />} />
                     </Box>
                 </Box>
-                <Box className="dataset-table">
-                    <StyledTable sample={datasetSample} />
-                </Box>
+                <TableContainer
+                    component={Paper}
+                    elevation={0}
+                    sx={{
+                        maxWidth: '650px',
+                        borderRight: `0.0625rem solid ${gray200}`,
+                        borderBottom: 0
+                    }}
+                >
+                    <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem'/>
+                </TableContainer>
             </Box>
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>

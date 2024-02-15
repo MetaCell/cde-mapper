@@ -4,11 +4,11 @@ import Home from "./steps/Home.tsx";
 import {STEPS} from "../models.ts";
 import Modal from './common/Modal.tsx'
 import MappingStep from './steps/MappingStep.tsx';
+import TemplateStep from './steps/TemplateStep.tsx';
 import Header from "./common/Header.tsx";
 import {useCdeContext} from "../CdeContext.ts";
 import {CommonCircularProgress} from "./common/CommonCircularProgress.tsx";
 import CommonWalkthrough, {WalkthroughStartDialog} from './common/CommonWalkthrough.tsx';
-
 
 const CdeModal: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
@@ -38,14 +38,14 @@ const CdeModal: FC = () => {
                 return <MappingStep/>;
             // Add cases for other steps
             default:
-                return <div>Unknown step</div>;
+                return <TemplateStep/>
         }
     };
 
     return (
         <>
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
-                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen}/>
+                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
                 <CommonWalkthrough/>
                 {!tutorialSteps["home"].run && tutorialStep==="home" ? <WalkthroughStartDialog/> : <></>}

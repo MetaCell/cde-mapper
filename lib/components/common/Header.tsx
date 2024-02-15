@@ -27,8 +27,8 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void }) => {
-    const { onClose, isInfoOpen, setIsInfoOpen } = props
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number }) => {
+    const { onClose, isInfoOpen, setIsInfoOpen, step } = props
     const { tutorialStep, tutorialSteps, setTutorialSteps } = useCdeContext();
 
     const handleInfoBtnClick = () => {
@@ -59,7 +59,6 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 <Box display='flex' alignItems='center' flex={1}>
                     <IconButton disableRipple onClick={onClose} sx={{
                         borderRadius: '0.5rem',
-
                         '&:hover': {
                             background: gray100
                         }
@@ -68,15 +67,17 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                     </IconButton>
                     <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
                     <Typography>
-                        Map selected dataset
+                        {step === -1 ? "Create template" : "Map selected dataset"}
                     </Typography>
                 </Box>
 
                 <Box display='flex' gap={1}>
-                    <IconButton sx={{ borderRadius: '0.5rem' }} onClick={handleStartTutorial}>
-                        <MapTriFold />
-                    </IconButton>
-                    <Button onClick={handleInfoBtnClick} disableRipple variant="outlined" className="about-info__btn">
+                    {
+                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }}>
+                            <MapTriFold />
+                        </IconButton>
+                    }
+                    <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
                         Info
                     </Button>
                 </Box>
