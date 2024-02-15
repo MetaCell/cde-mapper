@@ -1,7 +1,7 @@
 import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
 import React, {Fragment} from 'react';
 import StepOne from './StepOne.tsx';
-import StepTwo from './StepTwo.tsx';
+import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
@@ -51,7 +51,7 @@ const renderTabComponent = (step: number, changeToNextTab: () => void) => {
         case TabsEnum.Collection:
             return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
         case TabsEnum.Suggestions:
-            return <StepTwo changeToNextTab={changeToNextTab}/>;
+            return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
         case TabsEnum.Mapping:
             return <StepThree/>;
         // Add cases for other steps

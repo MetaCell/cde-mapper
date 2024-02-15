@@ -1,11 +1,12 @@
-import { Box, Button, Chip, IconButton, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
-import { ArrowDropDown, LeftIcon, RightIcon } from '../../icons/index.tsx';
+import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
+import {useCallback, useEffect, useState} from 'react';
+import {ArrowDropDown, LeftIcon, RightIcon} from '../../../icons';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
-import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { vars } from '../../theme/variables.ts';
-import { useCdeContext } from "../../CdeContext.ts";
-import { MAX_SUGGESTIONS } from "../../settings.ts";
+import ModalHeightWrapper from '../../common/ModalHeightWrapper.tsx';
+import {vars} from '../../../theme/variables.ts';
+import {useCdeContext} from "../../../CdeContext.ts";
+import {MAX_SUGGESTIONS} from "../../../settings.ts";
+import NoSuggestions from "./NoSuggestions.tsx";
 
 const {
     gray100,
@@ -17,13 +18,15 @@ const {
     primary600
 } = vars;
 
-interface StepTwoProps {
+interface SuggestionsStepProps {
     changeToNextTab: () => void;
 }
 
-function StepTwo({ changeToNextTab }: StepTwoProps) {
+function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
     const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
+    const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
+
 
     const {
         getSuggestions,
@@ -61,13 +64,23 @@ function StepTwo({ changeToNextTab }: StepTwoProps) {
     }, [activeSuggestions, currentKeyIndex]);
 
     useEffect(() => {
-        if (activeSuggestions.size === 0) {
+        const initialActiveSuggestions = new Set<string>(
+            Object.keys(suggestionsMapping).filter(key => suggestionsMapping[key].length > 0)
+        );
+        setActiveSuggestions(initialActiveSuggestions);
+
+        // Set hadInitialSuggestions based on whether there were any initial suggestions
+        setHadInitialSuggestions(initialActiveSuggestions.size > 0);
+    }, [suggestionsMapping]);
+
+    useEffect(() => {
+        if (activeSuggestions.size === 0 && hadInitialSuggestions) {
             changeToNextTab();
         }
-    }, [activeSuggestions, changeToNextTab]);
+    }, [activeSuggestions, changeToNextTab, hadInitialSuggestions]);
 
     if (activeSuggestions.size === 0) {
-        return <div>No suggestions available.</div>;
+        return <NoSuggestions onNext={changeToNextTab}/>
     }
 
     const columnsWithSuggestions = Array.from(activeSuggestions);
@@ -212,4 +225,4 @@ function StepTwo({ changeToNextTab }: StepTwoProps) {
     );
 }
 
-export default StepTwo;
+export default SuggestionsStep;
