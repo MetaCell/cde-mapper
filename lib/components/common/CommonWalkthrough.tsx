@@ -5,7 +5,7 @@ import { useCdeContext } from '../../CdeContext';
 import { TutorialCloseIcon } from '../../icons';
 import { vars } from '../../theme/variables';
 
-const {baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900} = vars;
+const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
 
 interface TooltipProps {
     continuous: boolean,
@@ -64,7 +64,7 @@ const Tooltip = ({
             )}
             <Box className='tooltip-content' {...tooltipContent}>
                 {step.content}
-                {index > 0 && <Checkbox
+                <Checkbox
                     label='Dont show on startup (accessible on the header)'
                     sx={{
                         mt: step.content !== '' ? '2rem' : 0,
@@ -74,7 +74,7 @@ const Tooltip = ({
                             color: gray500
                         }
                     }}
-                />}
+                />
             </Box>
             <Box className='tooltip-footer' {...tooltipFooter}>
                 <Typography variant='caption' sx={{ color: gray500 }}>{index + 1} of {size}</Typography>
@@ -125,21 +125,16 @@ const CommonWalkthrough = () => {
                 ...prevTutorialSteps,
                 [tutorialStep]: {
                     ...prevTutorialSteps[tutorialStep],
-                    stepIndex: nextStepIndex
-                }
-            }));
-        } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                [tutorialStep]: {
-                    ...prevTutorialSteps[tutorialStep],
-                    run: false,
-                    stepIndex: 0
+                    stepIndex: action === ACTIONS.CLOSE ? 0 : nextStepIndex,
+                    run: action === ACTIONS.CLOSE ? false : true
                 }
             }));
         }
     };
-   
+
+    console.log("tutorial step: ", tutorialStep)
+    console.log("tutorial steps stepIndex: ", tutorialSteps[tutorialStep].stepIndex)
+
     return (
         <Joyride
             callback={handleJoyrideCallback}

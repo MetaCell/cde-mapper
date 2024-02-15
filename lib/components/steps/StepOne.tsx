@@ -3,9 +3,9 @@ import {Stack, Typography, Box, Button, Link} from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
 
 function StepOne() {
-    const [selectedRadioValue, setSelectedRadioValue] = useState('');
+    const [selectedRadioValue, setSelectedRadioValue] = useState(0);
 
-    const handleRadioChange = (value: string) => {
+    const handleRadioChange = (value: number) => {
         setSelectedRadioValue(value);
     };
 
@@ -32,10 +32,10 @@ function StepOne() {
                         </Typography>
                     </Stack>
                     <Stack direction="row" spacing={1.5} className='repository-cards'>
-                        <StyledCard value={"Spinal Cord Injury (SCI)"} isSuggested={true}
-                                    selectedValue={selectedRadioValue} onChange={handleRadioChange}/>
-                        <StyledCard value={"Trauma Brain Injury (TBI)"} selectedValue={selectedRadioValue}
-                                    onChange={handleRadioChange}/>
+                        <StyledCard value={0} isSuggested={true}
+                                    selectedValue={selectedRadioValue} onChange={handleRadioChange} label="Spinal Cord Injury (SCI)"/>
+                        <StyledCard value={1} selectedValue={selectedRadioValue}
+                                    onChange={handleRadioChange} label="Trauma Brain Injury (TBI)"/>
                     </Stack>
                     <Stack alignItems="center" sx={{width: '100%'}}>
                         <Box>

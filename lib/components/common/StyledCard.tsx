@@ -13,13 +13,14 @@ import {useCdeContext} from '../../CdeContext';
 const {baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700} = vars
 
 interface StyledCardProps {
-    value: string;
+    value: number;
     isSuggested?: boolean;
-    selectedValue: string;
-    onChange: (value: string) => void;
+    selectedValue: number;
+    onChange: (value: number) => void;
+    label: string;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange}) => {
+const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label}) => {
     const radioGroup = useRadioGroup();
     let checked = false;
     const {setTutorialSteps} = useCdeContext();
@@ -31,14 +32,14 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
     const handleRadioChange = () => {
         if (value !== selectedValue) {
             onChange(value);
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                ['collection']: {
-                    ...prevTutorialSteps['collection'],
-                    stepIndex: prevTutorialSteps['collection'].stepIndex+=1
-                }
-            }));
         }
+        setTutorialSteps(prevTutorialSteps => ({
+            ...prevTutorialSteps,
+            ['collection']: {
+                ...prevTutorialSteps['collection'],
+                stepIndex: 1
+            }
+        }));
     };
 
     return (
@@ -79,7 +80,7 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
                         }}
                     >
                         <FormControlLabel value={value} control={<Radio size="small" checked={selectedValue === value}
-                                                                        onChange={handleRadioChange}/>} label={value}/>
+                                                                        onChange={handleRadioChange}/>} label={label}/>
                         {isSuggested && <Typography variant="caption" sx={{color: gray500}}>
                             Suggested
                         </Typography>}

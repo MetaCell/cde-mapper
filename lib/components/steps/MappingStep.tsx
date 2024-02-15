@@ -1,10 +1,10 @@
-import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
-import React, {Fragment} from 'react';
+import { Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps } from '@mui/material';
+import React, { Fragment } from 'react';
 import StepOne from './StepOne.tsx';
 import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import {vars} from '../../theme/variables.ts';
+import { vars } from '../../theme/variables.ts';
 import { useCdeContext } from '../../CdeContext.ts';
 
 const {
@@ -49,11 +49,11 @@ enum TabsEnum {
 const renderTabComponent = (step: number, changeToNextTab: () => void) => {
     switch (step) {
         case TabsEnum.Collection:
-            return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
+            return <ModalHeightWrapper height="11.5rem"><StepOne /></ModalHeightWrapper>;
         case TabsEnum.Suggestions:
-            return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
+            return <SuggestionsStep changeToNextTab={changeToNextTab} />;
         case TabsEnum.Mapping:
-            return <StepThree/>;
+            return <StepThree />;
         // Add cases for other steps
         default:
             return <div>Unknown step</div>;
@@ -67,7 +67,7 @@ interface CustomTabPanelProps extends BoxProps {
 }
 
 
-const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, ...other}) => {
+const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index, ...other }) => {
     return (
         <Box
             height={1}
@@ -100,21 +100,22 @@ function MappingStep() {
         setTutorialSteps(prevTutorialSteps => ({
             ...prevTutorialSteps,
             ["suggestions"]: {
-              ...prevTutorialSteps["suggestions"],
-              run: false
+                ...prevTutorialSteps["suggestions"],
+                run: false,
+                stepIndex: 0
             }
         }));
     }
 
-    React.useEffect(()=>{
-        if(value===0){
+    React.useEffect(() => {
+        if (value === 0) {
             setTutorialStep('collection')
-        }else if(value===1){
+        } else if (value === 1) {
             setTutorialStep('suggestions')
-        }else{
+        } else {
             setTutorialStep('mapping')
         }
-    },[value])
+    }, [value])
 
     return (
         <Fragment>
@@ -154,25 +155,25 @@ function MappingStep() {
                         <Button variant='text' onClick={handleContinueButtonClick} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : value === TabsEnum.Mapping && (<>
-                        <Typography sx={{
-                            color: gray500,
-                            fontSize: '0.75rem',
-                            fontWeight: 500,
-                            lineHeight: '150%',
-                        }} className='mapping-header__indicator'>
-                            37/120 column headers still unmapped
-                        </Typography>
+                            <Typography sx={{
+                                color: gray500,
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                lineHeight: '150%',
+                            }} className='mapping-header__indicator'>
+                                37/120 column headers still unmapped
+                            </Typography>
 
-                        <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
+                            <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
 
-                        <Button variant='contained'>
-                            Save mapping
-                        </Button></>)}
+                            <Button variant='contained'>
+                                Save mapping
+                            </Button></>)}
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
                 <CustomTabPanel key={index} value={value}
-                                index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
+                    index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
             ))}
         </Fragment>
     );
