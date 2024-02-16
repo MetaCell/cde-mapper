@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Stack, Typography, Box, Button, Link} from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
 import {useCdeContext} from "../../CdeContext.ts";
+import ModalHeightWrapper from "../common/ModalHeightWrapper.tsx";
 
 
 interface CollectionsProps {
@@ -28,7 +29,7 @@ function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProp
     };
 
     return (
-        <>
+        <ModalHeightWrapper height="11.5rem">
             <Box
                 overflow='auto'
                 display='flex'
@@ -53,7 +54,7 @@ function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProp
                             <StyledCard
                                 key={key}
                                 value={collections[key].name}
-                                isSuggested={collections[key].suggested}
+                                isSuggested={collections[key].suggested || false}
                                 selectedValue={selectedCollection === key ? collections[key].name : ""}
                                 onChange={() => handleRadioChange(key)}
                             />
@@ -75,7 +76,8 @@ function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProp
                     </Stack>
                 </Stack>
             </Box>
-        </>
+        </ModalHeightWrapper>
+
     );
 }
 

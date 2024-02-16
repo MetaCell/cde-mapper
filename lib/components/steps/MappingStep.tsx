@@ -3,7 +3,6 @@ import React, {Fragment} from 'react';
 import CollectionsTab from './CollectionsTab.tsx';
 import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
-import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import {vars} from '../../theme/variables.ts';
 
 const {
@@ -82,14 +81,10 @@ function MappingStep() {
     const renderTabComponent = () => {
         switch (tabIndex) {
             case TabsEnum.Collection:
-                return (
-                    <ModalHeightWrapper height="11.5rem">
-                        <CollectionsTab
-                            setDefaultCollection={setDefaultCollection}
-                            changeToNextTab={changeToNextTab}
-                        />
-                    </ModalHeightWrapper>
-                );
+                return <CollectionsTab
+                    setDefaultCollection={setDefaultCollection}
+                    changeToNextTab={changeToNextTab}
+                />
             case TabsEnum.Suggestions:
                 return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
             case TabsEnum.Mapping:
