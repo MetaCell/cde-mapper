@@ -210,7 +210,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             prevCollections.map(collection => {
                 if (collection.id === selectedCollection.id) {
                     // Toggle the 'selected' state
-                    return { ...collection, selected: !collection.selected };
+                    return {...collection, selected: !collection.selected};
                 } else {
                     return collection;
                 }
@@ -256,8 +256,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const searchCDE = () => mockCDE;
 
-    console.log(datasetMapping)
-    console.log(defaultCollection)
+    const searchText = "Search in " + (selectedCollections.length === 1 ? `${selectedCollections[0].name} collection` : 'multiple collections');
     return (
         <>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -299,7 +298,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                         <CustomEntitiesDropdown
                                             placeholder={"Choose CDE or Data Dictionary fields... "}
                                             options={{
-                                                searchPlaceholder: `Search in ${defaultCollection} collection`,
+                                                searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: () => searchCDE(),
                                                 collections: selectedCollections,
