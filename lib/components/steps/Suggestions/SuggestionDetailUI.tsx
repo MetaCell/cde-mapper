@@ -10,8 +10,7 @@ const {
     gray900,
     gray200,
     gray500,
-    gray300,
-    primary600
+    gray300
 } = vars;
 
 type SuggestionDetailUIProps = {
@@ -47,12 +46,7 @@ function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
         <Box gap='1.5rem' display='flex' alignItems='start'>
             <Box height='2.625rem' display='flex' alignItems='center' sx={{"& .MuiRadio-root": {
                                 padding: 0,
-                                color: gray300,
-                                marginRight: '0.75rem',
-                                marginLeft: '0.6rem',
-                                '&.Mui-checked': {
-                                    color: primary600
-                                }
+                                color: gray300
                             },}}>
                 <StyledRadio/>
             </Box>
