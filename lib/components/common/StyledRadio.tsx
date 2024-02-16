@@ -11,10 +11,6 @@ const DefaultIcon = styled('span')(() => ({
     height: 16,
     backgroundColor: baseWhite,
     border: `1px solid ${gray300}`,
-    '.Mui-focusVisible &': {
-        outline: '2px auto rgba(19,124,189,.6)',
-        outlineOffset: 2,
-    },
     'input:hover ~ &': {
         backgroundColor: primary100,
         border: `1px solid ${primary600}`
