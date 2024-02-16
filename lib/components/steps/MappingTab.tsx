@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
     Accordion,
     AccordionDetails,
@@ -22,6 +22,7 @@ import {useCdeContext} from "../../CdeContext.ts";
 import {getTypeFromRow, isRowMapped} from "../../helpers/functions.ts";
 import {PairingTooltip} from "./Mapping/PairingTooltip.tsx";
 import {PairingSuggestion} from "./Mapping/PairingSuggestion.tsx";
+import {SelectableCollection} from "../../models.ts";
 
 const styles = {
     root: {
@@ -186,17 +187,42 @@ interface MappingProps {
 }
 
 
-
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
-    const [rows, setRows] = useState([]);
-    const {datasetMapping, headerMapping} = useCdeContext();
+    const {datasetMapping, headerMapping, collections} = useCdeContext();
+    const [visibleRows, setVisibleRows] = useState([]);
+    const [selectedCollections, setSelectedCollections] = useState<SelectableCollection[]>([]);
+
+    useEffect(() => {
+        // Initialize the selected collections state
+        const initialSelectedCollections = Object.keys(collections).map(key => ({
+            id: key,
+            name: collections[key].name,
+            selected: key === defaultCollection
+        }));
+
+        setSelectedCollections(initialSelectedCollections);
+    }, [collections, defaultCollection]);
+
+
+    const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
+        setSelectedCollections(prevCollections =>
+            prevCollections.map(collection => {
+                if (collection.id === selectedCollection.id) {
+                    // Toggle the 'selected' state
+                    return { ...collection, selected: !collection.selected };
+                } else {
+                    return collection;
+                }
+            })
+        );
+    };
 
 
     const handleFiltering = () => {
         // TODO: to implement
-        console.log("To be implemented " + rows)
-        setRows([])
+        console.log("To be implemented " + visibleRows)
+        setVisibleRows([])
     }
 
     const getChipComponent = (key: string) => {
@@ -270,13 +296,16 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                         <ArrowIcon/>
                                     </Box>
                                     <Box sx={styles.col}>
-                                        <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
-                                                                options={{
-                                                                    searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                                                    noResultReason: "We couldn’t find any record with this in the database.",
-                                                                    onSearch: () => searchCDE(),
-                                                                    value: mockCDE[2] ?? "",
-                                                                }}/>
+                                        <CustomEntitiesDropdown
+                                            placeholder={"Choose CDE or Data Dictionary fields... "}
+                                            options={{
+                                                searchPlaceholder: `Search in ${defaultCollection} collection`,
+                                                noResultReason: "We couldn’t find any results.",
+                                                onSearch: () => searchCDE(),
+                                                collections: selectedCollections,
+                                                onCollectionSelect: handleCollectionSelect,
+                                                value: mockCDE[2] ?? "",
+                                            }}/>
                                     </Box>
 
                                     {hasPairingSuggestions(key) && (
@@ -298,7 +327,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         {getPairingSuggestions(key).map(() => (
                                                             <PairingSuggestion
                                                                 value='0'
-                                                                onChange={() => {}}
+                                                                onChange={() => {
+                                                                }}
                                                                 selectOptions={[]}
                                                                 subjectName="To be implemented"
                                                                 subjectDescription="To be implemented"

@@ -63,3 +63,8 @@ export enum STEPS {
     COLLECTION,
 }
 
+export interface SelectableCollection {
+    id: string;
+    name: string;
+    selected: boolean;
+}

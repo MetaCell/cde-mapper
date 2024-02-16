@@ -6,6 +6,7 @@ import HoveredOptionContent from "./HoveredOptionContent.tsx";
 import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/Mapping/SearchCollectionSelector.tsx";
+import {SelectableCollection} from "../../models.ts";
 
 const {
     buttonOutlinedBorderColor,
@@ -175,6 +176,8 @@ interface CustomEntitiesDropdownProps {
         onSearch: (searchValue: string) => Option[];
         value: Option;
         header?: Header;
+        collections: SelectableCollection[];
+        onCollectionSelect: (collection: SelectableCollection) => void;
     };
 }
 
@@ -187,7 +190,9 @@ export default function CustomEntitiesDropdown({
                                                        noResultReason,
                                                        onSearch,
                                                        value,
-                                                       header
+                                                       header,
+                                                       collections,
+                                                       onCollectionSelect,
                                                    },
                                                }: CustomEntitiesDropdownProps) {
     const [searchValue] = useState("");
@@ -623,7 +628,8 @@ export default function CustomEntitiesDropdown({
                                                 }
                                             }
                                         }} key={group}>
-                                            <SearchCollectionSelector/>
+                                            <SearchCollectionSelector collections={collections}
+                                                                      onCollectionSelect={onCollectionSelect}/>
 
                                             {toggleCustomView &&
                                                 <Box>

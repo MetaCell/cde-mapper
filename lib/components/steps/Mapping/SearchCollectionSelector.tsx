@@ -1,13 +1,9 @@
 import {useState} from 'react';
 import {Box, ListSubheader, Typography} from '@mui/material';
 import {CheckIcon, DownIcon} from "../../../icons";
+import {SelectableCollection} from "../../../models.ts";
 
 
-interface SelectableCollection {
-    id: string;
-    name: string;
-    selected: boolean;
-}
 
 interface SearchCollectionSelectorProps {
     collections: SelectableCollection[];
