@@ -6,6 +6,17 @@ export const getVariableName = (row: string[], headerMapping: HeaderMapping) => 
 export const getPreciseAbbreviation = (row: string[], headerMapping: HeaderMapping) => row[headerMapping.preciseAbbreviationIndex];
 export const isRowMapped = (row: string[], headerMapping: HeaderMapping) => row[headerMapping.preciseAbbreviationIndex] != ''
 
+export const getTypeFromRow = (row: string[], headerMapping: HeaderMapping): EntityType => {
+    const isMapped = isRowMapped(row, headerMapping)
+    const hasInterLexId = row[headerMapping.interlexIdIndex] !== '';
+
+    if (isMapped) {
+        return hasInterLexId ? EntityType.MappedCDE : EntityType.MappedCustomDataDictionary;
+    } else {
+        return EntityType.Unmapped;
+    }
+};
+
 export const getEntityFromRow = (
     row: string[],
     datasetMappingHeader: string[],
@@ -16,7 +27,7 @@ export const getEntityFromRow = (
         preciseAbbrev: row[headerMapping.preciseAbbreviationIndex],
         title: row[headerMapping.titleIndex],
         interlexId: row[headerMapping.interlexIdIndex],
-        type: row[headerMapping.interlexIdIndex] ? EntityType.CDE : EntityType.CustomDataDictionary,
+        type: row[headerMapping.interlexIdIndex] ? EntityType.MappedCDE : EntityType.MappedCustomDataDictionary,
     };
 
     datasetMappingHeader.forEach((header, index) => {

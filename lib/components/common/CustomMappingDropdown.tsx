@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {FormControl, InputAdornment, MenuItem, Popper, Select, SelectChangeEvent, Stack, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, ListSubheader, Chip} from '@mui/material';
-import {AddIcon, CheckIcon, ChevronDown, DownIcon, GlobeIcon, MagicWandIcon, MagnifyGlassIcon} from "../../icons";
-import HoveredOptionContent from "./HoveredOptionContent";
-import NoResultField from './NoResultField';
-import {vars} from '../../theme/variables';
+import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
+import HoveredOptionContent from "./HoveredOptionContent.tsx";
+import NoResultField from './NoResultField.tsx';
+import {vars} from '../../theme/variables.ts';
+import SearchCollectionSelector from "../steps/Mapping/SearchCollectionSelector.tsx";
 
 const {
     buttonOutlinedBorderColor,
@@ -177,6 +178,7 @@ interface CustomEntitiesDropdownProps {
     };
 }
 
+
 export default function CustomEntitiesDropdown({
                                                    placeholder,
                                                    options: {
@@ -190,7 +192,6 @@ export default function CustomEntitiesDropdown({
                                                }: CustomEntitiesDropdownProps) {
     const [searchValue] = useState("");
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [toggleMenu, setToggleMenu] = useState(false);
     const [age, setAge] = React.useState('0');
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -622,172 +623,7 @@ export default function CustomEntitiesDropdown({
                                                 }
                                             }
                                         }} key={group}>
-                                            <Box>
-                                                <ListSubheader
-                                                    component="div"
-                                                    onClick={() => setToggleMenu(!toggleMenu)}
-                                                    style={{
-                                                        position: 'relative',
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        cursor: 'pointer',
-                                                        justifyContent: "space-between",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        sx={{
-                                                            color: '#373A3E',
-                                                            fontSize: "0.75rem",
-                                                            fontWeight: 500,
-                                                            lineHeight: "1.125rem",
-                                                        }}
-                                                    >
-                                                        Spinal Cord Injury (SCI)
-                                                    </Typography>
-                                                    <DownIcon/>
-                                                    {toggleMenu && (
-                                                        <Box onClick={(e) => e.stopPropagation()} sx={{
-                                                            borderRadius: '0.5rem',
-                                                            overflow: 'hidden',
-                                                            position: 'absolute',
-                                                            width: 'calc(100% - 1.875rem)',
-                                                            top: '2.125rem',
-                                                            left: '0.9375rem',
-                                                            border: '0.0625rem solid #E4E5E7',
-                                                            background: '#FFF',
-                                                            boxShadow: '0rem 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0rem 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)',
-
-                                                            '& .simple-list': {
-                                                                gap: 0,
-                                                                '& li': {
-                                                                    borderRadius: 0,
-                                                                    paddingLeft: '1rem',
-                                                                    paddingRight: '1rem',
-                                                                    borderBottom: '0.0625rem solid #ECEDEE',
-                                                                    '&:hover': {
-                                                                        borderRadius: 0,
-                                                                    },
-                                                                    '& .MuiTypography-root': {
-                                                                        fontWeight: '500 !important',
-                                                                    },
-                                                                }
-                                                            }
-                                                        }}>
-                                                            <ul className='simple-list'>
-                                                                <li>
-                                                                    <Typography
-                                                                        sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                                    >Spinal Cord Injury (SCI)</Typography>
-                                                                </li>
-                                                                <li>
-                                                                    <Typography
-                                                                        sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                                    >Trauma Brain Injury (TBI)</Typography>
-                                                                </li>
-                                                            </ul>
-                                                            <ListSubheader
-                                                                component="div"
-                                                                style={{
-                                                                    cursor: 'auto',
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "space-between",
-                                                                }}
-                                                            >
-                                                                <Typography
-                                                                    sx={{
-                                                                        color: '#676C74 !important',
-                                                                        fontSize: "0.75rem",
-                                                                        fontWeight: '400 !important',
-                                                                        lineHeight: "1.125rem",
-                                                                    }}
-                                                                >
-                                                                    Common Data Element (CDE)
-                                                                </Typography>
-                                                            </ListSubheader>
-                                                            <Box p="0.375rem">
-                                                                <ul>
-                                                                    <li className='selected'>
-                                                                        <Typography
-                                                                            sx={{
-                                                                                width: 1,
-                                                                                height: 1,
-                                                                                padding: "0.625rem"
-                                                                            }}
-                                                                        >Spinal Cord Injury (SCI)</Typography>
-                                                                        <CheckIcon color="#19418F"/>
-                                                                    </li>
-                                                                    <li>
-                                                                        <Typography
-                                                                            sx={{
-                                                                                width: 1,
-                                                                                height: 1,
-                                                                                padding: "0.625rem"
-                                                                            }}
-                                                                        >Trauma Brain Injury (TBI)</Typography>
-                                                                    </li>
-                                                                </ul>
-                                                            </Box>
-                                                        </Box>
-                                                    )}
-                                                </ListSubheader>
-                                            </Box>
-
-                                            <Box mt={0.5} mx="-0.375rem" p='0.375rem' mb='0.375rem'
-                                                 sx={{
-                                                     background: '#EEF2FC',
-                                                     '& ul': {
-                                                         '& li': {
-                                                             '& svg': {
-                                                                 marginLeft: 'auto'
-                                                             },
-                                                             '& .MuiTypography-body1': {
-                                                                 color: '#2155BA'
-                                                             },
-                                                             '& .MuiTypography-body2': {
-                                                                 color: '#346DDB',
-                                                                 fontWeight: 400
-                                                             },
-                                                             '&.selected': {
-                                                                 background: 'rgba(194, 212, 244, 0.30)'
-                                                             },
-                                                             '&:hover': {
-                                                                 background: 'rgba(194, 212, 244, 0.30)'
-                                                             }
-                                                         },
-                                                     }
-                                                 }}
-                                            >
-                                                <Typography sx={{
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 500,
-                                                    lineHeight: '150%',
-                                                    padding: '0.6875rem 0.625rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    color: '#122E64'
-                                                }}>
-                                                    <MagicWandIcon/>
-                                                    Suggestions
-                                                </Typography>
-                                                <ul>
-                                                    <li className='selected'>
-                                                        <Typography
-                                                            sx={{height: 1, padding: "0.625rem"}}
-                                                        >GUID</Typography>
-                                                        <Typography variant='body2'>SCI</Typography>
-                                                        <CheckIcon color="#2155BA"/>
-                                                    </li>
-                                                    <li>
-                                                        <Typography
-                                                            sx={{height: 1, padding: "0.625rem"}}
-                                                        >SmallSpeciesStrainTyp</Typography>
-                                                        <Typography variant='body2'>SCI</Typography>
-                                                    </li>
-                                                </ul>
-                                            </Box>
-
+                                            <SearchCollectionSelector/>
 
                                             {toggleCustomView &&
                                                 <Box>
@@ -838,27 +674,6 @@ export default function CustomEntitiesDropdown({
 
 
                                             <Box>
-                                                <ListSubheader
-                                                    component="div"
-                                                    style={{
-                                                        position: 'static',
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "space-between",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        sx={{
-                                                            color: '#676C74',
-                                                            fontSize: "0.75rem",
-                                                            fontWeight: 500,
-                                                            lineHeight: "1.125rem",
-                                                        }}
-                                                    >
-                                                        Spinal Cord Injury (SCI)
-                                                    </Typography>
-                                                </ListSubheader>
-
                                                 <ul>
                                                     {groupedOptions[group]
                                                         .filter((option: Option) =>
