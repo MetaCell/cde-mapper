@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts'
 
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({mode}) => ({
     define: {
         'process.env': {}
     },
@@ -23,4 +23,15 @@ export default defineConfig(({ mode }) => ({
         sourcemap: mode == 'dev',
         emptyOutDir: true,
         copyPublicDir: false,
-    }}));
+    },
+    server: {
+        proxy: {
+            '/api': {
+                target: 'https://scicrunch.org',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '/api/1/elastic/Interlex_pr/_search?key=I0FJ8VwuqLSVxfW586ICMpgzdT1m7miU'),
+            },
+        },
+    },
+
+}));
