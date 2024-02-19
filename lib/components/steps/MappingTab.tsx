@@ -4,7 +4,7 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Chip,
+    Chip, ChipProps,
     TextField,
     Typography
 } from "@mui/material"
@@ -15,14 +15,14 @@ import {
     PairIcon,
     SortIcon
 } from "../../icons";
-import CustomEntitiesDropdown from "../common/CustomMappingDropdown.tsx";
+import CustomEntitiesDropdown, {Option} from "../common/CustomMappingDropdown.tsx";
 import PreviewBox from "../common/PreviewBox";
 import MappingSearch from "./Mapping/MappingSearch.tsx";
 import {useCdeContext} from "../../CdeContext.ts";
-import {getTypeFromRow, isRowMapped} from "../../helpers/functions.ts";
+import {getOptionFromEntity, getTypeFromRow} from "../../helpers/functions.ts";
 import {PairingTooltip} from "./Mapping/PairingTooltip.tsx";
 import {PairingSuggestion} from "./Mapping/PairingSuggestion.tsx";
-import {SelectableCollection} from "../../models.ts";
+import {EntityType, SelectableCollection} from "../../models.ts";
 
 const styles = {
     root: {
@@ -84,103 +84,6 @@ const styles = {
     }
 }
 
-const mockCDE = [
-    {
-        "id": "5304",
-        "group": 'Origins',
-        "label": "GUID",
-        "content": [
-            {
-                "title": "Name",
-                "value": "GUID"
-            },
-            {
-                "title": "Variable Name",
-                "value": "Subject"
-            },
-            {
-                "title": "Title",
-                "value": "Unique identification of each mouse ID"
-            }
-        ]
-    },
-    {
-        "id": "32845",
-        "group": 'Origins',
-        "label": "SmallSpeciesStrainTyp",
-        "content": [
-            {
-                "title": "Name",
-                "value": "SmallSpeciesStrainTyp"
-            },
-            {
-                "title": "Variable Name",
-                "value": "Subject"
-            },
-            {
-                "title": "Title",
-                "value": "Unique identification of each mouse ID"
-            }
-        ]
-    },
-    {
-        "id": "47428",
-        "group": 'Origins',
-        "label": "StudySpeciesTyp",
-        "content": [
-            {
-                "title": "Name",
-                "value": "StudySpeciesTyp"
-            },
-            {
-                "title": "Variable Name",
-                "value": "Subject"
-            },
-            {
-                "title": "Title",
-                "value": "Unique identification of each mouse ID"
-            }
-        ]
-    },
-    {
-        "id": "12822",
-        "group": 'Origins',
-        "label": "Weight",
-        "content": [
-            {
-                "title": "Name",
-                "value": "Weight"
-            },
-            {
-                "title": "Variable Name",
-                "value": "Subject"
-            },
-            {
-                "title": "Title",
-                "value": "Unique identification of each mouse ID"
-            }
-        ]
-    },
-    {
-        "id": "1798",
-        "group": 'Origins',
-        "label": "AgeVal",
-        "content": [
-            {
-                "title": "Name",
-                "value": "AgeVal"
-            },
-            {
-                "title": "Variable Name",
-                "value": "Subject"
-            },
-            {
-                "title": "Title",
-                "value": "Unique identification of each mouse ID"
-            }
-        ]
-    },
-];
 
 interface MappingProps {
     defaultCollection: string;
@@ -191,7 +94,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerMapping, collections} = useCdeContext();
     const [visibleRows, setVisibleRows] = useState([]);
-    const [selectedCollections, setSelectedCollections] = useState<SelectableCollection[]>([]);
+    const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
 
     useEffect(() => {
         // Initialize the selected collections state
@@ -201,12 +104,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             selected: key === defaultCollection
         }));
 
-        setSelectedCollections(initialSelectedCollections);
+        setSelectableCollections(initialSelectedCollections);
     }, [collections, defaultCollection]);
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
-        setSelectedCollections(prevCollections =>
+        setSelectableCollections(prevCollections =>
             prevCollections.map(collection => {
                 if (collection.id === selectedCollection.id) {
                     // Toggle the 'selected' state
@@ -226,10 +129,30 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
     const getChipComponent = (key: string) => {
-        const isMapped = isRowMapped(datasetMapping[key], headerMapping);
-        const label = getTypeFromRow(datasetMapping[key], headerMapping)
-        const color = isMapped ? 'success' : 'default';
-        const iconColor = isMapped ? '#12B76A' : '#676C74';
+        const row = datasetMapping[key];
+        const type = getTypeFromRow(row, headerMapping);
+        let label: string;
+        let color: ChipProps['color'];
+        let iconColor: string;
+
+
+        switch (type) {
+            case EntityType.CDE:
+                label = "Mapped to CDE";
+                color = "success";
+                iconColor = "#12B76A";
+                break;
+            case EntityType.CustomDataDictionary:
+                label = "Mapped to Custom Data Dictionary";
+                color = "success";
+                iconColor = "#346DDB";
+                break;
+            default:
+                label = "Unmapped";
+                color = "default";
+                iconColor = "#676C74";
+                break;
+        }
 
         return (
             <Chip
@@ -253,10 +176,31 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         return false
     };
 
+    const searchInCollections = async (queryString: string): Promise<Option[]> => {
+        const selectedCollections = selectableCollections
+            .filter(collection => collection.selected)
+            .map(collection => collections[collection.id]);
 
-    const searchCDE = () => mockCDE;
+        try {
+            const fetchPromises = selectedCollections.map(async (collection) => {
+                    const entities = await collection.fetch(queryString);
+                    return entities.map(entity => getOptionFromEntity(entity, collection.name))
+                }
+            );
 
-    const searchText = "Search in " + (selectedCollections.length === 1 ? `${selectedCollections[0].name} collection` : 'multiple collections');
+            const results = await Promise.all(fetchPromises);
+
+            return results.flat();
+
+        } catch (error) {
+            console.error("Error searching collections:", error);
+            return []
+        }
+    }
+
+    const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+
+    // FIXME: CustomMappingDropdown is triggering a search for each field on mount
     return (
         <>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -300,10 +244,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                             options={{
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
-                                                onSearch: () => searchCDE(),
-                                                collections: selectedCollections,
+                                                onSearch: (queryString) => searchInCollections(queryString),
+                                                collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: mockCDE[2] ?? "",
+                                                value: null,
                                             }}/>
                                     </Box>
 

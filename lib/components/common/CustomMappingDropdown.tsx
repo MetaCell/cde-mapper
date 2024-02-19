@@ -173,8 +173,8 @@ interface CustomEntitiesDropdownProps {
         errors?: string;
         searchPlaceholder?: string;
         noResultReason?: string;
-        onSearch: (searchValue: string) => Option[];
-        value: Option;
+        onSearch: (searchValue: string) => Promise<Option[]>;
+        value: Option | null;
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
@@ -211,17 +211,27 @@ export default function CustomEntitiesDropdown({
     const id = open ? 'simple-popper' : undefined;
 
     const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>(
-        [value] || []
-    );
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
+
     const [autocompleteOptions, setAutocompleteOptions] = useState<Option[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [toggleCustomView, setToggleCustomView] = useState(false)
 
     React.useEffect(() => {
-        searchValue !== undefined &&
-        setAutocompleteOptions(onSearch(searchValue));
-    }, [searchValue, onSearch, autocompleteOptions]);
+        const fetchOptions = async () => {
+            if (searchValue !== undefined) {
+                try {
+                    const options = await onSearch(searchValue);
+                    setAutocompleteOptions(options);
+                } catch (error) {
+                    console.error('Error fetching search options:', error);
+                    setAutocompleteOptions([]);
+                }
+            }
+        };
+
+        fetchOptions();
+    }, [searchValue, onSearch]);
 
     type GroupedOptions = {
         [group: string]: Option[];

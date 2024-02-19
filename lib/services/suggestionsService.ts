@@ -60,7 +60,7 @@ export const computeSuggestions = (
                 }
                 return b.count - a.count; // Sort by count, higher first
             }
-            return a.type === EntityType.MappedCDE ? -1 : 1; // Prioritize 'cde' type
+            return a.type === EntityType.CDE ? -1 : 1; // Prioritize 'cde' type
         });
         suggestions[variableName] = entities.map(item => item.entity);
     });

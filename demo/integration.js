@@ -1,5 +1,6 @@
 import {init} from './cde-mapper.js';
 
+import {getQueryObject} from "./query.js";
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
     let datasetMappings = [];
@@ -103,12 +104,52 @@ function getCollections() {
         {
             id: 'global',
             name: "Global",
-            fetch: fetch,
+            fetch: fetchElasticSearchData,
         }
     ]
 }
 
-function fetch(queryString) {
-    console.log(queryString)
-    return []
+async function fetchElasticSearchData(queryString) {
+    const query = getQueryObject(queryString)
+    const response = await fetch('/api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...query
+        }),
+    });
+
+    const data = await response.json();
+    return mapHitsToEntities(data.hits.hits || [])
+}
+
+
+function mapHitsToEntities(hits) {
+    return hits.map(hit => {
+        const source = hit._source;
+        const preciseAbbrev = (source.synonyms.find(s => s.type === 'abbrev') || {}).literal || '';
+        const unitOfMeasure = (source.annotations.find(a => a.annotation_term_label === 'has unit') || {}).value;
+        const dataType = (source.annotations.find(a => a.annotation_term_label === 'allowedType') || {}).value;
+        const permittedValues = (source.annotations.find(a => a.annotation_term_label === 'allowedValues') || {}).value;
+        const minValue = (source.annotations.find(a => a.annotation_term_label === 'minValue') || {}).value;
+        const maxValue = (source.annotations.find(a => a.annotation_term_label === 'maxValue') || {}).value;
+        const cdeLevel = (source.annotations.find(a => a.annotation_term_label === 'hasCDELevel') || {}).value;
+
+        return {
+            variableName: '',
+            preciseAbbrev,
+            title: source.label,
+            interlexId: source.ilx,
+            type: "CDE",
+            description: source.definition,
+            unitOfMeasure,
+            dataType,
+            permittedValues,
+            minValue,
+            maxValue,
+            cdeLevel,
+        };
+    });
 }

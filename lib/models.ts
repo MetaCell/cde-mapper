@@ -45,9 +45,8 @@ export interface Entity {
 }
 
 export enum EntityType {
-    MappedCDE = 'MappedCDE',
-    MappedCustomDataDictionary = 'MappedCustomDataDictionary',
-    Unmapped = 'Unmapped'
+    CDE = 'CDE',
+    CustomDataDictionary = 'CustomDataDictionary',
 }
 
 export interface Suggestions {
