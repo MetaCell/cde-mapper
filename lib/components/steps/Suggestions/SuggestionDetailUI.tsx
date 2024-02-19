@@ -1,14 +1,16 @@
-import {Box, Checkbox, Typography} from '@mui/material';
-import {ArrowIcon, CheckboxDefault, CheckboxSelected, GlobeIcon} from '../../../icons';
+import {Box, Typography} from '@mui/material';
+import {ArrowIcon, GlobeIcon} from '../../../icons';
 import CdeDetails from '../../common/CdeDetails.tsx';
 import {vars} from '../../../theme/variables.ts';
 import {Entity} from "../../../models.ts";
 import {getCleanUrl} from "../../../helpers/functions.ts";
+import StyledRadio from '../../common/StyledRadio.tsx';
 
 const {
     gray900,
     gray200,
-    gray500
+    gray500,
+    gray300
 } = vars;
 
 type SuggestionDetailUIProps = {
@@ -42,8 +44,11 @@ function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
 
     return (
         <Box gap='1.5rem' display='flex' alignItems='start'>
-            <Box height='2.625rem' display='flex' alignItems='center'>
-                <Checkbox sx={{mt: '0rem'}} disableRipple icon={<CheckboxDefault/>} checkedIcon={<CheckboxSelected/>}/>
+            <Box height='2.625rem' display='flex' alignItems='center' sx={{"& .MuiRadio-root": {
+                                padding: 0,
+                                color: gray300
+                            },}}>
+                <StyledRadio/>
             </Box>
             <Box flex={1}>
                 <Box gap='1.5rem' display='flex' alignItems='center' mb='0.75rem'>
