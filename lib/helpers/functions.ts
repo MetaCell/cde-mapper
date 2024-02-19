@@ -40,7 +40,7 @@ export const getEntityFromRow = (
 }
 
 
-const EXCLUDED_KEYS = ['preciseAbbrev', 'interlexId', 'type'];
+const EXCLUDED_KEYS = ['variableName', 'interlexId', 'type'];
 
 export const getOptionFromEntity = (entity: Entity, group: string): Option => {
     return {

@@ -195,7 +195,6 @@ export default function CustomEntitiesDropdown({
                                                        onCollectionSelect,
                                                    },
                                                }: CustomEntitiesDropdownProps) {
-    const [searchValue] = useState("");
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [age, setAge] = React.useState('0');
 
@@ -210,34 +209,34 @@ export default function CustomEntitiesDropdown({
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
 
+    const [toggleCustomView, setToggleCustomView] = useState(false)
+
     const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
-
-    const [autocompleteOptions, setAutocompleteOptions] = useState<Option[]>([]);
-    const [inputValue, setInputValue] = useState('');
-    const [toggleCustomView, setToggleCustomView] = useState(false)
+    const [searchResults, setSearchResults] = useState<Option[]>([]);
+    const [searchInput, setSearchInput] = useState('');
 
     React.useEffect(() => {
         const fetchOptions = async () => {
-            if (searchValue !== undefined) {
+            if (searchInput !== undefined) {
                 try {
-                    const options = await onSearch(searchValue);
-                    setAutocompleteOptions(options);
+                    const options = await onSearch(searchInput);
+                    setSearchResults(options);
                 } catch (error) {
                     console.error('Error fetching search options:', error);
-                    setAutocompleteOptions([]);
+                    setSearchResults([]);
                 }
             }
         };
 
         fetchOptions();
-    }, [searchValue, onSearch]);
+    }, [searchInput, onSearch]);
 
     type GroupedOptions = {
         [group: string]: Option[];
     };
 
-    const groupedOptions = autocompleteOptions.reduce((grouped: GroupedOptions, option: Option) => {
+    const groupedOptions = searchResults.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
         if (!grouped[group]) {
             grouped[group] = [];
@@ -257,8 +256,8 @@ export default function CustomEntitiesDropdown({
     };
 
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
     };
 
     const isOptionSelected = (option: Option) => {
@@ -312,8 +311,6 @@ export default function CustomEntitiesDropdown({
                             >
                                 <GlobeIcon/>
                                 <Typography variant='body1'>{value?.label}</Typography>
-                                <Typography variant='body2'>Unique identifiers for each subject in the
-                                    dataset</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -333,7 +330,7 @@ export default function CustomEntitiesDropdown({
                     background: baseWhite,
                     boxShadow: '0 0.5rem 0.5rem -0.25rem rgba(7, 8, 8, 0.03), 0 1.25rem 1.5rem -0.25rem rgba(7, 8, 8, 0.08)',
                     m: '0.25rem 0  !important',
-                    width: autocompleteOptions.length > 0 ? '55.5rem' : '27.75rem',
+                    width: searchResults.length > 0 ? '55.5rem' : '27.75rem',
                     display: 'flex',
                     flexDirection: 'column',
                     zIndex: 99999
@@ -347,8 +344,8 @@ export default function CustomEntitiesDropdown({
                         gap={1}
                         sx={{
                             borderBottom: `0.0625rem solid ${gray100}`,
-                            height: autocompleteOptions.length > 0 ? '2.75rem' : 'auto',
-                            padding: autocompleteOptions.length > 0 ? '0 0.875rem' : '0.875rem'
+                            height: searchResults.length > 0 ? '2.75rem' : 'auto',
+                            padding: searchResults.length > 0 ? '0 0.875rem' : '0.875rem'
                         }}
                     >
                         <Typography variant="body2">
@@ -389,10 +386,10 @@ export default function CustomEntitiesDropdown({
                         ))}
                     </Box>
                 )}
-                <Box display='flex' flex={1} height={autocompleteOptions.length > 0 ? 'calc(100% - 2.75rem)' : 'auto'}>
-                    {autocompleteOptions.length > 0 && (!toggleCustomView ?
+                <Box display='flex' flex={1} height={searchResults.length > 0 ? 'calc(100% - 2.75rem)' : 'auto'}>
+                    {searchResults.length > 0 && (!toggleCustomView ?
                             (<Box sx={styles.details}>
-                                {autocompleteOptions.length > 0 && (hoveredOption ? (
+                                {searchResults.length > 0 && (hoveredOption ? (
                                     <HoveredOptionContent
                                         entity={hoveredOption}
                                     />
@@ -510,7 +507,7 @@ export default function CustomEntitiesDropdown({
 
                     <Box sx={{
                         ...styles.list,
-                        width: autocompleteOptions.length > 0 ? '40%' : '100%'
+                        width: searchResults.length > 0 ? '40%' : '100%'
                     }}>
                         <Box sx={{
                             borderBottom: `0.0625rem solid ${gray100}`,
@@ -548,8 +545,8 @@ export default function CustomEntitiesDropdown({
                             <TextField
                                 fullWidth
                                 type="text"
-                                value={inputValue}
-                                onChange={handleInputChange}
+                                value={searchInput}
+                                onChange={handleSearchChange}
                                 placeholder={searchPlaceholder}
                                 InputProps={{
                                     startAdornment: <InputAdornment
@@ -557,7 +554,7 @@ export default function CustomEntitiesDropdown({
                                 }}
                             />
                         </Box>
-                        {autocompleteOptions.length > 0 ? (
+                        {searchResults.length > 0 ? (
                             <>
                                 <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
                                     {Object.keys(groupedOptions).map((group) => (
@@ -692,9 +689,6 @@ export default function CustomEntitiesDropdown({
                                             <Box>
                                                 <ul>
                                                     {groupedOptions[group]
-                                                        .filter((option: Option) =>
-                                                            option.label.toLowerCase().includes(inputValue.toLowerCase())
-                                                        )
                                                         .map((option: Option) => (
                                                             <li
                                                                 key={option.id}
