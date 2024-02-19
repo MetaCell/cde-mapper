@@ -5,7 +5,6 @@ import React from "react";
 import CustomEntitiesDropdown from "../common/CustomMappingDropdown";
 import CdeDetails from "../common/CdeDetails";
 import Filters from "../common/Filters";
-import { useCdeContext } from "../../CdeContext";
 import PreviewBox from "../common/PreviewBox";
 
 const styles = {
@@ -68,9 +67,8 @@ const styles = {
   }
 }
 
-const StepThree = () => {
+const StepThree = ({handleNextStepTutorial}:{handleNextStepTutorial: () => void}) => {
   const [age, setAge] = React.useState('0');
-  const { tutorialSteps, setTutorialSteps } = useCdeContext();
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value as string);
@@ -80,16 +78,7 @@ const StepThree = () => {
 
   const filterToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-
-    if (tutorialSteps['mapping'].run) {
-      setTutorialSteps(prevTutorialSteps => ({
-        ...prevTutorialSteps,
-        ["mapping"]: {
-          ...prevTutorialSteps["mapping"],
-          stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
-        }
-      }));
-    }
+    handleNextStepTutorial();
   };
 
   const handleClose = () => {
@@ -261,7 +250,9 @@ const StepThree = () => {
                   <ArrowIcon />
                 </Box>
                 <Box sx={styles.col} className="cde-fields__item-first">
-                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..." options={{
+                  <CustomEntitiesDropdown placeholder="Choose CDE or Data Dictionary fields..."
+                  handleNextStepTutorial={handleNextStepTutorial}
+                  options={{
                     searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                     noResultReason: "We couldn’t find any record with this in the database.",
                     onSearch: () => searchCDE(),
@@ -674,7 +665,7 @@ const StepThree = () => {
         </Box>
       </ModalHeightWrapper>
 
-      <PreviewBox/>
+      <PreviewBox handleNextStepTutorial={handleNextStepTutorial}/>
     </Box>
   )
 }

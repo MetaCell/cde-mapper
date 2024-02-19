@@ -7,21 +7,13 @@ import { StyledTable } from "./StyledTable";
 
 
 
-const PreviewBox = () => {
-    const { step, datasetSample, setStep, tutorialSteps, setTutorialSteps } = useCdeContext();
+const PreviewBox = ({handleNextStepTutorial}:{handleNextStepTutorial?: () => void | undefined}) => {
+    const { step, datasetSample, setStep } = useCdeContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     const handlePreviewToggle = () => {
         setTogglePreview(!togglePreview)
-        if (tutorialSteps['mapping'].run) {
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                ["mapping"]: {
-                    ...prevTutorialSteps["mapping"],
-                    stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
-                }
-            }));
-        }
+        handleNextStepTutorial?.()
     }
 
     return (

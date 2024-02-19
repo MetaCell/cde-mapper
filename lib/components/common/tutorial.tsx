@@ -193,12 +193,14 @@ export const tutorial: TutorialSteps = {
                 target: '.mapping__filter-popover',
                 title: 'Filter',
                 placement: 'right',
+                hideBackButton: true,
                 content: 'Filter through column headers and only showing those that are relevant to you.'
             },
             {
                 target: '.mapping__sort-icon',
                 title: 'Sort by Unmapped or Mapped first',
                 placement: 'left',
+                hideBackButton: true,
                 content: <Box display="flex" flexDirection="column">
                     <Typography variant="body1" sx={{ fontSize: 14 }}>
                         By default, rows are ordered based on .csv (source) ordering. Click this button to sort by unmapped first and click again to sort by mapped first.
@@ -223,6 +225,7 @@ export const tutorial: TutorialSteps = {
                 target: '.preview__toggle',
                 title: 'Preview',
                 placement: 'top-start',
+                hideBackButton: true,
                 styles: {
                     options: {
                         width: 620
@@ -249,7 +252,7 @@ export const tutorial: TutorialSteps = {
             },
             {
                 target: '.mapping__column-header',
-                placement: 'left',
+                placement: 'bottom',
                 title: 'Column headers',
                 content: 'These are the column headers that you’ve selected and will be mapping CDE or Data dictionary field to.'
             },
@@ -263,13 +266,13 @@ export const tutorial: TutorialSteps = {
                 target: '.cde-fields__item-first',
                 spotlightClicks: true,
                 hideFooter: true,
-                placement: 'right',
+                placement: 'bottom-start',
                 title: 'Click to choose mapping',
                 content: 'To map your column header to a CDE or Data Dictionary field, click to open the dropdown where you will be able to select which to map your column header with.'
             },
             {
                 target: '.cde-field__popper',
-                placement: 'top-end',
+                placement: 'bottom-start',
                 title: 'Choose CDE or Data Dictionary field',
                 content: ''
             }

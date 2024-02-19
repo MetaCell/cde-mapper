@@ -2,7 +2,6 @@ import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import { vars } from "../../theme/variables";
 import { CloseIcon, MapTriFold } from "../../icons";
 import Info from "./Info";
-import { useCdeContext } from "../../CdeContext";
 
 const { baseWhite, gray100, gray700 } = vars
 
@@ -27,32 +26,14 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number }) => {
-    const { onClose, isInfoOpen, setIsInfoOpen, step } = props
-    const { tutorialStep, tutorialSteps, setTutorialSteps } = useCdeContext();
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, handleStartTutorial: () => void , handleNextStepTutorial: () => void}) => {
+    const { onClose, isInfoOpen, setIsInfoOpen, step, handleStartTutorial, handleNextStepTutorial } = props
 
     const handleInfoBtnClick = () => {
         setIsInfoOpen(true);
-        if (tutorialSteps["home"].run) {
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                [tutorialStep]: {
-                    ...prevTutorialSteps[tutorialStep],
-                    stepIndex: prevTutorialSteps[tutorialStep].stepIndex += 1
-                }
-            }));
-        }
+        handleNextStepTutorial();
     };
 
-    const handleStartTutorial = () => {
-        setTutorialSteps(prevTutorialSteps => ({
-            ...prevTutorialSteps,
-            [tutorialStep]: {
-                ...prevTutorialSteps[tutorialStep],
-                run: true
-            }
-        }));
-    }
     return (
         <>
             <Box sx={styles.root}>

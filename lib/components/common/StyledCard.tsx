@@ -8,7 +8,6 @@ import Radio from '@mui/material/Radio';
 import {useRadioGroup} from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {vars} from '../../theme/variables';
-import {useCdeContext} from '../../CdeContext';
 
 const {baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700} = vars
 
@@ -18,12 +17,12 @@ interface StyledCardProps {
     selectedValue: number;
     onChange: (value: number) => void;
     label: string;
+    handleNextStepTutorial: () => void;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label}) => {
+const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label, handleNextStepTutorial}) => {
     const radioGroup = useRadioGroup();
     let checked = false;
-    const {setTutorialSteps} = useCdeContext();
 
     if (radioGroup) {
         checked = radioGroup.value === value;
@@ -33,13 +32,7 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
         if (value !== selectedValue) {
             onChange(value);
         }
-        setTutorialSteps(prevTutorialSteps => ({
-            ...prevTutorialSteps,
-            ['collection']: {
-                ...prevTutorialSteps['collection'],
-                stepIndex: 1
-            }
-        }));
+        handleNextStepTutorial()
     };
 
     return (

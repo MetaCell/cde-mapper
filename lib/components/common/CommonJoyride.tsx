@@ -106,8 +106,9 @@ const Tooltip = ({
     );
 }
 
-const CommonWalkthrough = () => {
+const CommonJoyride = () => {
     const { tutorialStep, tutorialSteps, setTutorialSteps } = useCdeContext();
+
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;
@@ -120,7 +121,7 @@ const CommonWalkthrough = () => {
                 }
             }));
         } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
-            const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+            const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1)
             setTutorialSteps(prevTutorialSteps => ({
                 ...prevTutorialSteps,
                 [tutorialStep]: {
@@ -129,11 +130,16 @@ const CommonWalkthrough = () => {
                     run: action === ACTIONS.CLOSE ? false : true
                 }
             }));
+        } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {
+            console.log("am I here?")
+            setTutorialSteps(prevTutorialSteps => ({
+                ...prevTutorialSteps,
+                collection: { ...prevTutorialSteps.collection, run: false },
+                suggestions: { ...prevTutorialSteps.suggestions, run: false },
+                mapping: { ...prevTutorialSteps.mapping, run: false }
+            }));
         }
     };
-
-    console.log("tutorial step: ", tutorialStep)
-    console.log("tutorial steps stepIndex: ", tutorialSteps[tutorialStep].stepIndex)
 
     return (
         <Joyride
@@ -231,14 +237,12 @@ const CommonWalkthrough = () => {
                 styles: {
                     floater: {
                         filter: 'none',
-                    },
-                    wrapperPosition: {
-                        willChange: 'unset',
-                    },
+                        willChange: 'unset !important'
+                    }
                 }
             }}
         />
     )
 }
 
-export default CommonWalkthrough;
+export default CommonJoyride;

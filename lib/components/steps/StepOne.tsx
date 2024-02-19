@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {Stack, Typography, Box, Button, Link} from '@mui/material';
+import { useState } from 'react';
+import { Stack, Typography, Box, Button, Link } from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
 
-function StepOne() {
+function StepOne({ handleNextStepTutorial }: { handleNextStepTutorial: () => void }) {
     const [selectedRadioValue, setSelectedRadioValue] = useState(0);
 
     const handleRadioChange = (value: number) => {
@@ -22,7 +22,7 @@ function StepOne() {
                 pt={6}
                 pb={6}
             >
-                <Stack spacing={6} sx={{width: 'max-content'}}>
+                <Stack spacing={6} sx={{ width: 'max-content' }}>
                     <Stack spacing={1}>
                         <Typography variant='h3' textAlign="center">
                             Select default repository
@@ -33,11 +33,19 @@ function StepOne() {
                     </Stack>
                     <Stack direction="row" spacing={1.5} className='repository-cards'>
                         <StyledCard value={0} isSuggested={true}
-                                    selectedValue={selectedRadioValue} onChange={handleRadioChange} label="Spinal Cord Injury (SCI)"/>
-                        <StyledCard value={1} selectedValue={selectedRadioValue}
-                                    onChange={handleRadioChange} label="Trauma Brain Injury (TBI)"/>
+                            selectedValue={selectedRadioValue}
+                            onChange={handleRadioChange}
+                            label="Spinal Cord Injury (SCI)"
+                            handleNextStepTutorial={handleNextStepTutorial}
+                        />
+                        <StyledCard value={1}
+                            selectedValue={selectedRadioValue}
+                            onChange={handleRadioChange}
+                            label="Trauma Brain Injury (TBI)"
+                            handleNextStepTutorial={handleNextStepTutorial}
+                        />
                     </Stack>
-                    <Stack alignItems="center" sx={{width: '100%'}}>
+                    <Stack alignItems="center" sx={{ width: '100%' }}>
                         <Box>
                             <Button
                                 disableRipple
@@ -47,7 +55,7 @@ function StepOne() {
                                 Select repository
                             </Button>
                         </Box>
-                        <Box sx={{mt: 1.5}}>
+                        <Box sx={{ mt: 1.5 }}>
                             <Link href={`mailto:${''}`}>Can’t find the repository you’re looking for? Contact us</Link>
                         </Box>
                     </Stack>

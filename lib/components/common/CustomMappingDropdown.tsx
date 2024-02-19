@@ -5,7 +5,6 @@ import {AddIcon, CheckIcon, ChevronDown, DownIcon, GlobeIcon, MagicWandIcon, Mag
 import HoveredOptionContent from "./HoveredOptionContent";
 import NoResultField from './NoResultField';
 import {vars} from '../../theme/variables';
-import { useCdeContext } from '../../CdeContext';
 
 const {
     buttonOutlinedBorderColor,
@@ -168,6 +167,7 @@ interface Header {
 
 interface CustomEntitiesDropdownProps {
     placeholder?: string;
+    handleNextStepTutorial?: () => void | undefined;
     options: {
         errors?: string;
         searchPlaceholder?: string;
@@ -180,6 +180,7 @@ interface CustomEntitiesDropdownProps {
 
 export default function CustomEntitiesDropdown({
                                                    placeholder,
+                                                   handleNextStepTutorial,
                                                    options: {
                                                        errors,
                                                        searchPlaceholder,
@@ -193,7 +194,6 @@ export default function CustomEntitiesDropdown({
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [toggleMenu, setToggleMenu] = useState(false);
     const [age, setAge] = React.useState('0');
-    const {tutorialSteps, setTutorialSteps} = useCdeContext();
 
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value as string);
@@ -201,15 +201,7 @@ export default function CustomEntitiesDropdown({
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
-        if (tutorialSteps['mapping'].run) {
-            setTutorialSteps(prevTutorialSteps => ({
-              ...prevTutorialSteps,
-              ["mapping"]: {
-                ...prevTutorialSteps["mapping"],
-                stepIndex: prevTutorialSteps["mapping"].stepIndex += 1
-              }
-            }));
-          }
+        handleNextStepTutorial?.();
     };
 
     const open = Boolean(anchorEl);

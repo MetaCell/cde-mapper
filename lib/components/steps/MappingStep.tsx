@@ -46,14 +46,14 @@ enum TabsEnum {
 }
 
 
-const renderTabComponent = (step: number, changeToNextTab: () => void) => {
+const renderTabComponent = (step: number, changeToNextTab: () => void, handleNextStepTutorial: () => void) => {
     switch (step) {
         case TabsEnum.Collection:
-            return <ModalHeightWrapper height="11.5rem"><StepOne /></ModalHeightWrapper>;
+            return <ModalHeightWrapper height="11.5rem"><StepOne handleNextStepTutorial={handleNextStepTutorial} /></ModalHeightWrapper>;
         case TabsEnum.Suggestions:
             return <SuggestionsStep changeToNextTab={changeToNextTab} />;
         case TabsEnum.Mapping:
-            return <StepThree />;
+            return <StepThree handleNextStepTutorial={handleNextStepTutorial}/>;
         // Add cases for other steps
         default:
             return <div>Unknown step</div>;
@@ -85,7 +85,7 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index,
 
 function MappingStep() {
     const [value, setValue] = React.useState(0);
-    const { setTutorialStep, setTutorialSteps } = useCdeContext();
+    const { tutorialStep, tutorialSteps, setTutorialStep, setTutorialSteps } = useCdeContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -95,25 +95,25 @@ function MappingStep() {
         setValue((prevValue) => (prevValue + 1) % tabsArr.length);
     };
 
-    const handleContinueButtonClick = () => {
-        setValue(TabsEnum.Mapping)
-        setTutorialSteps(prevTutorialSteps => ({
-            ...prevTutorialSteps,
-            ["suggestions"]: {
-                ...prevTutorialSteps["suggestions"],
-                run: false,
-                stepIndex: 0
-            }
-        }));
-    }
+    const handleNextStepTutorial = () => {
+        if(tutorialSteps[tutorialStep].run){
+            setTutorialSteps(prevTutorialSteps => ({
+                ...prevTutorialSteps,
+                [tutorialStep]: {
+                    ...prevTutorialSteps[tutorialStep],
+                    stepIndex: prevTutorialSteps[tutorialStep].stepIndex + 1
+                }
+            }));
+        }
+    };
 
     React.useEffect(() => {
         if (value === 0) {
-            setTutorialStep('collection')
+            setTutorialStep('collection');
         } else if (value === 1) {
-            setTutorialStep('suggestions')
+            setTutorialStep('suggestions');
         } else {
-            setTutorialStep('mapping')
+            setTutorialStep('mapping');
         }
     }, [value])
 
@@ -152,7 +152,7 @@ function MappingStep() {
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {value === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={handleContinueButtonClick} className='suggestions__cancel-btn'>
+                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : value === TabsEnum.Mapping && (<>
                             <Typography sx={{
@@ -173,7 +173,7 @@ function MappingStep() {
             </Box>
             {tabsArr?.map((_tab, index) => (
                 <CustomTabPanel key={index} value={value}
-                    index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
+                    index={index}>{renderTabComponent(index, changeToNextTab, handleNextStepTutorial)}</CustomTabPanel>
             ))}
         </Fragment>
     );
