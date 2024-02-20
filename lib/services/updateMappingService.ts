@@ -1,10 +1,6 @@
 import {DatasetMapping, OptionDetail} from "../models.ts";
 import React from "react";
 
-function isUnmapping(newRowContent: OptionDetail[]) {
-    return newRowContent.length > 0;
-}
-
 // Function to update a specific row in datasetMapping
 export const updateDatasetMappingRow = (
     variableName: string,
@@ -54,3 +50,7 @@ export const updateDatasetMappingRow = (
     // Update state
     setDatasetMapping({...datasetMapping, [variableName]: updatedRow});
 };
+
+function isUnmapping(newRowContent: OptionDetail[]) {
+    return newRowContent.length == 0;
+}

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {
     Accordion,
     AccordionDetails,
@@ -22,7 +22,7 @@ import {useCdeContext} from "../../../CdeContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
-import {getType} from "../../../helpers/getters.ts";
+import {getId, getType} from "../../../helpers/getters.ts";
 
 const styles = {
     root: {
@@ -123,13 +123,15 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         );
     };
 
-    const searchInCollections = async (queryString: string): Promise<Option[]> => {
-        const selectedCollections = selectableCollections
-            .filter(collection => collection.selected)
-            .map(collection => collections[collection.id]);
 
-        try {
-            const fetchPromises = selectedCollections.map(async (collection) => {
+    const searchInCollections = useCallback(
+        async (queryString: string): Promise<Option[]> => {
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+                .map(collection => collections[collection.id]);
+
+            try {
+                const fetchPromises = selectedCollections.map(async (collection) => {
                     const searchResults = await collection.fetch(queryString);
 
                     const searchResultsDictionary = searchResults.reduce((acc, option) => {
@@ -137,24 +139,25 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         return acc;
                     }, {} as { [id: string]: Option });
 
-                    setSearchResultsDictionary({...searchResultsDictionary});
+                    setSearchResultsDictionary(prev => ({...prev, ...searchResultsDictionary}));
 
-                    return searchResults
-                }
-            );
-            const results = await Promise.all(fetchPromises);
-            return results.flat();
-        } catch (error) {
-            console.error("Error searching collections:", error);
-            return []
-        }
-    }
+                    return searchResults;
+                });
+                const results = await Promise.all(fetchPromises);
+                return results.flat();
+            } catch (error) {
+                console.error("Error searching collections:", error);
+                return [];
+            }
+        },
+        [selectableCollections, collections]
+    );
 
     const handleSelection = (variableName: string, optionId: string, newIsSelectedState: boolean) => {
         const option = searchResultsDictionary[optionId];
         if (option) {
-            handleUpdateDatasetMappingRow(variableName, newIsSelectedState? option.content : []);
-        }else {
+            handleUpdateDatasetMappingRow(variableName, newIsSelectedState ? option.content : []);
+        } else {
             console.error("Option not found: " + optionId);
         }
     }
@@ -202,21 +205,18 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         );
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getPairingSuggestions = (key: string) => {
-        // TODO: to implement
-        console.log("To be implemented " + key)
         return []
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hasPairingSuggestions = (key: string) => {
-        // TODO: to implement
-        console.log("To be implemented " + key)
         return false
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
-    // FIXME: CustomMappingDropdown is triggering a search for each field on mount
     return (
         <>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -239,16 +239,16 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
-                            {Object.keys(datasetMapping).map((key, index) => (
+                            {Object.keys(datasetMapping).map((variableName, index) => (
                                 <Box key={index} sx={styles.row}>
                                     <Box sx={styles.col}>
-                                        {getChipComponent(key)}
+                                        {getChipComponent(variableName)}
                                     </Box>
                                     <Box sx={styles.col}>
                                         <TextField
                                             disabled
                                             fullWidth
-                                            value={key}
+                                            value={variableName}
                                         />
                                     </Box>
                                     <Box sx={styles.col}>
@@ -260,15 +260,15 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                             options={{
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
-                                                onSearch: (queryString) => searchInCollections(queryString),
-                                                onSelection: (optionId, newIsSelectedState) => handleSelection(key, optionId, newIsSelectedState),
+                                                onSearch: searchInCollections,
+                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: null
+                                                value: searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)] || null
                                             }}/>
                                     </Box>
 
-                                    {hasPairingSuggestions(key) && (
+                                    {hasPairingSuggestions(variableName) && (
                                         <Box sx={styles.row}>
                                             <Accordion>
                                                 <AccordionSummary>
@@ -279,12 +279,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         fontWeight: 500,
                                                         lineHeight: '150%'
                                                     }}>Pairing suggestions</Typography>
-                                                    <PairingTooltip datasetMapping={datasetMapping} key={key}
+                                                    <PairingTooltip datasetMapping={datasetMapping} key={variableName}
                                                                     headerMapping={headerIndexes}/>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions(key).map(() => (
+                                                        {getPairingSuggestions(variableName).map(() => (
                                                             <PairingSuggestion
                                                                 value='0'
                                                                 onChange={() => {

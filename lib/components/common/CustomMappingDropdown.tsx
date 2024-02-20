@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FormControl, InputAdornment, MenuItem, Popper, Select, SelectChangeEvent, Stack, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, ListSubheader, Chip} from '@mui/material';
 import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
@@ -7,6 +7,7 @@ import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
 import {Option, SelectableCollection} from "../../models.ts";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const {
     buttonOutlinedBorderColor,
@@ -206,8 +207,14 @@ export default function CustomEntitiesDropdown({
     const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
     const [searchResults, setSearchResults] = useState<Option[]>([]);
     const [searchInput, setSearchInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    React.useEffect(() => {
+
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+
         const fetchOptions = async () => {
             if (searchInput !== undefined) {
                 try {
@@ -220,8 +227,9 @@ export default function CustomEntitiesDropdown({
             }
         };
 
-        fetchOptions();
-    }, [searchInput, onSearch]);
+        setIsLoading(true);
+        fetchOptions().then(() => setIsLoading(false));
+    }, [searchInput, onSearch, open]);
 
     type GroupedOptions = {
         [group: string]: Option[];
@@ -546,7 +554,16 @@ export default function CustomEntitiesDropdown({
                                 }}
                             />
                         </Box>
-                        {searchResults.length > 0 ? (
+                        {isLoading ? (
+                            <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                sx={{height: "100%"}}
+                            >
+                                <CircularProgress/>
+                            </Box>
+                        ) : searchResults.length > 0 ? (
                             <>
                                 <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
                                     {Object.keys(groupedOptions).map((group) => (
