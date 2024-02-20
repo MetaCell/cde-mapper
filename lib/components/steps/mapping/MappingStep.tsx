@@ -1,9 +1,9 @@
 import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
 import React, {Fragment} from 'react';
 import CollectionsTab from './CollectionsTab.tsx';
-import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
+import SuggestionsStep from '../suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
-import {vars} from '../../theme/variables.ts';
+import {vars} from '../../../theme/variables.ts';
 
 const {
     baseWhite,
@@ -27,7 +27,7 @@ const tabsArr = [
     {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
-        description: 'Suggestions are based on what was previously mapped before.'
+        description: 'suggestions are based on what was previously mapped before.'
     },
     {
         label: 'Map the rest of the dataset',

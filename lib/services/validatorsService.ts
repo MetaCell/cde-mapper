@@ -23,6 +23,7 @@ export const validateDatasetMapping = (datasetMapping: string[][] | undefined, v
 
         // Check if the variableName is already in the set
         if (variableNameSet.has(variableName)) {
+            // TODO: Potentially use the last one instead of throw an error
             throw new Error(`Duplicate variable name '${variableName}' found at row ${i + 1}.`);
         }
 

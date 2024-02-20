@@ -5,8 +5,8 @@ import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../.
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
 import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
-import SearchCollectionSelector from "../steps/Mapping/SearchCollectionSelector.tsx";
-import {SelectableCollection} from "../../models.ts";
+import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
+import {Option, SelectableCollection} from "../../models.ts";
 
 const {
     buttonOutlinedBorderColor,
@@ -150,17 +150,6 @@ const styles = {
     }
 }
 
-export type OptionDetail = {
-    title: string; // What to display as the title/label for the property.
-    value: string; // The actual value/content for the property.
-};
-
-export type Option = {
-    id: string;
-    label: string;
-    group: string;
-    content: OptionDetail[];
-}
 
 interface Header {
     label: string;
@@ -174,6 +163,7 @@ interface CustomEntitiesDropdownProps {
         searchPlaceholder?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
+        onSelection: (optionId: string, newIsSelectedState: boolean) => void;
         value: Option | null;
         header?: Header;
         collections: SelectableCollection[];
@@ -189,6 +179,7 @@ export default function CustomEntitiesDropdown({
                                                        searchPlaceholder,
                                                        noResultReason,
                                                        onSearch,
+                                                       onSelection,
                                                        value,
                                                        header,
                                                        collections,
@@ -253,6 +244,7 @@ export default function CustomEntitiesDropdown({
         } else {
             setSelectedOptions([...selectedOptions, option]);
         }
+        onSelection(option.id, !isOptionAlreadySelected)
     };
 
 

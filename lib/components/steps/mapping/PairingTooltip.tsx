@@ -1,8 +1,8 @@
 import {Box, Tooltip, Typography} from "@mui/material";
 import {InfoIcon} from "../../../icons";
-import {DatasetMapping, HeaderMapping} from "../../../models.ts";
+import {DatasetMapping, HeaderIndexes} from "../../../models.ts";
 
-export function PairingTooltip(props: { datasetMapping: DatasetMapping, key: string, headerMapping: HeaderMapping }) {
+export function PairingTooltip(props: { datasetMapping: DatasetMapping, key: string, headerMapping: HeaderIndexes }) {
     return <Tooltip
         title={
             <>
@@ -19,7 +19,7 @@ export function PairingTooltip(props: { datasetMapping: DatasetMapping, key: str
                     lineHeight: "142.857%",
                     color: "#fff",
                 }}>
-                    {props.datasetMapping[props.key][props.headerMapping.preciseAbbreviationIndex]} is typically used
+                    {props.datasetMapping[props.key][props.headerMapping.preciseAbbreviation]} is typically used
                     with the following fellow CDEs
                 </Typography>
             </>

@@ -2,8 +2,8 @@ import {Box, Checkbox, Typography} from '@mui/material';
 import {ArrowIcon, CheckboxDefault, CheckboxSelected, GlobeIcon} from '../../../icons';
 import CdeDetails from '../../common/CdeDetails.tsx';
 import {vars} from '../../../theme/variables.ts';
-import {Entity} from "../../../models.ts";
-import {getCleanUrl} from "../../../helpers/functions.ts";
+import {getCleanUrl} from "../../../helpers/utils.ts";
+import {HeaderIndexes} from "../../../models.ts";
 
 const {
     gray900,
@@ -12,33 +12,18 @@ const {
 } = vars;
 
 type SuggestionDetailUIProps = {
-    entity: Entity;
+    row: string[];
+    header: string[]
+    headerIndexes: HeaderIndexes
 }
 
 
-function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
+function SuggestionDetailUI({row, header, headerIndexes}: SuggestionDetailUIProps) {
 
-    // Deconstruct the fixed properties from row
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variableName, preciseAbbrev, title, interlexId, type, ...otherProps } = entity;
-
-    // Get the first 4 non-empty dynamic attributes
-    const dynamicAttributes = Object.entries(otherProps)
-        .filter(([, value]) => value !== '')
-        .slice(0, 4)
-        .map(([key, value]) => ({
-            heading: key,
-            text: value,
-        }));
-
-    // Combine the fixed and dynamic attributes
-    const rowContent = [
-        { heading: 'Variable Name', text: variableName },
-        { heading: 'Precise Abbreviation', text: preciseAbbrev },
-        { heading: 'Title', text: title },
-        { heading: 'Interlex ID', text: interlexId, link: getCleanUrl(interlexId)},
-        ...dynamicAttributes,
-    ];
+    const rowContent = header.map((heading, index) => ({
+        heading: heading,
+        text: index === headerIndexes.interlexId ? getCleanUrl(row[index]) : row[index]
+    }));
 
     return (
         <Box gap='1.5rem' display='flex' alignItems='start'>
@@ -64,7 +49,7 @@ function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
                             lineHeight: '142.857%',
                             color: gray900
                         }}>
-                            {preciseAbbrev}
+                            {row[headerIndexes.preciseAbbreviation]}
                         </Typography>
                         <Typography sx={{
                             fontSize: '0.875rem',
@@ -72,7 +57,7 @@ function SuggestionDetailUI({entity}: SuggestionDetailUIProps) {
                             lineHeight: '142.857%',
                             color: gray500
                         }}>
-                            {title}
+                            {row[headerIndexes.title]}
                         </Typography>
                     </Box>
                 </Box>

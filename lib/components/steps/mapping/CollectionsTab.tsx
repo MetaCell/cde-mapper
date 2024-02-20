@@ -1,8 +1,8 @@
 import {useState} from 'react';
 import {Stack, Typography, Box, Button, Link} from '@mui/material';
-import StyledCard from '../common/StyledCard.tsx';
-import {useCdeContext} from "../../CdeContext.ts";
-import ModalHeightWrapper from "../common/ModalHeightWrapper.tsx";
+import StyledCard from '../../common/StyledCard.tsx';
+import {useCdeContext} from "../../../CdeContext.ts";
+import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx";
 
 
 interface CollectionsProps {

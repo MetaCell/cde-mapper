@@ -1,30 +1,33 @@
-import {DatasetMapping, HeaderMapping} from "../models.ts";
+import {DatasetMapping, HeaderIndexes} from "../models.ts";
 import {DEFAULT_HEADERS} from "../settings.ts";
 
-// Mapper for datasetMapping
-export const mapStringTableToDatasetMapping = (rawMapping: string[][] | undefined, headerMapping: HeaderMapping, includeHeaders?: string[]): [DatasetMapping, string[]] => {
+export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, headerMapping: HeaderIndexes,
+                                  datasetHeaders?: string[]): [DatasetMapping, string[]] => {
     const datasetMapping: DatasetMapping = {};
-    let headers: string[];
+    let datasetMappingHeaders: string[];
 
-    // Determine headers
-    if (rawMapping && rawMapping.length > 0) {
-        [headers, ...rawMapping] = rawMapping;
+    // Determine datasetMappingHeaders
+    if (datasetMappingRows && datasetMappingRows.length > 0) {
+        [datasetMappingHeaders, ...datasetMappingRows] = datasetMappingRows;
     } else {
-        headers = Array.from({ length: Math.max(...Object.values(headerMapping)) + 1 }, (_, i) => DEFAULT_HEADERS[i] || '');
+        // If the dataset mapping was not provided or has no data we use the default headers
+        datasetMappingHeaders = Array.from(
+            { length: Math.max(...Object.values(headerMapping)) + 1 },
+            (_, i) => DEFAULT_HEADERS[i] || '');
     }
 
-    // Initialize datasetMapping keys
-    const mappingKeys = includeHeaders || (rawMapping ? rawMapping.map(row => row[headerMapping.variableNameIndex]) : []);
-    mappingKeys.forEach(key => datasetMapping[key] = new Array(headers.length).fill(''));
+    // Include only the datasetMappingRows that exist in the datasetHeader provided or all of them if not
+    const relevantRows = datasetHeaders || (datasetMappingRows ? datasetMappingRows.map(row => row[headerMapping.variableName]) : []);
+    relevantRows.forEach(key => datasetMapping[key] = new Array(datasetMappingHeaders.length).fill(''));
 
-    // Populate datasetMapping with rawMapping data
-    rawMapping?.forEach(row => {
-        const variableNameValue = row[headerMapping.variableNameIndex];
+    // Populate datasetMapping with datasetMappingRows data
+    datasetMappingRows?.forEach(row => {
+        const variableNameValue = row[headerMapping.variableName];
         if (variableNameValue in datasetMapping) {
             datasetMapping[variableNameValue] = row;
         }
     });
 
-    return [datasetMapping, headers];
+    return [datasetMapping, datasetMappingHeaders];
 };
 

@@ -1,5 +1,5 @@
-import {init} from './cde-mapper.js';
 
+import {init, mapElasticSearchHitsToOptions} from '../lib/main.tsx';
 import {getQueryObject} from "./query.js";
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
@@ -70,11 +70,11 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
                         callback: (cdeFileMapping) => console.log(cdeFileMapping),
-                        headerMapping: {
-                            variableNameIndex: 0,
-                            preciseAbbreviationIndex: 1,
-                            titleIndex: 2,
-                            interlexIdIndex: 11
+                        headerIndexes: {
+                            variableName: 0,
+                            preciseAbbreviation: 1,
+                            title: 2,
+                            interlexId: 11
                         }
                     });
                 },
@@ -122,51 +122,5 @@ async function fetchElasticSearchData(queryString) {
     });
 
     const data = await response.json();
-    return mapHitsToEntities(data.hits.hits || [])
-}
-
-
-function mapHitsToEntities(hits) {
-    return hits.map(hit => {
-        const source = hit._source;
-        let preciseAbbrev = source.synonyms.find(s => s.type === 'abbrev')?.literal || '';
-        const unitOfMeasure = source.annotations.find(a => a.annotation_term_label === 'has unit')?.value;
-        const dataType = source.annotations.find(a => a.annotation_term_label === 'allowedType')?.value;
-        const permittedValues = source.annotations.find(a => a.annotation_term_label === 'allowedValues')?.value;
-        const minValue = source.annotations.find(a => a.annotation_term_label === 'minValue')?.value;
-        const maxValue = source.annotations.find(a => a.annotation_term_label === 'maxValue')?.value;
-        const cdeLevel = source.annotations.find(a => a.annotation_term_label === 'hasCDELevel')?.value;
-
-        if (!preciseAbbrev && source.label) {
-            preciseAbbrev = simpleHash(source.label);
-        }
-
-        const entity = {
-            variableName: '',
-            preciseAbbrev,
-            title: source.label,
-            interlexId: source.ilx,
-            type: 'CDE',
-        };
-
-        // Conditionally add properties if they have a value
-        if (unitOfMeasure) entity.unitOfMeasure = unitOfMeasure;
-        if (dataType) entity.dataType = dataType;
-        if (permittedValues) entity.permittedValues = permittedValues;
-        if (minValue) entity.minValue = minValue;
-        if (maxValue) entity.maxValue = maxValue;
-        if (cdeLevel) entity.cdeLevel = cdeLevel;
-
-        return entity;
-    });
-}
-
-function simpleHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash |= 0;
-    }
-    return `${str.replace(/\s+/g, '').substring(0, 10)}-${Math.abs(hash)}`;
+    return mapElasticSearchHitsToOptions(data.hits.hits || [])
 }

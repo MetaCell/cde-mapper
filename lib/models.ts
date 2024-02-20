@@ -6,24 +6,24 @@ export interface InitParams {
     additionalDatasetMappings?: string[][][];
     // First row should be the headers
     datasetSample: string[][];
-    headerMapping?: HeaderMapping;
+    headerIndexes?: HeaderIndexes;
     collections: Collection[];
     config: Config;
     name: string
     callback: (cdeFileMapping: DatasetMapping) => void;
 }
 
-export interface HeaderMapping {
-    variableNameIndex: number;
-    preciseAbbreviationIndex: number;
-    titleIndex: number;
-    interlexIdIndex: number;
+export interface HeaderIndexes {
+    variableName: number;
+    preciseAbbreviation: number;
+    title: number;
+    interlexId: number;
 }
 
 export interface Collection {
     id: string;
     name: string;
-    fetch: (queryString: string) => Promise<Entity[]>;
+    fetch: (queryString: string) => Promise<Option[]>;
     suggested: boolean | null
 }
 
@@ -32,25 +32,28 @@ export interface Config {
     width: string; // in %
 }
 
-// Internal
+export type OptionDetail = {
+    title: string; // What to display as the title/label for the property.
+    value: string; // The actual value/content for the property.
+};
 
-export interface Entity {
-    variableName: string;
-    preciseAbbrev: string;
-    title: string;
-    interlexId: string;
-    type: EntityType;
-
-    [key: string]: string;
+export type Option = {
+    id: string;
+    label: string;
+    group: string;
+    content: OptionDetail[];
 }
+
+// Internal
 
 export enum EntityType {
     CDE = 'CDE',
     CustomDataDictionary = 'CustomDataDictionary',
+    Unknown = 'Unknown',
 }
 
 export interface Suggestions {
-    [column: string]: Entity[]
+    [column: string]: string[][]
 }
 
 export interface DatasetMapping {

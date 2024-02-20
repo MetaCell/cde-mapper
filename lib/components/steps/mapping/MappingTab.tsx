@@ -8,21 +8,21 @@ import {
     TextField,
     Typography
 } from "@mui/material"
-import ModalHeightWrapper from "../common/ModalHeightWrapper"
+import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
     ArrowIcon,
     BulletIcon,
     PairIcon,
     SortIcon
-} from "../../icons";
-import CustomEntitiesDropdown, {Option} from "../common/CustomMappingDropdown.tsx";
-import PreviewBox from "../common/PreviewBox";
-import MappingSearch from "./Mapping/MappingSearch.tsx";
-import {useCdeContext} from "../../CdeContext.ts";
-import {getOptionFromEntity, getTypeFromRow} from "../../helpers/functions.ts";
-import {PairingTooltip} from "./Mapping/PairingTooltip.tsx";
-import {PairingSuggestion} from "./Mapping/PairingSuggestion.tsx";
-import {EntityType, SelectableCollection} from "../../models.ts";
+} from "../../../icons";
+import CustomEntitiesDropdown from "../../common/CustomMappingDropdown.tsx";
+import PreviewBox from "../../common/PreviewBox.tsx";
+import MappingSearch from "./MappingSearch.tsx";
+import {useCdeContext} from "../../../CdeContext.ts";
+import {PairingTooltip} from "./PairingTooltip.tsx";
+import {PairingSuggestion} from "./PairingSuggestion.tsx";
+import {EntityType, Option, SelectableCollection} from "../../../models.ts";
+import {getType} from "../../../helpers/getters.ts";
 
 const styles = {
     root: {
@@ -92,9 +92,11 @@ interface MappingProps {
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
-    const {datasetMapping, headerMapping, collections} = useCdeContext();
+    const {datasetMapping, headerIndexes, collections, handleUpdateDatasetMappingRow} = useCdeContext();
     const [visibleRows, setVisibleRows] = useState([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
+    const [searchResultsDictionary, setSearchResultsDictionary] = useState<{ [id: string]: Option }>({});
+
 
     useEffect(() => {
         // Initialize the selected collections state
@@ -121,6 +123,42 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         );
     };
 
+    const searchInCollections = async (queryString: string): Promise<Option[]> => {
+        const selectedCollections = selectableCollections
+            .filter(collection => collection.selected)
+            .map(collection => collections[collection.id]);
+
+        try {
+            const fetchPromises = selectedCollections.map(async (collection) => {
+                    const searchResults = await collection.fetch(queryString);
+
+                    const searchResultsDictionary = searchResults.reduce((acc, option) => {
+                        acc[option.id] = option;
+                        return acc;
+                    }, {} as { [id: string]: Option });
+
+                    setSearchResultsDictionary({...searchResultsDictionary});
+
+                    return searchResults
+                }
+            );
+            const results = await Promise.all(fetchPromises);
+            return results.flat();
+        } catch (error) {
+            console.error("Error searching collections:", error);
+            return []
+        }
+    }
+
+    const handleSelection = (variableName: string, optionId: string, newIsSelectedState: boolean) => {
+        const option = searchResultsDictionary[optionId];
+        if (option) {
+            handleUpdateDatasetMappingRow(variableName, newIsSelectedState? option.content : []);
+        }else {
+            console.error("Option not found: " + optionId);
+        }
+    }
+
 
     const handleFiltering = () => {
         // TODO: to implement
@@ -130,13 +168,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
-        const type = getTypeFromRow(row, headerMapping);
+        const entityType = getType(row, headerIndexes);
+
         let label: string;
         let color: ChipProps['color'];
         let iconColor: string;
 
-
-        switch (type) {
+        switch (entityType) {
             case EntityType.CDE:
                 label = "Mapped to CDE";
                 color = "success";
@@ -175,28 +213,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         console.log("To be implemented " + key)
         return false
     };
-
-    const searchInCollections = async (queryString: string): Promise<Option[]> => {
-        const selectedCollections = selectableCollections
-            .filter(collection => collection.selected)
-            .map(collection => collections[collection.id]);
-
-        try {
-            const fetchPromises = selectedCollections.map(async (collection) => {
-                    const entities = await collection.fetch(queryString);
-                    return entities.map(entity => getOptionFromEntity(entity, collection.name))
-                }
-            );
-
-            const results = await Promise.all(fetchPromises);
-
-            return results.flat();
-
-        } catch (error) {
-            console.error("Error searching collections:", error);
-            return []
-        }
-    }
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
@@ -245,9 +261,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: (queryString) => searchInCollections(queryString),
+                                                onSelection: (optionId, newIsSelectedState) => handleSelection(key, optionId, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: null,
+                                                value: null
                                             }}/>
                                     </Box>
 
@@ -263,7 +280,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         lineHeight: '150%'
                                                     }}>Pairing suggestions</Typography>
                                                     <PairingTooltip datasetMapping={datasetMapping} key={key}
-                                                                    headerMapping={headerMapping}/>
+                                                                    headerMapping={headerIndexes}/>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
