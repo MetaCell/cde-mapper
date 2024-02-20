@@ -1,9 +1,10 @@
+import { Dispatch, SetStateAction } from 'react';
 import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps } from 'react-joyride';
 import { Box, Typography, Button, IconButton } from '@mui/material';
 import Checkbox from './CheckBox';
-import { useCdeContext } from '../../CdeContext';
 import { TutorialCloseIcon } from '../../icons';
 import { vars } from '../../theme/variables';
+import { TourSteps } from './tutorial';
 
 const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
 
@@ -106,33 +107,31 @@ const Tooltip = ({
     );
 }
 
-const CommonJoyride = () => {
-    const { tutorialStep, tutorialSteps, setTutorialSteps } = useCdeContext();
-
+const Tour = (props: { tourStepName: keyof TourSteps, tourSteps: TourSteps, setTourSteps: Dispatch<SetStateAction<TourSteps>> }) => {
+    const { tourStepName, tourSteps, setTourSteps } = props;
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;
         if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
-            setTutorialSteps(prevTutorialSteps => ({
+            setTourSteps(prevTutorialSteps => ({
                 ...prevTutorialSteps,
-                [tutorialStep]: {
-                    ...prevTutorialSteps[tutorialStep],
+                [tourStepName]: {
+                    ...prevTutorialSteps[tourStepName],
                     run: false
                 }
             }));
         } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
             const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1)
-            setTutorialSteps(prevTutorialSteps => ({
+            setTourSteps(prevTutorialSteps => ({
                 ...prevTutorialSteps,
-                [tutorialStep]: {
-                    ...prevTutorialSteps[tutorialStep],
+                [tourStepName]: {
+                    ...prevTutorialSteps[tourStepName],
                     stepIndex: action === ACTIONS.CLOSE ? 0 : nextStepIndex,
                     run: action === ACTIONS.CLOSE ? false : true
                 }
             }));
         } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {
-            console.log("am I here?")
-            setTutorialSteps(prevTutorialSteps => ({
+            setTourSteps(prevTutorialSteps => ({
                 ...prevTutorialSteps,
                 collection: { ...prevTutorialSteps.collection, run: false },
                 suggestions: { ...prevTutorialSteps.suggestions, run: false },
@@ -146,9 +145,9 @@ const CommonJoyride = () => {
             callback={handleJoyrideCallback}
             continuous={true}
             disableOverlayClose={true}
-            run={tutorialSteps[tutorialStep].run}
-            stepIndex={tutorialSteps[tutorialStep].stepIndex}
-            steps={tutorialSteps[tutorialStep].steps}
+            run={tourSteps[tourStepName].run}
+            stepIndex={tourSteps[tourStepName].stepIndex}
+            steps={tourSteps[tourStepName].steps}
             showProgress={false}
             showSkipButton={true}
             tooltipComponent={Tooltip}
@@ -245,4 +244,4 @@ const CommonJoyride = () => {
     )
 }
 
-export default CommonJoyride;
+export default Tour;

@@ -8,28 +8,10 @@ import { useCdeContext } from "../../CdeContext.ts";
 const { primary600, gray600, drodownDetailBg, gray200 } = vars;
 
 function Home() {
-    const {
-        setStep,
-        datasetSample,
-        tutorialSteps,
-        setTutorialSteps
-    } = useCdeContext();
-
-    const handleStartMappingClick = () => {
-        setStep(STEPS.COLLECTION);
-        if (tutorialSteps["home"].run) {
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                ["home"]: {
-                    ...prevTutorialSteps["home"],
-                    run: false
-                }
-            }));
-        }
-    }
+    const { setStep, datasetSample } = useCdeContext();
 
     return (
-        <Box display='flex' alignItems='center' flexDirection='column' className="home-step" px={3} py={6} sx={{
+        <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
             background: drodownDetailBg
         }}>
             <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
@@ -86,11 +68,10 @@ function Home() {
             </Box>
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
-                <Button variant='contained' onClick={handleStartMappingClick} className="mapping__start-btn">Start mapping</Button>
+                <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className="mapping__start-btn">Start mapping</Button>
                 <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
                     instead </Button>
             </Box>
-
         </Box>
     );
 }

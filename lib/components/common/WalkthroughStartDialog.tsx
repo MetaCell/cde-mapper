@@ -4,7 +4,7 @@ import { vars } from '../../theme/variables';
 
 const { baseWhite, gray600, primary600, primary700, tooltipBoxShadow, gray900 } = vars;
 
-const WalkthroughStartDialog = ({ handleNextStepTutorial, handleSkipTutorial }: { handleNextStepTutorial: () => void, handleSkipTutorial: () => void }) => {
+const WalkthroughStartDialog = ({ handleStartTutorial, handleSkipTutorial }: { handleStartTutorial: () => void, handleSkipTutorial: () => void }) => {
     const [isVisible, setIsVisible] = React.useState(true);
 
     const handleSkipButtonClick = () => {
@@ -13,7 +13,7 @@ const WalkthroughStartDialog = ({ handleNextStepTutorial, handleSkipTutorial }: 
     };
 
     const handleNextButtonClick = () => {
-        handleNextStepTutorial();
+        handleStartTutorial();
         setIsVisible(false);
     };
 

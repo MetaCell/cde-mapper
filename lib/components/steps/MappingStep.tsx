@@ -85,7 +85,7 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index,
 
 function MappingStep() {
     const [value, setValue] = React.useState(0);
-    const { tutorialStep, tutorialSteps, setTutorialStep, setTutorialSteps } = useCdeContext();
+    const { tourStepName, tourSteps, setTourStepName, setTourSteps } = useCdeContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -96,12 +96,12 @@ function MappingStep() {
     };
 
     const handleNextStepTutorial = () => {
-        if(tutorialSteps[tutorialStep].run){
-            setTutorialSteps(prevTutorialSteps => ({
+        if(tourSteps[tourStepName].run){
+            setTourSteps(prevTutorialSteps => ({
                 ...prevTutorialSteps,
-                [tutorialStep]: {
-                    ...prevTutorialSteps[tutorialStep],
-                    stepIndex: prevTutorialSteps[tutorialStep].stepIndex + 1
+                [tourStepName]: {
+                    ...prevTutorialSteps[tourStepName],
+                    stepIndex: prevTutorialSteps[tourStepName].stepIndex + 1
                 }
             }));
         }
@@ -109,11 +109,11 @@ function MappingStep() {
 
     React.useEffect(() => {
         if (value === 0) {
-            setTutorialStep('collection');
+            setTourStepName('collection');
         } else if (value === 1) {
-            setTutorialStep('suggestions');
+            setTourStepName('suggestions');
         } else {
-            setTutorialStep('mapping');
+            setTourStepName('mapping');
         }
     }, [value])
 

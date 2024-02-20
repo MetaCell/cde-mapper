@@ -7,7 +7,7 @@ import {
     Suggestions
 } from "./models.ts";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
-import { TutorialSteps } from "./components/common/tutorial.tsx";
+import { TourSteps } from "./components/common/tutorial.tsx";
 
 export const CdeContext = createContext<{
 
@@ -30,10 +30,10 @@ export const CdeContext = createContext<{
     errorMessage: string | null;
     setErrorMessage: (errorMessage: string | null) => void;
     handleClose: () => void;
-    tutorialSteps: TutorialSteps,
-    setTutorialSteps: Dispatch<SetStateAction<TutorialSteps>>;
-    tutorialStep: keyof TutorialSteps;
-    setTutorialStep: Dispatch<SetStateAction<keyof TutorialSteps>>;
+    tourSteps: TourSteps,
+    setTourSteps: Dispatch<SetStateAction<TourSteps>>;
+    tourStepName: keyof TourSteps;
+    setTourStepName: Dispatch<SetStateAction<keyof TourSteps>>;
 }>({
 
     name: '',
@@ -68,7 +68,7 @@ export const CdeContext = createContext<{
     },
     handleClose: () => {
     },
-    tutorialSteps: {
+    tourSteps: {
         home: {
             run: false,
             stepIndex: 0,
@@ -90,10 +90,10 @@ export const CdeContext = createContext<{
             steps: []
         }
     },
-    setTutorialSteps: () => {
+    setTourSteps: () => {
     },
-    tutorialStep: 'home',
-    setTutorialStep: () => {
+    tourStepName: 'home',
+    setTourStepName: () => {
     }
 });
 

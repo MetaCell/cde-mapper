@@ -1,7 +1,6 @@
 import {Box, Button, Divider, IconButton, Link, Typography} from "@mui/material";
 import {CloseIcon} from "../../icons";
 import {vars} from "../../theme/variables";
-import { useCdeContext } from "../../CdeContext";
 
 const {baseWhite, gray700, gray600, primary600, gray400} = vars;
 
@@ -109,21 +108,12 @@ const styles = {
     }
 };
 
-const Info = (props: { setIsInfoOpen: (b: boolean) => void }) => {
-    const {setIsInfoOpen} = props
-    const { tutorialSteps, setTutorialSteps } = useCdeContext();
+const Info = (props: { setIsInfoOpen: (b: boolean) => void, handleNextStepTutorial: () => void }) => {
+    const {setIsInfoOpen, handleNextStepTutorial} = props
 
     const handleClose = () => {
         setIsInfoOpen(false);
-        if(tutorialSteps['home'].run){
-            setTutorialSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                ["home"]: {
-                    ...prevTutorialSteps["home"],
-                    stepIndex: prevTutorialSteps["home"].stepIndex+=1
-                }
-            }));
-        }
+        handleNextStepTutorial();
     }
 
     const InfoContent = () => (
