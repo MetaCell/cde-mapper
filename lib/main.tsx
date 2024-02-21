@@ -1,5 +1,3 @@
-
-
 import CdeModal from './components/CdeModal';
 import {InitParams} from "./models.ts";
 import {CdeContextProvider} from "./CdeContextProvider.tsx";
@@ -17,7 +15,7 @@ export const init = (props: InitParams) => {
     // Render the React component into the div
     root.render(
         <CdeContextProvider {...props}>
-            <CdeModal />
+            <CdeModal/>
         </CdeContextProvider>,
     );
 
@@ -27,3 +25,6 @@ export const init = (props: InitParams) => {
         document.body.removeChild(modalDiv);
     };
 };
+
+
+export {mapElasticSearchHitsToOptions} from "./helpers/mappers.ts";

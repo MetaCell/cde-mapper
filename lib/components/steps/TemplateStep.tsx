@@ -18,103 +18,6 @@ function TemplateStep() {
             return [...prevDropdowns, prevDropdowns.length + 1]
         })
     };
-    const mockCDE = [
-        {
-            "id": "5304",
-            "group": 'Origins',
-            "label": "GUID",
-            "content": [
-                {
-                    "title": "Name",
-                    "value": "GUID"
-                },
-                {
-                    "title": "Variable Name",
-                    "value": "Subject"
-                },
-                {
-                    "title": "Title",
-                    "value": "Unique identification of each mouse ID"
-                }
-            ]
-        },
-        {
-            "id": "32845",
-            "group": 'Origins',
-            "label": "SmallSpeciesStrainTyp",
-            "content": [
-                {
-                    "title": "Name",
-                    "value": "SmallSpeciesStrainTyp"
-                },
-                {
-                    "title": "Variable Name",
-                    "value": "Subject"
-                },
-                {
-                    "title": "Title",
-                    "value": "Unique identification of each mouse ID"
-                }
-            ]
-        },
-        {
-            "id": "47428",
-            "group": 'Origins',
-            "label": "StudySpeciesTyp",
-            "content": [
-                {
-                    "title": "Name",
-                    "value": "StudySpeciesTyp"
-                },
-                {
-                    "title": "Variable Name",
-                    "value": "Subject"
-                },
-                {
-                    "title": "Title",
-                    "value": "Unique identification of each mouse ID"
-                }
-            ]
-        },
-        {
-            "id": "12822",
-            "group": 'Origins',
-            "label": "Weight",
-            "content": [
-                {
-                    "title": "Name",
-                    "value": "Weight"
-                },
-                {
-                    "title": "Variable Name",
-                    "value": "Subject"
-                },
-                {
-                    "title": "Title",
-                    "value": "Unique identification of each mouse ID"
-                }
-            ]
-        },
-        {
-            "id": "1798",
-            "group": 'Origins',
-            "label": "AgeVal",
-            "content": [
-                {
-                    "title": "Name",
-                    "value": "AgeVal"
-                },
-                {
-                    "title": "Variable Name",
-                    "value": "Subject"
-                },
-                {
-                    "title": "Title",
-                    "value": "Unique identification of each mouse ID"
-                }
-            ]
-        },
-    ];
 
     return (
         <Box>
@@ -137,8 +40,11 @@ function TemplateStep() {
                                         options={{
                                             searchPlaceholder: "Search Spinal Cord Injury (SCI)",
                                             noResultReason: "We couldn’t find any record with this in the database.",
-                                            onSearch: () => mockCDE,
-                                            value: mockCDE[1],
+                                            onSearch: async () => [],
+                                            onSelection: async () => [],
+                                            collections: [],
+                                            onCollectionSelect: () => [],
+                                            value: null,
                                         }}
                                     />
                                     <Box width='100%' mt={1.5}>
