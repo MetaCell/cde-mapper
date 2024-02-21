@@ -3,7 +3,7 @@ import {Snackbar} from '@mui/material';
 import Home from "./steps/Home.tsx";
 import {STEPS} from "../models.ts";
 import Modal from './common/Modal.tsx'
-import MappingStep from './steps/MappingStep.tsx';
+import MappingStep from './steps/mapping/MappingStep.tsx';
 import TemplateStep from './steps/TemplateStep.tsx';
 import Header from "./common/Header.tsx";
 import {useCdeContext} from "../CdeContext.ts";

@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FormControl, InputAdornment, MenuItem, Popper, Select, SelectChangeEvent, Stack, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, ListSubheader, Chip} from '@mui/material';
-import {AddIcon, CheckIcon, ChevronDown, DownIcon, GlobeIcon, MagicWandIcon, MagnifyGlassIcon} from "../../icons";
-import HoveredOptionContent from "./HoveredOptionContent";
-import NoResultField from './NoResultField';
-import {vars} from '../../theme/variables';
+import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
+import HoveredOptionContent from "./HoveredOptionContent.tsx";
+import NoResultField from './NoResultField.tsx';
+import {vars} from '../../theme/variables.ts';
+import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
+import {Option, SelectableCollection} from "../../models.ts";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const {
     buttonOutlinedBorderColor,
@@ -148,17 +151,6 @@ const styles = {
     }
 }
 
-export type OptionDetail = {
-    title: string; // What to display as the title/label for the property.
-    value: string; // The actual value/content for the property.
-};
-
-export type Option = {
-    id: string;
-    label: string;
-    group: string;
-    content: OptionDetail[];
-}
 
 interface Header {
     label: string;
@@ -172,11 +164,15 @@ interface CustomEntitiesDropdownProps {
         errors?: string;
         searchPlaceholder?: string;
         noResultReason?: string;
-        onSearch: (searchValue: string) => Option[];
-        value: Option;
+        onSearch: (searchValue: string) => Promise<Option[]>;
+        onSelection: (optionId: string, newIsSelectedState: boolean) => void;
+        value: Option | null;
         header?: Header;
+        collections: SelectableCollection[];
+        onCollectionSelect: (collection: SelectableCollection) => void;
     };
 }
+
 
 export default function CustomEntitiesDropdown({
                                                    placeholder,
@@ -186,13 +182,14 @@ export default function CustomEntitiesDropdown({
                                                        searchPlaceholder,
                                                        noResultReason,
                                                        onSearch,
+                                                       onSelection,
                                                        value,
-                                                       header
+                                                       header,
+                                                       collections,
+                                                       onCollectionSelect,
                                                    },
                                                }: CustomEntitiesDropdownProps) {
-    const [searchValue] = useState("");
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [toggleMenu, setToggleMenu] = useState(false);
     const [age, setAge] = React.useState('0');
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -206,18 +203,35 @@ export default function CustomEntitiesDropdown({
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
 
-    const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>(
-        [value] || []
-    );
-    const [autocompleteOptions, setAutocompleteOptions] = useState<Option[]>([]);
-    const [inputValue, setInputValue] = useState('');
     const [toggleCustomView, setToggleCustomView] = useState(false)
 
-    React.useEffect(() => {
-        searchValue !== undefined &&
-        setAutocompleteOptions(onSearch(searchValue));
-    }, [searchValue, onSearch, autocompleteOptions]);
+    const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
+    const [searchResults, setSearchResults] = useState<Option[]>([]);
+    const [searchInput, setSearchInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+
+    useEffect(() => {
+        if (!open) {
+            return;
+        }
+
+        const fetchOptions = async () => {
+            if (searchInput !== undefined) {
+                try {
+                    const options = await onSearch(searchInput);
+                    setSearchResults(options);
+                } catch (error) {
+                    console.error('Error fetching search options:', error);
+                    setSearchResults([]);
+                }
+            }
+        };
+
+        setIsLoading(true);
+        fetchOptions().then(() => setIsLoading(false));
+    }, [searchInput, onSearch, open]);
 
     React.useEffect(() => {
         if(open){
@@ -229,7 +243,7 @@ export default function CustomEntitiesDropdown({
         [group: string]: Option[];
     };
 
-    const groupedOptions = autocompleteOptions.reduce((grouped: GroupedOptions, option: Option) => {
+    const groupedOptions = searchResults.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
         if (!grouped[group]) {
             grouped[group] = [];
@@ -246,11 +260,12 @@ export default function CustomEntitiesDropdown({
         } else {
             setSelectedOptions([...selectedOptions, option]);
         }
+        onSelection(option.id, !isOptionAlreadySelected)
     };
 
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(event.target.value);
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
     };
 
     const isOptionSelected = (option: Option) => {
@@ -304,8 +319,6 @@ export default function CustomEntitiesDropdown({
                             >
                                 <GlobeIcon/>
                                 <Typography variant='body1'>{value?.label}</Typography>
-                                <Typography variant='body2'>Unique identifiers for each subject in the
-                                    dataset</Typography>
                             </Box>
                         ))}
                     </Box>
@@ -326,7 +339,7 @@ export default function CustomEntitiesDropdown({
                     background: baseWhite,
                     boxShadow: '0 0.5rem 0.5rem -0.25rem rgba(7, 8, 8, 0.03), 0 1.25rem 1.5rem -0.25rem rgba(7, 8, 8, 0.08)',
                     m: '0.25rem 0  !important',
-                    width: autocompleteOptions.length > 0 ? '55.5rem' : '27.75rem',
+                    width: searchResults.length > 0 ? '55.5rem' : '27.75rem',
                     display: 'flex',
                     flexDirection: 'column',
                     zIndex: 99999
@@ -340,8 +353,8 @@ export default function CustomEntitiesDropdown({
                         gap={1}
                         sx={{
                             borderBottom: `0.0625rem solid ${gray100}`,
-                            height: autocompleteOptions.length > 0 ? '2.75rem' : 'auto',
-                            padding: autocompleteOptions.length > 0 ? '0 0.875rem' : '0.875rem'
+                            height: searchResults.length > 0 ? '2.75rem' : 'auto',
+                            padding: searchResults.length > 0 ? '0 0.875rem' : '0.875rem'
                         }}
                     >
                         <Typography variant="body2">
@@ -382,10 +395,10 @@ export default function CustomEntitiesDropdown({
                         ))}
                     </Box>
                 )}
-                <Box display='flex' flex={1} height={autocompleteOptions.length > 0 ? 'calc(100% - 2.75rem)' : 'auto'}>
-                    {autocompleteOptions.length > 0 && (!toggleCustomView ?
+                <Box display='flex' flex={1} height={searchResults.length > 0 ? 'calc(100% - 2.75rem)' : 'auto'}>
+                    {searchResults.length > 0 && (!toggleCustomView ?
                             (<Box sx={styles.details}>
-                                {autocompleteOptions.length > 0 && (hoveredOption ? (
+                                {searchResults.length > 0 && (hoveredOption ? (
                                     <HoveredOptionContent
                                         entity={hoveredOption}
                                     />
@@ -503,7 +516,7 @@ export default function CustomEntitiesDropdown({
 
                     <Box sx={{
                         ...styles.list,
-                        width: autocompleteOptions.length > 0 ? '40%' : '100%'
+                        width: searchResults.length > 0 ? '40%' : '100%'
                     }}>
                         <Box sx={{
                             borderBottom: `0.0625rem solid ${gray100}`,
@@ -541,8 +554,8 @@ export default function CustomEntitiesDropdown({
                             <TextField
                                 fullWidth
                                 type="text"
-                                value={inputValue}
-                                onChange={handleInputChange}
+                                value={searchInput}
+                                onChange={handleSearchChange}
                                 placeholder={searchPlaceholder}
                                 InputProps={{
                                     startAdornment: <InputAdornment
@@ -550,7 +563,16 @@ export default function CustomEntitiesDropdown({
                                 }}
                             />
                         </Box>
-                        {autocompleteOptions.length > 0 ? (
+                        {isLoading ? (
+                            <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                sx={{height: "100%"}}
+                            >
+                                <CircularProgress/>
+                            </Box>
+                        ) : searchResults.length > 0 ? (
                             <>
                                 <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
                                     {Object.keys(groupedOptions).map((group) => (
@@ -631,172 +653,8 @@ export default function CustomEntitiesDropdown({
                                                 }
                                             }
                                         }} key={group}>
-                                            <Box>
-                                                <ListSubheader
-                                                    component="div"
-                                                    onClick={() => setToggleMenu(!toggleMenu)}
-                                                    style={{
-                                                        position: 'relative',
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        cursor: 'pointer',
-                                                        justifyContent: "space-between",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        sx={{
-                                                            color: '#373A3E',
-                                                            fontSize: "0.75rem",
-                                                            fontWeight: 500,
-                                                            lineHeight: "1.125rem",
-                                                        }}
-                                                    >
-                                                        Spinal Cord Injury (SCI)
-                                                    </Typography>
-                                                    <DownIcon/>
-                                                    {toggleMenu && (
-                                                        <Box onClick={(e) => e.stopPropagation()} sx={{
-                                                            borderRadius: '0.5rem',
-                                                            overflow: 'hidden',
-                                                            position: 'absolute',
-                                                            width: 'calc(100% - 1.875rem)',
-                                                            top: '2.125rem',
-                                                            left: '0.9375rem',
-                                                            border: '0.0625rem solid #E4E5E7',
-                                                            background: '#FFF',
-                                                            boxShadow: '0rem 0.25rem 0.375rem -0.125rem rgba(7, 8, 8, 0.03), 0rem 0.75rem 1rem -0.25rem rgba(7, 8, 8, 0.08)',
-
-                                                            '& .simple-list': {
-                                                                gap: 0,
-                                                                '& li': {
-                                                                    borderRadius: 0,
-                                                                    paddingLeft: '1rem',
-                                                                    paddingRight: '1rem',
-                                                                    borderBottom: '0.0625rem solid #ECEDEE',
-                                                                    '&:hover': {
-                                                                        borderRadius: 0,
-                                                                    },
-                                                                    '& .MuiTypography-root': {
-                                                                        fontWeight: '500 !important',
-                                                                    },
-                                                                }
-                                                            }
-                                                        }}>
-                                                            <ul className='simple-list'>
-                                                                <li>
-                                                                    <Typography
-                                                                        sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                                    >Spinal Cord Injury (SCI)</Typography>
-                                                                </li>
-                                                                <li>
-                                                                    <Typography
-                                                                        sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                                    >Trauma Brain Injury (TBI)</Typography>
-                                                                </li>
-                                                            </ul>
-                                                            <ListSubheader
-                                                                component="div"
-                                                                style={{
-                                                                    cursor: 'auto',
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "space-between",
-                                                                }}
-                                                            >
-                                                                <Typography
-                                                                    sx={{
-                                                                        color: '#676C74 !important',
-                                                                        fontSize: "0.75rem",
-                                                                        fontWeight: '400 !important',
-                                                                        lineHeight: "1.125rem",
-                                                                    }}
-                                                                >
-                                                                    Common Data Element (CDE)
-                                                                </Typography>
-                                                            </ListSubheader>
-                                                            <Box p="0.375rem">
-                                                                <ul>
-                                                                    <li className='selected'>
-                                                                        <Typography
-                                                                            sx={{
-                                                                                width: 1,
-                                                                                height: 1,
-                                                                                padding: "0.625rem"
-                                                                            }}
-                                                                        >Spinal Cord Injury (SCI)</Typography>
-                                                                        <CheckIcon color="#19418F"/>
-                                                                    </li>
-                                                                    <li>
-                                                                        <Typography
-                                                                            sx={{
-                                                                                width: 1,
-                                                                                height: 1,
-                                                                                padding: "0.625rem"
-                                                                            }}
-                                                                        >Trauma Brain Injury (TBI)</Typography>
-                                                                    </li>
-                                                                </ul>
-                                                            </Box>
-                                                        </Box>
-                                                    )}
-                                                </ListSubheader>
-                                            </Box>
-
-                                            <Box mt={0.5} mx="-0.375rem" p='0.375rem' mb='0.375rem'
-                                                 sx={{
-                                                     background: '#EEF2FC',
-                                                     '& ul': {
-                                                         '& li': {
-                                                             '& svg': {
-                                                                 marginLeft: 'auto'
-                                                             },
-                                                             '& .MuiTypography-body1': {
-                                                                 color: '#2155BA'
-                                                             },
-                                                             '& .MuiTypography-body2': {
-                                                                 color: '#346DDB',
-                                                                 fontWeight: 400
-                                                             },
-                                                             '&.selected': {
-                                                                 background: 'rgba(194, 212, 244, 0.30)'
-                                                             },
-                                                             '&:hover': {
-                                                                 background: 'rgba(194, 212, 244, 0.30)'
-                                                             }
-                                                         },
-                                                     }
-                                                 }}
-                                            >
-                                                <Typography sx={{
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: 500,
-                                                    lineHeight: '150%',
-                                                    padding: '0.6875rem 0.625rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    color: '#122E64'
-                                                }}>
-                                                    <MagicWandIcon/>
-                                                    Suggestions
-                                                </Typography>
-                                                <ul>
-                                                    <li className='selected'>
-                                                        <Typography
-                                                            sx={{height: 1, padding: "0.625rem"}}
-                                                        >GUID</Typography>
-                                                        <Typography variant='body2'>SCI</Typography>
-                                                        <CheckIcon color="#2155BA"/>
-                                                    </li>
-                                                    <li>
-                                                        <Typography
-                                                            sx={{height: 1, padding: "0.625rem"}}
-                                                        >SmallSpeciesStrainTyp</Typography>
-                                                        <Typography variant='body2'>SCI</Typography>
-                                                    </li>
-                                                </ul>
-                                            </Box>
-
+                                            <SearchCollectionSelector collections={collections}
+                                                                      onCollectionSelect={onCollectionSelect}/>
 
                                             {toggleCustomView &&
                                                 <Box>
@@ -847,32 +705,8 @@ export default function CustomEntitiesDropdown({
 
 
                                             <Box>
-                                                <ListSubheader
-                                                    component="div"
-                                                    style={{
-                                                        position: 'static',
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "space-between",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        sx={{
-                                                            color: '#676C74',
-                                                            fontSize: "0.75rem",
-                                                            fontWeight: 500,
-                                                            lineHeight: "1.125rem",
-                                                        }}
-                                                    >
-                                                        Spinal Cord Injury (SCI)
-                                                    </Typography>
-                                                </ListSubheader>
-
                                                 <ul>
                                                     {groupedOptions[group]
-                                                        .filter((option: Option) =>
-                                                            option.label.toLowerCase().includes(inputValue.toLowerCase())
-                                                        )
                                                         .map((option: Option) => (
                                                             <li
                                                                 key={option.id}

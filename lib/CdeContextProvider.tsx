@@ -1,10 +1,10 @@
 import {PropsWithChildren, useMemo, useState} from 'react';
-import {DatasetMapping, Entity, InitParams, STEPS} from "./models.ts";
+import {Collection, DatasetMapping, InitParams, OptionDetail, STEPS} from "./models.ts";
 import theme from "./theme/index.tsx";
 import {ThemeProvider} from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
-import {validateDatasetMapping,} from "./services/validatorsService.ts";
-import {mapStringTableToDatasetMapping} from "./services/initialMappingService.ts";
+import {validateDataset, validateDatasetMapping,} from "./services/validatorsService.ts";
+import {getDatasetMapping} from "./services/initialMappingService.ts";
 import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
 import ErrorPage from "./components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
@@ -12,19 +12,19 @@ import {CdeContext} from './CdeContext.ts';
 import {computeSuggestions} from "./services/suggestionsService.ts";
 
 
-const defaultHeaderMapping = {
-    variableNameIndex: VARIABLE_NAME_INDEX,
-    preciseAbbreviationIndex: ABBREVIATION_INDEX,
-    titleIndex: TITLE_INDEX,
-    interlexIdIndex: INTERLEX_ID_INDEX,
+const defaultHeaderIndexes = {
+    variableName: VARIABLE_NAME_INDEX,
+    preciseAbbreviation: ABBREVIATION_INDEX,
+    title: TITLE_INDEX,
+    interlexId: INTERLEX_ID_INDEX,
 };
 
 export const CdeContextProvider = ({
                                        datasetSample,
                                        datasetMapping: rawDatasetMapping,
                                        additionalDatasetMappings: rawAdditionalDatasetMappings = [],
-                                       headerMapping: providedHeaderMapping = defaultHeaderMapping,
-                                       collections,
+                                       headerIndexes: providedHeaderIndexes = defaultHeaderIndexes,
+                                       collections: rawCollections,
                                        config,
                                        name,
                                        callback,
@@ -38,34 +38,55 @@ export const CdeContextProvider = ({
     let checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
     const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
-    const headerMapping = useMemo(() => ({
-        ...defaultHeaderMapping,
-        ...providedHeaderMapping
-    }), [providedHeaderMapping]);
+    // Defines the mapping of the mandatory columns in the dataset mapping file
+
+    const headerIndexes = useMemo(() => {
+        // If the dataset mapping is not provided or has no data we use the default header indexes
+        if (!rawDatasetMapping || rawDatasetMapping.length === 0) {
+            return defaultHeaderIndexes;
+        }
+        // Merge providedHeaderIndexes with defaultHeaderIndexes if rawDatasetMapping is valid
+        return {
+            ...defaultHeaderIndexes,
+            ...providedHeaderIndexes
+        };
+    }, [providedHeaderIndexes, rawDatasetMapping]);
 
 
-    // Process and validate datasetMapping
-    const [initialDatasetMapping, initialDatasetMappingHeader, areFilesValid] = useMemo(() => {
-        let localDatasetMapping = {};
-        let localDatasetMappingHeader: string[] = [];
-        let localAreFilesValid = true;
+    // validate dataset sample
 
-        if (rawDatasetMapping && rawDatasetMapping.length > 0) {
-            try {
-                validateDatasetMapping(rawDatasetMapping, headerMapping.variableNameIndex);
-            } catch (error) {
-                const message = error instanceof Error ? error.message : 'An unknown error occurred';
-                const errorMessage = `Invalid dataset mapping: ${message}`;
-                console.error(errorMessage);
-                localAreFilesValid = false;
-            }
-            const datasetMappingData = mapStringTableToDatasetMapping(rawDatasetMapping, headerMapping);
-            localDatasetMapping = datasetMappingData[0];
-            localDatasetMappingHeader = datasetMappingData[1]
+    const isDatasetInvalid = useMemo(() => {
+        let tmpIsDatasetInvalid = false;
+
+        try {
+            validateDataset(datasetSample);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred';
+            const errorMessage = `Invalid dataset: ${message}`;
+            console.error(errorMessage);
+            tmpIsDatasetInvalid = true;
         }
 
-        return [localDatasetMapping, localDatasetMappingHeader, localAreFilesValid];
-    }, [rawDatasetMapping, headerMapping]);
+        return tmpIsDatasetInvalid;
+    }, [datasetSample]);
+
+    // Validate and process datasetMapping
+
+    const [initialDatasetMapping, initialDatasetMappingHeader, isDatasetMappingInvalid] = useMemo(() => {
+
+        try {
+            validateDatasetMapping(rawDatasetMapping, headerIndexes.variableName);
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred';
+            const errorMessage = `Invalid dataset mapping: ${message}`;
+            console.error(errorMessage);
+            return [{}, [], true]
+        }
+        const datasetHeader = datasetSample[0]
+        const [tmpDatasetMapping, tmpDatasetMappingHeader] = getDatasetMapping(rawDatasetMapping, headerIndexes, datasetHeader);
+
+        return [tmpDatasetMapping, tmpDatasetMappingHeader, false];
+    }, [rawDatasetMapping, headerIndexes, datasetSample]);
 
 
     const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
@@ -74,7 +95,7 @@ export const CdeContextProvider = ({
 
     const additionalDatasetMappings: DatasetMapping[] = rawAdditionalDatasetMappings.map((additionalMapping, index) => {
         try {
-            validateDatasetMapping(additionalMapping, headerMapping.variableNameIndex);
+            validateDatasetMapping(additionalMapping, headerIndexes.variableName);
         } catch (error) {
             if (error instanceof Error) {
                 console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: ${error.message}`);
@@ -83,18 +104,28 @@ export const CdeContextProvider = ({
             }
             return null;
         }
-        const mappedAdditionalMappingData = mapStringTableToDatasetMapping(additionalMapping, headerMapping);
-        return mappedAdditionalMappingData[0];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [mappedAdditionalMapping, _] = getDatasetMapping(additionalMapping, headerIndexes);
+        return mappedAdditionalMapping;
     }).filter(mapping => mapping !== null) as DatasetMapping[];
 
     const suggestions = useMemo(() => {
-        return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerMapping);
-    }, [initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerMapping]);
+        return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, headerIndexes);
+    }, [initialDatasetMapping, additionalDatasetMappings, headerIndexes]);
 
     const getSuggestions = () => {
         return suggestions
     };
 
+    const collectionsDictionary = useMemo(() => {
+        return rawCollections.reduce((acc, collection, index) => {
+            acc[collection.id] = {
+                ...collection,
+                suggested: index === 0 // Set 'suggested' for the first collection, false for others
+            };
+            return acc;
+        }, {} as { [key: string]: Collection });
+    }, [rawCollections]);
 
     const handleClose = () => {
         setErrorMessage(null);
@@ -102,14 +133,14 @@ export const CdeContextProvider = ({
         callback(datasetMapping)
     };
 
-    const handleUpdateDatasetMappingRow = (key: string, newData: Entity) => {
+    const handleUpdateDatasetMappingRow = (key: string, newData: OptionDetail[]) => {
         updateDatasetMappingRow(
             key,
             newData,
             datasetMapping,
             datasetMappingHeader,
             setDatasetMapping,
-            setDatasetMappingHeader
+            setDatasetMappingHeader,
         );
     };
 
@@ -120,8 +151,8 @@ export const CdeContextProvider = ({
         datasetMappingHeader,
         handleUpdateDatasetMappingRow,
         getSuggestions,
-        headerMapping,
-        collections,
+        headerIndexes,
+        collections: collectionsDictionary,
         config,
         step,
         setStep,
@@ -133,14 +164,16 @@ export const CdeContextProvider = ({
         isTourOpen, 
         setIsTourOpen
     };
+
+    const hasErrors = isDatasetInvalid || isDatasetMappingInvalid || rawCollections.length == 0
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline/>
-            {areFilesValid ? (
+            {hasErrors ? <ErrorPage/> : (
                 <CdeContext.Provider value={contextValue}>
                     {children}
                 </CdeContext.Provider>
-            ) : <ErrorPage/>}
+            )}
 
         </ThemeProvider>
 

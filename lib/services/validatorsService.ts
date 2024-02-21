@@ -1,6 +1,12 @@
-export const validateDatasetMapping = (datasetMapping: string[][], variableNameIndex: number): void => {
-    if (datasetMapping.length === 0) {
-        throw new Error("Dataset mapping is empty.");
+export const validateDataset = (dataset: string[][]) => {
+    if (dataset.length < 2) {
+        throw new Error("Dataset must have at least two rows (one for headers and one for data).");
+    }
+};
+
+export const validateDatasetMapping = (datasetMapping: string[][] | undefined, variableNameIndex: number): void => {
+    if (datasetMapping == undefined || datasetMapping.length === 0) {
+        return
     }
     const headers = datasetMapping[0];
     if (headers.length < 3) {
@@ -17,6 +23,7 @@ export const validateDatasetMapping = (datasetMapping: string[][], variableNameI
 
         // Check if the variableName is already in the set
         if (variableNameSet.has(variableName)) {
+            // TODO: Potentially use the last one instead of throw an error
             throw new Error(`Duplicate variable name '${variableName}' found at row ${i + 1}.`);
         }
 

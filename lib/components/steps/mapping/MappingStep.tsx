@@ -1,10 +1,9 @@
-import { Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps } from '@mui/material';
-import React, { Fragment } from 'react';
-import StepOne from './StepOne.tsx';
-import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
-import StepThree from './StepThree.tsx';
-import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { vars } from '../../theme/variables.ts';
+import {Box, Button, Tab, Tabs, Tooltip, Typography, Divider, BoxProps} from '@mui/material';
+import React, {Fragment} from 'react';
+import CollectionsTab from './CollectionsTab.tsx';
+import SuggestionsStep from '../suggestions/SuggestionsStep.tsx';
+import MappingTab from './MappingTab.tsx';
+import {vars} from '../../../theme/variables.ts';
 
 const {
     baseWhite,
@@ -28,8 +27,7 @@ const tabsArr = [
     {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
-        description: 'Suggestions are based on what was previously mapped before.',
-        className: 'suggestions-tab'
+        description: 'suggestions are based on what was previously mapped before.'
     },
     {
         label: 'Map the rest of the dataset',
@@ -44,20 +42,6 @@ enum TabsEnum {
     Mapping = 2,
 }
 
-
-const renderTabComponent = (step: number, changeToNextTab: () => void) => {
-    switch (step) {
-        case TabsEnum.Collection:
-            return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
-        case TabsEnum.Suggestions:
-            return <SuggestionsStep changeToNextTab={changeToNextTab} />;
-        case TabsEnum.Mapping:
-            return <StepThree/>;
-        // Add cases for other steps
-        default:
-            return <div>Unknown step</div>;
-    }
-};
 
 interface CustomTabPanelProps extends BoxProps {
     children?: React.ReactNode;
@@ -83,14 +67,31 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index,
 
 
 function MappingStep() {
-    const [value, setValue] = React.useState(0);
+    const [tabIndex, setTabIndex] = React.useState(0);
+    const [defaultCollection, setDefaultCollection] = React.useState("");
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+        setTabIndex(newValue);
     };
 
     const changeToNextTab = () => {
-        setValue((prevValue) => (prevValue + 1) % tabsArr.length);
+        setTabIndex((prevValue) => (prevValue + 1) % tabsArr.length);
+    };
+
+    const renderTabComponent = () => {
+        switch (tabIndex) {
+            case TabsEnum.Collection:
+                return <CollectionsTab
+                    setDefaultCollection={setDefaultCollection}
+                    changeToNextTab={changeToNextTab}
+                />
+            case TabsEnum.Suggestions:
+                return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
+            case TabsEnum.Mapping:
+                return <MappingTab defaultCollection={defaultCollection}/>;
+            default:
+                return <div>Unknown step</div>;
+        }
     };
 
     return (
@@ -99,7 +100,7 @@ function MappingStep() {
                 borderBottom: `0.0625rem solid ${gray100}`,
                 padding: '0 1.5rem',
             }} display='flex' justifyContent='space-between' alignItems='center'>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
                     {tabsArr?.map((tab, index) => (
                         <Tooltip
                             placement='bottom'
@@ -127,18 +128,18 @@ function MappingStep() {
                 </Tabs>
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
-                    {value === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setValue(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
+                    {tabIndex === TabsEnum.Suggestions ? (
+                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)}>
                             Continue without suggestions
-                        </Button>) : value === TabsEnum.Mapping && (<>
-                            <Typography sx={{
-                                color: gray500,
-                                fontSize: '0.75rem',
-                                fontWeight: 500,
-                                lineHeight: '150%',
-                            }} className='mapping-header__indicator'>
-                                37/120 column headers still unmapped
-                            </Typography>
+                        </Button>) : tabIndex === TabsEnum.Mapping && (<>
+                        <Typography sx={{
+                            color: gray500,
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            lineHeight: '150%',
+                        }}>
+                            37/120 column headers still unmapped
+                        </Typography>
 
                             <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
 
@@ -148,8 +149,12 @@ function MappingStep() {
                 </Box>
             </Box>
             {tabsArr?.map((_tab, index) => (
-                <CustomTabPanel key={index} value={value}
-                    index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
+                <CustomTabPanel
+                    key={index}
+                    value={tabIndex}
+                    index={index}>
+                    {renderTabComponent()}
+                </CustomTabPanel>
             ))}
         </Fragment>
     );

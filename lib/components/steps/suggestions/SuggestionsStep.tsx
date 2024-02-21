@@ -33,6 +33,8 @@ function SuggestionsStep({ changeToNextTab }: SuggestionsStepProps) {
 
     const {
         getSuggestions,
+        datasetMappingHeader,
+        headerIndexes
     } = useCdeContext();
 
     const suggestionsMapping = getSuggestions();
@@ -158,7 +160,10 @@ function SuggestionsStep({ changeToNextTab }: SuggestionsStepProps) {
                 <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
                     {visibleSuggestions.map((suggestion, index) => {
                         return (
-                            <SuggestionDetailUI key={index} entity={suggestion} />
+                            <SuggestionDetailUI key={index}
+                                                row={suggestion}
+                                                header={datasetMappingHeader}
+                                                headerIndexes={headerIndexes}/>
                         );
                     })}
                     {shouldShowOtherSuggestionsButton && (
@@ -183,7 +188,10 @@ function SuggestionsStep({ changeToNextTab }: SuggestionsStepProps) {
                 {showOtherSuggestions && (
                     <Box display='flex' alignItems='start' flexDirection='column' mt='3rem' gap='3rem'>
                         {otherSuggestions.map((suggestion, index) => (
-                            <SuggestionDetailUI key={index} entity={suggestion} />
+                            <SuggestionDetailUI key={index}
+                                                row={suggestion}
+                                                header={datasetMappingHeader}
+                                                headerIndexes={headerIndexes}/>
                         ))}
                     </Box>
                 )}

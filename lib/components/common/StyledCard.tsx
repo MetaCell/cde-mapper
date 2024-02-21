@@ -4,9 +4,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActionArea from '@mui/material/CardActionArea';
 import Typography from '@mui/material/Typography';
-import Radio from '@mui/material/Radio';
 import {useRadioGroup} from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import StyledRadio from './StyledRadio';
 import {vars} from '../../theme/variables';
 
 const {baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700} = vars
@@ -72,8 +72,8 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
                             }
                         }}
                     >
-                        <FormControlLabel value={value} control={<Radio size="small" checked={selectedValue === value}
-                                                                        onChange={handleRadioChange}/>} label={label}/>
+                        <FormControlLabel value={value} control={<StyledRadio checked={selectedValue === value}
+                                                                        onChange={handleRadioChange}/>} label={value}/>
                         {isSuggested && <Typography variant="caption" sx={{color: gray500}}>
                             Suggested
                         </Typography>}

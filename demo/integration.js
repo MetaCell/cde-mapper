@@ -1,4 +1,6 @@
-import {init} from './cde-mapper.js';
+
+import {init, mapElasticSearchHitsToOptions} from '../lib/main.tsx';
+import {getQueryObject} from "./query.js";
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
     let datasetMappings = [];
@@ -64,15 +66,15 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         datasetMapping: datasetMappings,
                         additionalDatasetMappings: additionalDatasetMappings,
                         datasetSample: datasetSample,
-                        collections: [],
+                        collections: getCollections(),
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
                         callback: (cdeFileMapping) => console.log(cdeFileMapping),
-                        headerMapping: {
-                            variableNameIndex: 0,
-                            preciseAbbreviationIndex: 1,
-                            titleIndex: 2,
-                            interlexIdIndex: 11
+                        headerIndexes: {
+                            variableName: 0,
+                            preciseAbbreviation: 1,
+                            title: 2,
+                            interlexId: 11
                         }
                     });
                 },
@@ -95,4 +97,30 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
     };
 
     startProcessing();
+}
+
+function getCollections() {
+    return [
+        {
+            id: 'global',
+            name: "Global",
+            fetch: fetchElasticSearchData,
+        }
+    ]
+}
+
+async function fetchElasticSearchData(queryString) {
+    const query = getQueryObject(queryString)
+    const response = await fetch('/api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            ...query
+        }),
+    });
+
+    const data = await response.json();
+    return mapElasticSearchHitsToOptions(data.hits.hits || [])
 }
