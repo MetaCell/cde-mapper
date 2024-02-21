@@ -1,23 +1,26 @@
-import React from 'react';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { vars } from '../../theme/variables';
 
 const { baseWhite, gray600, primary600, primary700, tooltipBoxShadow, gray900 } = vars;
 
-const WalkthroughStartDialog = ({ handleStartTutorial, handleSkipTutorial }: { handleStartTutorial: () => void, handleSkipTutorial: () => void }) => {
-    const [isVisible, setIsVisible] = React.useState(true);
+const WalkthroughStartDialog = (props: {
+    isTourStartDialogVisible: boolean,
+    setIsTourStartDialogVisible: (b: boolean) => void,
+    setIsTourOpen: (b: boolean) => void
+}) => {
+    const { isTourStartDialogVisible, setIsTourStartDialogVisible, setIsTourOpen } = props;
 
     const handleSkipButtonClick = () => {
-        setIsVisible(false);
-        handleSkipTutorial();
+        setIsTourStartDialogVisible(false)
+        setIsTourOpen(false);
     };
 
     const handleNextButtonClick = () => {
-        handleStartTutorial();
-        setIsVisible(false);
+        setIsTourStartDialogVisible(false)
+        setIsTourOpen(true);
     };
 
-    return isVisible && (
+    return isTourStartDialogVisible && (
         <Box sx={{
             position: 'absolute',
             bottom: 0,

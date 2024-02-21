@@ -1,12 +1,14 @@
-import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
-import {useCallback, useEffect, useState} from 'react';
-import {ArrowDropDown, LeftIcon, RightIcon} from '../../../icons';
+import { Box, Button, Chip, IconButton, Typography } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
+import { ArrowDropDown, LeftIcon, RightIcon } from '../../../icons';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../../common/ModalHeightWrapper.tsx';
-import {vars} from '../../../theme/variables.ts';
-import {useCdeContext} from "../../../CdeContext.ts";
-import {MAX_SUGGESTIONS} from "../../../settings.ts";
+import { vars } from '../../../theme/variables.ts';
+import { useCdeContext } from "../../../CdeContext.ts";
+import { MAX_SUGGESTIONS } from "../../../settings.ts";
 import NoSuggestions from "./NoSuggestions.tsx";
+import Tour from '../../common/Tour.tsx';
+import { tutorial, TourSteps } from '../../common/tutorial.tsx';
 
 const {
     gray100,
@@ -22,10 +24,11 @@ interface SuggestionsStepProps {
     changeToNextTab: () => void;
 }
 
-function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
+function SuggestionsStep({ changeToNextTab }: SuggestionsStepProps) {
     const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
     const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
     const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
+    const [stepIndex, setStepIndex] = useState<number>(0);
 
 
     const {
@@ -80,7 +83,7 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     }, [activeSuggestions, changeToNextTab, hadInitialSuggestions]);
 
     if (activeSuggestions.size === 0) {
-        return <NoSuggestions onNext={changeToNextTab}/>
+        return <NoSuggestions onNext={changeToNextTab} />
     }
 
     const columnsWithSuggestions = Array.from(activeSuggestions);
@@ -131,52 +134,50 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                     </Typography>
                 </div>
 
-                <div className='cde-suggestions__content'>
-                    <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
-                        alignItems='center' justifyContent='space-between'>
-                        <Typography sx={{
-                            color: gray500,
-                            fontSize: '0.875rem',
-                            fontWeight: 500,
-                            lineHeight: '142.857%'
-                        }}>
-                            CDE suggestions
-                        </Typography>
-                        <Typography sx={{
-                            color: gray500,
-                            fontSize: '0.75rem',
-                            fontWeight: 400,
-                            lineHeight: '150%'
-                        }}>
-                            Select only 1 suggestion to map {column} with. Suggestions are ordered based on the quality of
-                            the suggestion.
-                        </Typography>
-                    </Box>
+                <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
+                    alignItems='center' justifyContent='space-between' className='cde-suggestions__content'>
+                    <Typography sx={{
+                        color: gray500,
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        lineHeight: '142.857%'
+                    }}>
+                        CDE suggestions
+                    </Typography>
+                    <Typography sx={{
+                        color: gray500,
+                        fontSize: '0.75rem',
+                        fontWeight: 400,
+                        lineHeight: '150%'
+                    }}>
+                        Select only 1 suggestion to map {column} with. Suggestions are ordered based on the quality of
+                        the suggestion.
+                    </Typography>
+                </Box>
 
-                    <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
-                        {visibleSuggestions.map((suggestion, index) => {
-                            return (
-                                <SuggestionDetailUI key={index} entity={suggestion} />
-                            );
-                        })}
-                        {shouldShowOtherSuggestionsButton && (
-                            <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)}
-                                disableRipple
-                                className='suggestions__expand-btn'
-                                sx={{
-                                    p: 0, gap: '0.25rem', color: primary600,
+                <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
+                    {visibleSuggestions.map((suggestion, index) => {
+                        return (
+                            <SuggestionDetailUI key={index} entity={suggestion} />
+                        );
+                    })}
+                    {shouldShowOtherSuggestionsButton && (
+                        <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)}
+                            disableRipple
+                            className='suggestions__expand-btn'
+                            sx={{
+                                p: 0, gap: '0.25rem', color: primary600,
 
-                                    '& svg': {
-                                        transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
-                                    }
-                                }}>
-                                <ArrowDropDown />
-                                {otherSuggestions.length} other suggestions available for this column. Expand all
-                                suggestions.
-                            </Button>
-                        )}
-                    </Box>
-                </div>
+                                '& svg': {
+                                    transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
+                                }
+                            }}>
+                            <ArrowDropDown />
+                            {otherSuggestions.length} other suggestions available for this column. Expand all
+                            suggestions.
+                        </Button>
+                    )}
+                </Box>
 
 
                 {showOtherSuggestions && (
@@ -221,6 +222,12 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                     <Button variant='contained'>Accept selected mapping</Button>
                 </Box>
             </Box>
+
+            <Tour
+                steps={tutorial[TourSteps.Suggestions]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
         </>
     );
 }

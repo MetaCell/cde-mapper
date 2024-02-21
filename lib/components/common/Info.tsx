@@ -108,12 +108,12 @@ const styles = {
     }
 };
 
-const Info = (props: { setIsInfoOpen: (b: boolean) => void, handleNextStepTutorial: () => void }) => {
-    const {setIsInfoOpen, handleNextStepTutorial} = props
+const Info = (props: { setIsInfoOpen: (b: boolean) => void, handleTourNextStepClick: () => void }) => {
+    const {setIsInfoOpen, handleTourNextStepClick} = props
 
     const handleClose = () => {
         setIsInfoOpen(false);
-        handleNextStepTutorial();
+        handleTourNextStepClick();
     }
 
     const InfoContent = () => (

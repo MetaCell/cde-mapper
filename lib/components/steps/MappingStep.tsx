@@ -5,7 +5,6 @@ import SuggestionsStep from './Suggestions/SuggestionsStep.tsx';
 import StepThree from './StepThree.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
 import { vars } from '../../theme/variables.ts';
-import { useCdeContext } from '../../CdeContext.ts';
 
 const {
     baseWhite,
@@ -46,14 +45,14 @@ enum TabsEnum {
 }
 
 
-const renderTabComponent = (step: number, changeToNextTab: () => void, handleNextStepTutorial: () => void) => {
+const renderTabComponent = (step: number, changeToNextTab: () => void) => {
     switch (step) {
         case TabsEnum.Collection:
-            return <ModalHeightWrapper height="11.5rem"><StepOne handleNextStepTutorial={handleNextStepTutorial} /></ModalHeightWrapper>;
+            return <ModalHeightWrapper height="11.5rem"><StepOne/></ModalHeightWrapper>;
         case TabsEnum.Suggestions:
             return <SuggestionsStep changeToNextTab={changeToNextTab} />;
         case TabsEnum.Mapping:
-            return <StepThree handleNextStepTutorial={handleNextStepTutorial}/>;
+            return <StepThree/>;
         // Add cases for other steps
         default:
             return <div>Unknown step</div>;
@@ -85,7 +84,6 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index,
 
 function MappingStep() {
     const [value, setValue] = React.useState(0);
-    const { tourStepName, tourSteps, setTourStepName, setTourSteps } = useCdeContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -94,28 +92,6 @@ function MappingStep() {
     const changeToNextTab = () => {
         setValue((prevValue) => (prevValue + 1) % tabsArr.length);
     };
-
-    const handleNextStepTutorial = () => {
-        if(tourSteps[tourStepName].run){
-            setTourSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                [tourStepName]: {
-                    ...prevTutorialSteps[tourStepName],
-                    stepIndex: prevTutorialSteps[tourStepName].stepIndex + 1
-                }
-            }));
-        }
-    };
-
-    React.useEffect(() => {
-        if (value === 0) {
-            setTourStepName('collection');
-        } else if (value === 1) {
-            setTourStepName('suggestions');
-        } else {
-            setTourStepName('mapping');
-        }
-    }, [value])
 
     return (
         <Fragment>
@@ -173,7 +149,7 @@ function MappingStep() {
             </Box>
             {tabsArr?.map((_tab, index) => (
                 <CustomTabPanel key={index} value={value}
-                    index={index}>{renderTabComponent(index, changeToNextTab, handleNextStepTutorial)}</CustomTabPanel>
+                    index={index}>{renderTabComponent(index, changeToNextTab)}</CustomTabPanel>
             ))}
         </Fragment>
     );

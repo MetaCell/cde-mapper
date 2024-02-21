@@ -1,4 +1,4 @@
-import {createContext, useContext, Dispatch, SetStateAction} from "react";
+import {createContext, useContext} from "react";
 import {
     Collection,
     Config,
@@ -7,7 +7,6 @@ import {
     Suggestions
 } from "./models.ts";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
-import { TourSteps } from "./components/common/tutorial.tsx";
 
 export const CdeContext = createContext<{
 
@@ -30,10 +29,8 @@ export const CdeContext = createContext<{
     errorMessage: string | null;
     setErrorMessage: (errorMessage: string | null) => void;
     handleClose: () => void;
-    tourSteps: TourSteps,
-    setTourSteps: Dispatch<SetStateAction<TourSteps>>;
-    tourStepName: keyof TourSteps;
-    setTourStepName: Dispatch<SetStateAction<keyof TourSteps>>;
+    isTourOpen: boolean;
+    setIsTourOpen: (isTourOpen: boolean) => void;
 }>({
 
     name: '',
@@ -68,33 +65,8 @@ export const CdeContext = createContext<{
     },
     handleClose: () => {
     },
-    tourSteps: {
-        home: {
-            run: false,
-            stepIndex: 0,
-            steps: []
-        },
-        collection: {
-            run: false,
-            stepIndex: 0,
-            steps: []
-        },
-        suggestions: {
-            run: false,
-            stepIndex: 0,
-            steps: []
-        },
-        mapping: {
-            run: false,
-            stepIndex: 0,
-            steps: []
-        }
-    },
-    setTourSteps: () => {
-    },
-    tourStepName: 'home',
-    setTourStepName: () => {
-    }
+    isTourOpen: true,
+    setIsTourOpen: () => {}
 });
 
 export const useCdeContext = () => useContext(CdeContext);

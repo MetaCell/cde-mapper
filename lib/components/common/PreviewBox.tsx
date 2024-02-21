@@ -1,19 +1,21 @@
-import React from "react";
 import { Box, Typography, Chip, Button } from "@mui/material";
 import { useCdeContext } from "../../CdeContext";
 // import PreviewTable from "./PreviewTable";
 import { GlobeIcon, ArrowDropDown, BulletIcon } from "../../icons";
 import { StyledTable } from "./StyledTable";
 
+interface PreviewBoxProps {
+    togglePreview: boolean;
+    setTogglePreview: (togglePreview: boolean) => void;
+    handleTourNextStepClick?: () => void;
+}
 
-
-const PreviewBox = ({handleNextStepTutorial}:{handleNextStepTutorial?: () => void | undefined}) => {
+const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }: PreviewBoxProps) => {
     const { step, datasetSample, setStep } = useCdeContext();
-    const [togglePreview, setTogglePreview] = React.useState(false);
 
     const handlePreviewToggle = () => {
         setTogglePreview(!togglePreview)
-        handleNextStepTutorial?.()
+        handleTourNextStepClick?.()
     }
 
     return (

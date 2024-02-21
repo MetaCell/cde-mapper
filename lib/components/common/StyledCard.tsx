@@ -17,10 +17,10 @@ interface StyledCardProps {
     selectedValue: number;
     onChange: (value: number) => void;
     label: string;
-    handleNextStepTutorial: () => void;
+    handleTourNextStepClick: () => void;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label, handleNextStepTutorial}) => {
+const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label, handleTourNextStepClick}) => {
     const radioGroup = useRadioGroup();
     let checked = false;
 
@@ -32,7 +32,7 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
         if (value !== selectedValue) {
             onChange(value);
         }
-        handleNextStepTutorial()
+        handleTourNextStepClick();
     };
 
     return (

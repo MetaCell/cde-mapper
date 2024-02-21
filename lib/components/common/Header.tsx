@@ -26,14 +26,13 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, handleStartTutorial: () => void , handleNextStepTutorial: () => void}) => {
-    const { onClose, isInfoOpen, setIsInfoOpen, step, handleStartTutorial, handleNextStepTutorial } = props
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, setIsTourOpen: (b: boolean) => void, handleTourNextStepClick: () => void }) => {
+    const { onClose, isInfoOpen, setIsInfoOpen, step, setIsTourOpen, handleTourNextStepClick } = props
 
     const handleInfoBtnClick = () => {
-        setIsInfoOpen(true);
-        handleNextStepTutorial();
-    };
-
+        setIsInfoOpen(true)
+        handleTourNextStepClick()
+    }
     return (
         <>
             <Box sx={styles.root}>
@@ -54,7 +53,7 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
 
                 <Box display='flex' gap={1}>
                     {
-                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }} onClick={handleStartTutorial}>
+                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }} onClick={() => setIsTourOpen(true)}>
                             <MapTriFold />
                         </IconButton>
                     }
@@ -64,7 +63,7 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 </Box>
             </Box>
 
-            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} handleNextStepTutorial={handleNextStepTutorial}/>}
+            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} handleTourNextStepClick={handleTourNextStepClick}/>}
         </>
     )
 };

@@ -10,7 +10,6 @@ import ErrorPage from "./components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
 import {CdeContext} from './CdeContext.ts';
 import {computeSuggestions} from "./services/suggestionsService.ts";
-import { tutorial, TourSteps } from './components/common/tutorial.tsx';
 
 
 const defaultHeaderMapping = {
@@ -35,8 +34,9 @@ export const CdeContextProvider = ({
     const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [tourSteps, setTourSteps] = useState(tutorial);
-    const [tourStepName, setTourStepName] = useState<keyof TourSteps>("home");
+
+    let checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
     const headerMapping = useMemo(() => ({
         ...defaultHeaderMapping,
@@ -130,10 +130,8 @@ export const CdeContextProvider = ({
         errorMessage,
         setErrorMessage,
         handleClose,
-        tourSteps,
-        setTourSteps,
-        tourStepName,
-        setTourStepName
+        isTourOpen, 
+        setIsTourOpen
     };
     return (
         <ThemeProvider theme={theme}>

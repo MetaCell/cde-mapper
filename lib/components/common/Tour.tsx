@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction } from 'react';
-import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps } from 'react-joyride';
+import React, { useState } from 'react';
+import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps, Step } from 'react-joyride';
 import { Box, Typography, Button, IconButton } from '@mui/material';
 import Checkbox from './CheckBox';
 import { TutorialCloseIcon } from '../../icons';
 import { vars } from '../../theme/variables';
-import { TourSteps } from './tutorial';
+import { useCdeContext } from '../../CdeContext';
 
 const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
 
@@ -47,6 +47,14 @@ const Tooltip = ({
         hideFooter
     } = step;
 
+    let isChecked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const [checked, setChecked] = useState(isChecked);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChecked(event.target.checked);
+        localStorage.setItem('isCheckboxChecked', JSON.stringify(event.target.checked));
+    };
+ 
     return (
         <Box
             className="tooltip"
@@ -67,6 +75,8 @@ const Tooltip = ({
                 {step.content}
                 <Checkbox
                     label='Dont show on startup (accessible on the header)'
+                    checked={checked}
+                    onChange={handleChange}
                     sx={{
                         mt: step.content !== '' ? '2rem' : 0,
                         '& .MuiTypography-root': {
@@ -81,11 +91,12 @@ const Tooltip = ({
                 <Typography variant='caption' sx={{ color: gray500 }}>{index + 1} of {size}</Typography>
                 {continuous && !hideFooter && (
                     <Box display="flex" gap={1}>
-                        {index > 0 && !hideBackButton ? (
+                        {index > 0 && !hideBackButton && (
                             <Button id="back" {...backProps} sx={{ border: `1px solid ${gray300}`, '&:hover': { color: gray600 } }}>
                                 Back
                             </Button>
-                        ) : (
+                        )}
+                        {!isLastStep && hideBackButton && (
                             <Button id="skip" {...skipProps} sx={{ border: `1px solid ${gray300}`, '&:hover': { color: gray600 } }}>
                                 Skip tutorial
                             </Button>
@@ -107,36 +118,31 @@ const Tooltip = ({
     );
 }
 
-const Tour = (props: { tourStepName: keyof TourSteps, tourSteps: TourSteps, setTourSteps: Dispatch<SetStateAction<TourSteps>> }) => {
-    const { tourStepName, tourSteps, setTourSteps } = props;
+interface TourProps {
+    steps: Step[];
+    stepIndex: number;
+    setStepIndex: (stepIndex: number) => void;
+    isSpotlightOpen?: boolean;
+    handleSpotlightClose?: () => void;
+}
+
+const Tour = (props: TourProps) => {
+    const { steps, stepIndex, setStepIndex, isSpotlightOpen, handleSpotlightClose } = props;
+    const { isTourOpen, setIsTourOpen } = useCdeContext();
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;
         if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
-            setTourSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                [tourStepName]: {
-                    ...prevTutorialSteps[tourStepName],
-                    run: false
-                }
-            }));
+            setIsTourOpen(false)
         } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
             const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1)
-            setTourSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                [tourStepName]: {
-                    ...prevTutorialSteps[tourStepName],
-                    stepIndex: action === ACTIONS.CLOSE ? 0 : nextStepIndex,
-                    run: action === ACTIONS.CLOSE ? false : true
-                }
-            }));
+            if(isSpotlightOpen && (nextStepIndex === 5 || nextStepIndex===8)){
+                handleSpotlightClose?.()
+            }
+            setStepIndex(action === ACTIONS.CLOSE ? 0 : nextStepIndex)
+            setIsTourOpen(action === ACTIONS.CLOSE ? false : true)
         } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {
-            setTourSteps(prevTutorialSteps => ({
-                ...prevTutorialSteps,
-                collection: { ...prevTutorialSteps.collection, run: false },
-                suggestions: { ...prevTutorialSteps.suggestions, run: false },
-                mapping: { ...prevTutorialSteps.mapping, run: false }
-            }));
+            setIsTourOpen(false)
         }
     };
 
@@ -145,9 +151,9 @@ const Tour = (props: { tourStepName: keyof TourSteps, tourSteps: TourSteps, setT
             callback={handleJoyrideCallback}
             continuous={true}
             disableOverlayClose={true}
-            run={tourSteps[tourStepName].run}
-            stepIndex={tourSteps[tourStepName].stepIndex}
-            steps={tourSteps[tourStepName].steps}
+            run={isTourOpen}
+            stepIndex={stepIndex}
+            steps={steps}
             showProgress={false}
             showSkipButton={true}
             tooltipComponent={Tooltip}
@@ -157,7 +163,7 @@ const Tour = (props: { tourStepName: keyof TourSteps, tourSteps: TourSteps, setT
                     arrowColor: baseWhite,
                     backgroundColor: baseWhite,
                     primaryColor: primary600,
-                    zIndex: 10000
+                    zIndex: 100000
                 },
                 spotlight: {
                     borderRadius: '0.5rem'
@@ -184,9 +190,11 @@ const Tour = (props: { tourStepName: keyof TourSteps, tourSteps: TourSteps, setT
                     alignItems: 'center'
                 },
                 tooltipContent: {
+                    display: 'flex',
+                    flexDirection: 'column',
                     fontSize: '0.875rem',
                     padding: '0 1.5rem 0.75rem 1.5rem',
-                    color: gray600,
+                    color: gray600
                 },
                 tooltipContainer: {
                     textAlign: 'left',

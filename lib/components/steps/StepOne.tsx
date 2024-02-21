@@ -1,9 +1,20 @@
 import { useState } from 'react';
 import { Stack, Typography, Box, Button, Link } from '@mui/material';
 import StyledCard from '../common/StyledCard.tsx';
+import Tour from '../common/Tour.tsx';
+import { tutorial, TourSteps } from '../common/tutorial.tsx';
+import { useCdeContext } from '../../CdeContext.ts';
 
-function StepOne({ handleNextStepTutorial }: { handleNextStepTutorial: () => void }) {
+function StepOne() {
+    const {isTourOpen} = useCdeContext();
     const [selectedRadioValue, setSelectedRadioValue] = useState(0);
+    const [stepIndex, setStepIndex] = useState(0);
+    
+    const handleTourNextStepClick = () => {
+        if(isTourOpen){
+            setStepIndex(1);
+        }
+    };
 
     const handleRadioChange = (value: number) => {
         setSelectedRadioValue(value);
@@ -36,13 +47,13 @@ function StepOne({ handleNextStepTutorial }: { handleNextStepTutorial: () => voi
                             selectedValue={selectedRadioValue}
                             onChange={handleRadioChange}
                             label="Spinal Cord Injury (SCI)"
-                            handleNextStepTutorial={handleNextStepTutorial}
+                            handleTourNextStepClick={handleTourNextStepClick}
                         />
                         <StyledCard value={1}
                             selectedValue={selectedRadioValue}
                             onChange={handleRadioChange}
                             label="Trauma Brain Injury (TBI)"
-                            handleNextStepTutorial={handleNextStepTutorial}
+                            handleTourNextStepClick={handleTourNextStepClick}
                         />
                     </Stack>
                     <Stack alignItems="center" sx={{ width: '100%' }}>
@@ -61,6 +72,11 @@ function StepOne({ handleNextStepTutorial }: { handleNextStepTutorial: () => voi
                     </Stack>
                 </Stack>
             </Box>
+            <Tour
+                steps={tutorial[TourSteps.Collection]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
         </>
     );
 }

@@ -167,7 +167,7 @@ interface Header {
 
 interface CustomEntitiesDropdownProps {
     placeholder?: string;
-    handleNextStepTutorial?: () => void | undefined;
+    handleTourNextStepClick?: () => void | undefined;
     options: {
         errors?: string;
         searchPlaceholder?: string;
@@ -180,7 +180,7 @@ interface CustomEntitiesDropdownProps {
 
 export default function CustomEntitiesDropdown({
                                                    placeholder,
-                                                   handleNextStepTutorial,
+                                                   handleTourNextStepClick,
                                                    options: {
                                                        errors,
                                                        searchPlaceholder,
@@ -201,7 +201,6 @@ export default function CustomEntitiesDropdown({
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
-        handleNextStepTutorial?.();
     };
 
     const open = Boolean(anchorEl);
@@ -219,6 +218,12 @@ export default function CustomEntitiesDropdown({
         searchValue !== undefined &&
         setAutocompleteOptions(onSearch(searchValue));
     }, [searchValue, onSearch, autocompleteOptions]);
+
+    React.useEffect(() => {
+        if(open){
+            handleTourNextStepClick?.()
+        }
+    }, [open])
 
     type GroupedOptions = {
         [group: string]: Option[];
