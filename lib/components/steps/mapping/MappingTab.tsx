@@ -165,7 +165,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const handleFiltering = () => {
         // TODO: to implement
-        console.log("To be implemented " + visibleRows)
+        void visibleRows
         setVisibleRows([])
     }
 
@@ -207,11 +207,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getPairingSuggestions = (key: string) => {
+        void key
         return []
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hasPairingSuggestions = (key: string) => {
+        void key
         return false
     };
 
