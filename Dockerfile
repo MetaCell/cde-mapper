@@ -1,10 +1,12 @@
 ARG PARENT=ubuntu/nginx
 ARG NODE_PARENT=node:18.12.1
-ARG VITE_API_KEY
+
+
 
 FROM ${NODE_PARENT} as build
-ENV APP_DIR=/app
+ARG VITE_API_KEY
 ENV VITE_API_KEY=$VITE_API_KEY
+ENV APP_DIR=/app
 
 WORKDIR ${APP_DIR}
 
@@ -15,6 +17,7 @@ RUN npm install
 
 # user node
 ADD --chown=node:node . ${APP_DIR}
+RUN npm run build:demo
 RUN npm run build
 
 FROM ${PARENT}
