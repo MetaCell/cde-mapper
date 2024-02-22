@@ -6,9 +6,10 @@ import Filters from "../../common/Filters.tsx";
 
 interface MappingSearchProps {
     onChange: () => void;
+    handleTourNextStepClick?: () => void;
 }
 
-export default function MappingSearch({onChange}: MappingSearchProps) {
+export default function MappingSearch({onChange, handleTourNextStepClick}: MappingSearchProps) {
 
     const [searchString, setSearchString] = useState('');
 
@@ -20,9 +21,10 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
         onChange()
     };
 
-    const handleFiltersClose = () => {
-        setAnchorEl(null);
+    const handleFiltersClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
         onChange()
+        handleTourNextStepClick?.()
     };
     const open = Boolean(anchorEl);
     const id = open ? 'filter-popover' : undefined;
@@ -33,6 +35,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
             fullWidth
             variant="outlined"
             placeholder="Search column headers or mapped CDEs..."
+            className="mapping__search-input"
             InputProps={{
                 startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>
             }}
@@ -42,6 +45,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
         <Button
             variant="outlined"
             onClick={handleFiltersClose}
+            className="mapping__filter-btn"
         >
             <FilterIcon/>
             Filter

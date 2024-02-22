@@ -27,7 +27,8 @@ const tabsArr = [
     {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
-        description: 'suggestions are based on what was previously mapped before.'
+        description: 'suggestions are based on what was previously mapped before.',
+        className: 'suggestions-tab'
     },
     {
         label: 'Map the rest of the dataset',
@@ -129,10 +130,10 @@ function MappingStep() {
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {tabIndex === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)}>
+                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : tabIndex === TabsEnum.Mapping && (<>
-                        <Typography sx={{
+                        <Typography className='mapping-header__indicator' sx={{
                             color: gray500,
                             fontSize: '0.75rem',
                             fontWeight: 500,

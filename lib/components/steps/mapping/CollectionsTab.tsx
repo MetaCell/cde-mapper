@@ -60,7 +60,7 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                 This can be changed at any time during the process.
                             </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={1.5}>
+                        <Stack direction="row" spacing={1.5} className='repository-cards'>
                             {collectionKeys.map(key => (
                                 <StyledCard
                                     key={key}

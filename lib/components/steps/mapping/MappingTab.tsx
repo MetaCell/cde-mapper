@@ -23,6 +23,8 @@ import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType} from "../../../helpers/getters.ts";
+import Tour from "../../common/Tour.tsx";
+import { tutorial, TourSteps } from "../../common/tutorial.tsx";
 
 const styles = {
     root: {
@@ -92,10 +94,12 @@ interface MappingProps {
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
-    const {datasetMapping, headerIndexes, collections, handleUpdateDatasetMappingRow} = useCdeContext();
+    const {datasetMapping, headerIndexes, collections, handleUpdateDatasetMappingRow, isTourOpen} = useCdeContext();
     const [visibleRows, setVisibleRows] = useState([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [searchResultsDictionary, setSearchResultsDictionary] = useState<{ [id: string]: Option }>({});
+    const [stepIndex, setStepIndex] = useState(0);
+    const [togglePreview, setTogglePreview] = useState(false);
 
 
     useEffect(() => {
@@ -109,6 +113,11 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setSelectableCollections(initialSelectedCollections);
     }, [collections, defaultCollection]);
 
+    const handleTourNextStepClick = () => {
+        if(isTourOpen){
+            setStepIndex((prevStepIndex) => prevStepIndex + 1)
+        }
+    };
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
         setSelectableCollections(prevCollections =>
@@ -218,15 +227,15 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
-        <>
+        <Box className='mapping-step'>
             <ModalHeightWrapper pb={10} height='15rem'>
-                <MappingSearch onChange={handleFiltering}/>
+                <MappingSearch onChange={handleFiltering} handleTourNextStepClick={handleTourNextStepClick}/>
 
                 <Box px={1.5}>
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <SortIcon/>
+                                <SortIcon className="mapping__sort-icon"/>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
@@ -241,10 +250,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         <Box sx={styles.wrap}>
                             {Object.keys(datasetMapping).map((variableName, index) => (
                                 <Box key={index} sx={styles.row}>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="mapping-chip">
                                         {getChipComponent(variableName)}
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="mapping__column-header">
                                         <TextField
                                             disabled
                                             fullWidth
@@ -254,9 +263,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                     <Box sx={styles.col}>
                                         <ArrowIcon/>
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="cde-fields__item-first">
                                         <CustomEntitiesDropdown
                                             placeholder={"Choose CDE or Data Dictionary fields... "}
+                                            handleTourNextStepClick={handleTourNextStepClick}
                                             options={{
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
@@ -306,8 +316,15 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 </Box>
             </ModalHeightWrapper>
 
-            <PreviewBox/>
-        </>
+            <PreviewBox togglePreview={togglePreview} setTogglePreview={setTogglePreview} handleTourNextStepClick={handleTourNextStepClick}/>
+            <Tour
+                steps={tutorial[TourSteps.Mapping]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+                // isSpotlightOpen={togglePreview}
+                // handleSpotlightClose={() => setTogglePreview(false)}
+            />
+        </Box>
     )
 }
 
