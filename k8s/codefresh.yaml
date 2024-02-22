@@ -31,3 +31,4 @@ steps:
     environment:
       - KUBECONTEXT=${{CLUSTER}}
       - KUBERNETES_NAMESPACE=${{NAMESPACE}}
+      - VITE_API_KEY=${{VITE_API_KEY}}
