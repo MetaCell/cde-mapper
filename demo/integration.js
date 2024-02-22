@@ -1,5 +1,5 @@
 
-import {init, mapElasticSearchHitsToOptions} from '../lib/main.tsx';
+import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
 import {getQueryObject} from "./query.js";
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
@@ -111,7 +111,14 @@ function getCollections() {
 
 async function fetchElasticSearchData(queryString) {
     const query = getQueryObject(queryString)
-    const response = await fetch('/api', {
+    const apiKey = import.meta.env.VITE_API_KEY;
+    const baseUrl = '/api/1/elastic/Interlex_pr/_search';
+
+    const queryParameters = new URLSearchParams({
+        key: apiKey,
+    }).toString();
+
+    const response = await fetch(`${baseUrl}?${queryParameters}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

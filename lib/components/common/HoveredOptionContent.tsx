@@ -1,6 +1,6 @@
 import {Stack, Typography, Box} from '@mui/material';
 import {vars} from '../../theme/variables';
-import {Option} from "./CustomMappingDropdown.tsx";
+import {Option} from "../../models.ts";
 
 const {
     gray400,
