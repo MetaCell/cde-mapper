@@ -20,7 +20,7 @@ steps:
     tag: "${{CF_SHORT_REVISION}}"
     dockerfile: Dockerfile
     registry: ${{REGISTRY}}
-    environment:
+    build_arguments:
       - VITE_API_KEY=${{VITE_API_KEY}}
   deploy-to-kubernetes:
     image: codefresh/cf-deploy-kubernetes
