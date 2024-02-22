@@ -205,13 +205,11 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         );
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getPairingSuggestions = (key: string) => {
         void key
         return []
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const hasPairingSuggestions = (key: string) => {
         void key
         return false
