@@ -3,9 +3,6 @@ import {resolve} from 'path'
 
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -31,7 +28,6 @@ export default defineConfig(({ mode }) => ({
             '/api': {
                 target: 'https://scicrunch.org',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api/, `/api/1/elastic/Interlex_pr/_search?key=${process.env.VITE_API_KEY}`),
             },
         },
     },
