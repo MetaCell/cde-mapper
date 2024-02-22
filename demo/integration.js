@@ -1,5 +1,5 @@
 
-import {init, mapElasticSearchHitsToOptions} from '../lib/main.tsx';
+import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
 import {getQueryObject} from "./query.js";
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
