@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 import replace from 'replace-in-file';
 
-dotenv.config(); // Load environment variables
+dotenv.config();
 
 const getReplacements = () => {
     // Filter only variables starting with VITE_
