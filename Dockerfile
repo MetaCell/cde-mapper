@@ -24,7 +24,7 @@ FROM ${PARENT}
 ENV PORT=80
 
 # Copy the custom NGINX configuration file
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/sites-available/default
 
 COPY --from=build /app/demo/* /var/www/html
 EXPOSE ${PORT}
