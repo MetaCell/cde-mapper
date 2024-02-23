@@ -1,8 +1,6 @@
 ARG PARENT=ubuntu/nginx
 ARG NODE_PARENT=node:18.12.1
 
-
-
 FROM ${NODE_PARENT} as build
 ARG VITE_API_KEY
 ENV VITE_API_KEY=$VITE_API_KEY
@@ -24,6 +22,9 @@ RUN npm run build
 
 FROM ${PARENT}
 ENV PORT=80
+
+# Copy the custom NGINX configuration file
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /app/demo/* /var/www/html
 EXPOSE ${PORT}
