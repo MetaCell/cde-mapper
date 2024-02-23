@@ -23,5 +23,17 @@ run
 docker run --name cde-mapper -e TZ=UTC -p 8000:80 cde-mapper
 ```
 
+## docker-compose
+
+run
+```bash
+docker-compose up --build
+```
+
+stop:
+```bash
+docker-compose down
+```
+
 open the url http://localhost:8000/
 
