@@ -17,7 +17,9 @@ RUN npm install
 
 # user node
 ADD --chown=node:node . ${APP_DIR}
-RUN npm run build:demo
+COPY replace_env_vars.sh /usr/local/bin/replace_env_vars.sh
+RUN chmod +x /usr/local/bin/replace_env_vars.sh
+RUN /usr/local/bin/replace_env_vars.sh
 RUN npm run build
 
 FROM ${PARENT}
