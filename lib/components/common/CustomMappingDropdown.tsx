@@ -231,13 +231,8 @@ export default function CustomEntitiesDropdown({
 
         setIsLoading(true);
         fetchOptions().then(() => setIsLoading(false));
-    }, [searchInput, onSearch, open]);
-
-    React.useEffect(() => {
-        if(open){
-            handleTourNextStepClick?.()
-        }
-    }, [open])
+        handleTourNextStepClick?.()
+    }, [searchInput, onSearch, open, handleTourNextStepClick]);
 
     type GroupedOptions = {
         [group: string]: Option[];
