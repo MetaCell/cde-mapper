@@ -20,7 +20,7 @@ interface StyledCardProps {
     handleTourNextStepClick: () => void;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, label, handleTourNextStepClick}) => {
+const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, handleTourNextStepClick}) => {
     const radioGroup = useRadioGroup();
     let checked = false;
 

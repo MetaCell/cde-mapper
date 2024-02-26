@@ -35,7 +35,7 @@ export const CdeContextProvider = ({
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    let checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
     const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
     // Defines the mapping of the mandatory columns in the dataset mapping file

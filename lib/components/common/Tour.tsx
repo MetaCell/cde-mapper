@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps, Step } from 'react-joyride';
+import Joyride, { ACTIONS, EVENTS, STATUS, CallBackProps, Step, TooltipRenderProps } from 'react-joyride';
 import { Box, Typography, Button, IconButton } from '@mui/material';
 import Checkbox from './CheckBox';
 import { TutorialCloseIcon } from '../../icons';
@@ -7,19 +7,6 @@ import { vars } from '../../theme/variables';
 import { useCdeContext } from '../../CdeContext';
 
 const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
-
-interface TooltipProps {
-    continuous: boolean,
-    index: number
-    isLastStep: boolean
-    size: number
-    step: any
-    backProps: any
-    closeProps: any
-    primaryProps: any
-    skipProps: any
-    tooltipProps: any
-};
 
 const Tooltip = ({
     continuous,
@@ -32,7 +19,7 @@ const Tooltip = ({
     tooltipProps,
     skipProps,
     size
-}: TooltipProps) => {
+}: TooltipRenderProps) => {
     const {
         styles: {
             tooltip: tooltipStyle,
@@ -40,14 +27,12 @@ const Tooltip = ({
             tooltipContent,
             tooltipFooter
         },
-        placement,
-        spotlightClicks,
         hideBackButton,
         hideCloseButton,
         hideFooter
     } = step;
 
-    let isChecked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const isChecked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
     const [checked, setChecked] = useState(isChecked);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,19 +44,17 @@ const Tooltip = ({
         <Box
             className="tooltip"
             {...tooltipProps}
-            {...tooltipStyle}
-            {...placement}
-            {...spotlightClicks}
+            sx={tooltipStyle}
         >
             {step.title && (
-                <Box className='tooltip-title' {...tooltipTitle}>
+                <Box className='tooltip-title' sx={tooltipTitle}>
                     {step.title}
                     <IconButton {...skipProps} sx={{ padding: 0, margin: 0, '&:hover': { background: 'transparent' } }}>
                         <TutorialCloseIcon />
                     </IconButton>
                 </Box>
             )}
-            <Box className='tooltip-content' {...tooltipContent}>
+            <Box className='tooltip-content' sx={tooltipContent}>
                 {step.content}
                 <Checkbox
                     label='Dont show on startup (accessible on the header)'
@@ -87,7 +70,7 @@ const Tooltip = ({
                     }}
                 />
             </Box>
-            <Box className='tooltip-footer' {...tooltipFooter}>
+            <Box className='tooltip-footer' sx={tooltipFooter}>
                 <Typography variant='caption' sx={{ color: gray500 }}>{index + 1} of {size}</Typography>
                 {continuous && !hideFooter && (
                     <Box display="flex" gap={1}>

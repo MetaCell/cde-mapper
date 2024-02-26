@@ -7,7 +7,7 @@ interface ICheckbox {
     label: string;
     sx?: SxProps<Theme>;
     checked?: boolean;
-    onChange?: (e: any) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}, checked, onChange}) => {
