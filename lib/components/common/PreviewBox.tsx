@@ -1,14 +1,15 @@
 import React from "react";
-import { Box, Typography, Chip, Button } from "@mui/material";
-import { useDataContext } from "../../contexts/data/DataContext.ts";
+import {Box, Typography, Chip, Button} from "@mui/material";
+import {useDataContext} from "../../contexts/data/DataContext.ts";
 // import PreviewTable from "./PreviewTable";
-import { GlobeIcon, ArrowDropDown, BulletIcon } from "../../icons";
-import { StyledTable } from "./StyledTable";
-
+import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
+import {StyledTable} from "./StyledTable";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
 
 
 const PreviewBox = () => {
-    const { step, datasetSample, setStep } = useDataContext();
+    const {datasetSample} = useDataContext();
+    const {step, setStep} = useUIContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     return (
@@ -23,7 +24,8 @@ const PreviewBox = () => {
             borderRadius: '0.75rem 0.75rem 0 0',
             border: '0.0625rem solid #ECEDEE',
         }}>
-            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={() => setTogglePreview(!togglePreview)}>
+            <Box display='flex' gap={1.5} px={3} py={2} sx={{cursor: 'pointer'}} alignItems='center'
+                 onClick={() => setTogglePreview(!togglePreview)}>
                 <Typography sx={{
                     flex: 1,
                     color: '#676C74',
@@ -33,7 +35,8 @@ const PreviewBox = () => {
                     fontWeight: 600,
                     lineHeight: '142.857%'
                 }}>
-                    <ArrowDropDown style={{ transform: togglePreview ? 'rotate(90deg)' : 'rotate(0deg)' }} color="#676C74" />
+                    <ArrowDropDown style={{transform: togglePreview ? 'rotate(90deg)' : 'rotate(0deg)'}}
+                                   color="#676C74"/>
                     Preview
                 </Typography>
 
@@ -46,8 +49,8 @@ const PreviewBox = () => {
                         124 total number of column headers
                     </Typography>
 
-                    <Chip icon={<BulletIcon />} color="success" label="87 mapped" size="small" />
-                    <Chip icon={<BulletIcon color="#676C74" />} label="37 unmapped" size="small" />
+                    <Chip icon={<BulletIcon/>} color="success" label="87 mapped" size="small"/>
+                    <Chip icon={<BulletIcon color="#676C74"/>} label="37 unmapped" size="small"/>
                 </Box>
             </Box>
 
@@ -76,13 +79,15 @@ const PreviewBox = () => {
                         }
                     }}>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="GUID" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="GUID" size="medium"/>
                         </Box>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="SmallSpeciesStrainTyp" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
+                                  size="medium"/>
                         </Box>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="SmallSpeciesStrainTyp" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
+                                  size="medium"/>
                         </Box>
                         <Box>
                             <Typography sx={{
@@ -155,11 +160,12 @@ const PreviewBox = () => {
                             }}>No mapping yet</Typography>
                         </Box>
                     </Box>
-                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem' /> 
+                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem'/>
                 </Box>
             )}
             {
-                step === -1 && <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '2px solid #ECEDEE' }}>
+                step === -1 &&
+                <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{borderTop: '2px solid #ECEDEE'}}>
                     <Button variant='text' onClick={() => setStep(0)}>Cancel</Button>
                     <Button variant='contained'>Create template</Button>
                 </Box>
