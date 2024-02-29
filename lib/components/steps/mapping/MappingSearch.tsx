@@ -26,7 +26,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
 
     React.useEffect(() => {
         onChange(debouncedSearchValue);
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, onChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
