@@ -32,7 +32,7 @@ function Home() {
                 setNumberOfMapped(prevNumberOfMapped => prevNumberOfMapped + 1);
             }
         })
-    }, []);
+    }, [datasetMapping, headerIndexes]);
 
     return (
         <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
