@@ -165,9 +165,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const handleFiltering = (searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
-            const cdeHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
+            const columnHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
             const cdeValues = searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)]?.label.toLowerCase().includes(searchTerm.toLowerCase())
-            return cdeHeaders || cdeValues
+            return columnHeaders || cdeValues
         })
         setVisibleRows(filteredData)
     }
