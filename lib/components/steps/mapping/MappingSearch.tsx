@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import {FilterIcon, SearchIcon} from "../../../icons";
 import Filters from "../../common/Filters.tsx";
+import { useDebounce } from "../../../hooks.ts";
 
 
 interface MappingSearchProps {
-    onChange: () => void;
+    onChange: (searchTerm: string) => void;
 }
 
 export default function MappingSearch({onChange}: MappingSearchProps) {
@@ -13,19 +14,19 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
     const [searchString, setSearchString] = useState('');
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchString(event.target.value);
-        onChange()
-    };
+    const debouncedSearchValue = useDebounce(searchString);
 
     const handleFiltersClose = () => {
         setAnchorEl(null);
-        onChange()
+        // onChange(searchString)
     };
+
     const open = Boolean(anchorEl);
     const id = open ? 'filter-popover' : undefined;
+
+    React.useEffect(() => {
+        onChange(debouncedSearchValue);
+    }, [debouncedSearchValue])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
@@ -37,7 +38,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
                 startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>
             }}
             value={searchString}
-            onChange={handleSearchChange}
+            onChange={(event) => setSearchString(event.target.value)}
         />
         <Button
             variant="outlined"
