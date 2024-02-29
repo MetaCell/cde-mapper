@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Chip, Button } from "@mui/material";
-import { useCdeContext } from "../../CdeContext";
+import { useDataContext } from "../../contexts/data/DataContext.ts";
 // import PreviewTable from "./PreviewTable";
 import { GlobeIcon, ArrowDropDown, BulletIcon } from "../../icons";
 import { StyledTable } from "./StyledTable";
@@ -8,7 +8,7 @@ import { StyledTable } from "./StyledTable";
 
 
 const PreviewBox = () => {
-    const { step, datasetSample, setStep } = useCdeContext();
+    const { step, datasetSample, setStep } = useDataContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     return (
