@@ -38,6 +38,9 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
         changeToNextTab();
     };
 
+    console.log("collections: ", collectionKeys)
+    console.log("chto za hren?: ", collections[collectionKeys[0]].name)
+
     return (
         <>
             <ModalHeightWrapper height="11.5rem">

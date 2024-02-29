@@ -3,7 +3,7 @@ import Checkbox from "../common/CheckBox";
 
 interface FiltersProps {
     anchorEl: Element | null;
-    handleClose: () => void;
+    handleClose: (e: React.MouseEvent<HTMLButtonElement>) => void;
     open: boolean;
     id: string | undefined;
 }

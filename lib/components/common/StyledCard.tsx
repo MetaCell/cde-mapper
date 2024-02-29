@@ -12,11 +12,10 @@ import {vars} from '../../theme/variables';
 const {baseWhite, primary50, primary600, primary800, gray100, gray300, gray500, gray700} = vars
 
 interface StyledCardProps {
-    value: number;
+    value: string;
     isSuggested?: boolean;
-    selectedValue: number;
-    onChange: (value: number) => void;
-    label: string;
+    selectedValue: string;
+    onChange: (value: string) => void;
     handleTourNextStepClick: () => void;
 }
 
