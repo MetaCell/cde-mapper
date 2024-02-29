@@ -1,17 +1,38 @@
+import React from 'react';
 import { Box, Button, Typography, Chip, TableContainer, Paper } from '@mui/material';
 import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 import { STEPS } from "../../models.ts";
 import { useCdeContext } from "../../CdeContext.ts";
+import { isRowMapped } from '../../helpers/getters.ts';
 
 const { primary600, gray600, drodownDetailBg, gray200 } = vars;
 
 function Home() {
     const {
         setStep,
-        datasetSample
+        datasetSample,
+        name,
+        datasetMapping,
+        headerIndexes,
+        getSuggestions
     } = useCdeContext();
+    
+    const [numberOfMapped, setNumberOfMapped] = React.useState(0);
+    const suggestionsMapping = getSuggestions();
+
+    const sumOfMappedAndUnmapped = Object.keys(datasetMapping).length;
+    const numberOfUnmapped = sumOfMappedAndUnmapped - numberOfMapped;
+    const numberOfSuggestions = Object.keys(suggestionsMapping).length;
+
+    React.useEffect(() => {
+        Object.keys(datasetMapping).map((variableName) => {
+            if (isRowMapped(datasetMapping[variableName], headerIndexes)) {
+                setNumberOfMapped(prevNumberOfMapped => prevNumberOfMapped + 1);
+            }
+        })
+    }, []);
 
     return (
         <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
@@ -24,7 +45,7 @@ function Home() {
                 maxWidth: '31.25rem',
                 textAlign: 'center',
             }}>
-                You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
+                You’ve selected column headers from the {name}’s dataset on ODC’s website to map.
             </Typography>
             <Box my={6}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} width={1}>
@@ -47,12 +68,12 @@ function Home() {
                             }
                         }}
                     >
-                        <Typography variant="h6">124</Typography>
+                        <Typography variant="h6">{sumOfMappedAndUnmapped}</Typography>
                         <Typography variant="body2">total number of column headers</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
-                        <Chip size="small" label="83 unmapped, 13 suggestions available" color="default"
+                        <Chip size="small" label={`${numberOfMapped} mapped`} color="success" icon={<CircleChipSuccess />} />
+                        <Chip size="small" label={`${numberOfUnmapped} unmapped, ${numberOfSuggestions} suggestions available`} color="default"
                             icon={<CircleChipDefault />} />
                     </Box>
                 </Box>
