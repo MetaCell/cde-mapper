@@ -1,4 +1,5 @@
-export interface InitParams {
+
+export interface DataInitParams {
     // First row should be the header.
     datasetMapping?: string[][];
     // List of files in the same format as the above.
@@ -10,8 +11,13 @@ export interface InitParams {
     collections: Collection[];
     config: Config;
     name: string
+}
+
+export interface ServiceInitParams {
     callback: (cdeFileMapping: DatasetMapping) => void;
 }
+
+export type InitParams = DataInitParams & ServiceInitParams;
 
 export interface HeaderIndexes {
     variableName: number;

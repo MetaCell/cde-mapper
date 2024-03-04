@@ -3,12 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { ArrowDropDown, LeftIcon, RightIcon } from '../../../icons';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../../common/ModalHeightWrapper.tsx';
-import { vars } from '../../../theme/variables.ts';
-import { useCdeContext } from "../../../CdeContext.ts";
-import { MAX_SUGGESTIONS } from "../../../settings.ts";
+import {vars} from '../../../theme/variables.ts';
+import {useDataContext} from "../../../contexts/data/DataContext.ts";
+import {MAX_SUGGESTIONS} from "../../../settings.ts";
 import NoSuggestions from "./NoSuggestions.tsx";
-import Tour from '../../common/Tour.tsx';
-import { tutorial, TourSteps } from '../../common/tutorial.tsx';
+import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 
 const {
     gray100,
@@ -24,73 +23,66 @@ interface SuggestionsStepProps {
     changeToNextTab: () => void;
 }
 
-function SuggestionsStep({ changeToNextTab }: SuggestionsStepProps) {
+function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
+
+    const {
+        datasetMappingHeader,
+        headerIndexes
+    } = useDataContext();
+
+    const {
+        getSuggestionsForColumn,
+        getColumnsWithSuggestions
+    } = useServicesContext();
+
     const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
     const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
     const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
     const [stepIndex, setStepIndex] = useState<number>(0);
 
-
-    const {
-        getSuggestions,
-        datasetMappingHeader,
-        headerIndexes
-    } = useCdeContext();
-
-    const suggestionsMapping = getSuggestions();
-
-    const [activeSuggestions, setActiveSuggestions] = useState<Set<string>>(
-        new Set<string>(Object.keys(suggestionsMapping)
-            .filter(key => suggestionsMapping[key].length > 0)));
+    const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>(getColumnsWithSuggestions());
 
     const handleNext = useCallback(() => {
-        const activeSuggestionsArray = Array.from(activeSuggestions);
-        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % activeSuggestionsArray.length);
-    }, [activeSuggestions]);
+        setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % suggestionsToProcess.length);
+    }, [suggestionsToProcess]);
 
     const handlePrevious = useCallback(() => {
-        const activeSuggestionsArray = Array.from(activeSuggestions);
-        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + activeSuggestionsArray.length) % activeSuggestionsArray.length);
-    }, [activeSuggestions]);
+        setCurrentKeyIndex((prevIndex) => (prevIndex - 1 + suggestionsToProcess.length) % suggestionsToProcess.length);
+    }, [suggestionsToProcess]);
 
     const completeSuggestion = useCallback(() => {
-        const activeSuggestionsArray = Array.from(activeSuggestions);
-        const currentColumn = activeSuggestionsArray[currentKeyIndex];
-        setActiveSuggestions((prevSuggestions) => {
-            const updatedSuggestions = new Set(prevSuggestions);
-            updatedSuggestions.delete(currentColumn);
-            return updatedSuggestions;
+        const currentColumn = suggestionsToProcess[currentKeyIndex];
+        setSuggestionsToProcess((prevSuggestions) => {
+            return prevSuggestions.filter(suggestion => suggestion !== currentColumn);
         });
 
-        if (currentKeyIndex == activeSuggestionsArray.length - 1) {
+        if (currentKeyIndex == suggestionsToProcess.length - 1) {
             setCurrentKeyIndex(0);
         }
 
-    }, [activeSuggestions, currentKeyIndex]);
+    }, [suggestionsToProcess, currentKeyIndex]);
 
     useEffect(() => {
-        const initialActiveSuggestions = new Set<string>(
-            Object.keys(suggestionsMapping).filter(key => suggestionsMapping[key].length > 0)
-        );
-        setActiveSuggestions(initialActiveSuggestions);
+        const initialActiveSuggestions = getColumnsWithSuggestions()
+        setSuggestionsToProcess(initialActiveSuggestions);
 
         // Set hadInitialSuggestions based on whether there were any initial suggestions
-        setHadInitialSuggestions(initialActiveSuggestions.size > 0);
-    }, [suggestionsMapping]);
+        setHadInitialSuggestions(initialActiveSuggestions.length > 0);
+    }, [getColumnsWithSuggestions]);
 
     useEffect(() => {
-        if (activeSuggestions.size === 0 && hadInitialSuggestions) {
+        if (suggestionsToProcess.length === 0 && hadInitialSuggestions) {
             changeToNextTab();
         }
-    }, [activeSuggestions, changeToNextTab, hadInitialSuggestions]);
+    }, [suggestionsToProcess, changeToNextTab, hadInitialSuggestions]);
 
-    if (activeSuggestions.size === 0) {
-        return <NoSuggestions onNext={changeToNextTab} />
+    if (suggestionsToProcess.length === 0) {
+        return <NoSuggestions onNext={changeToNextTab}/>
     }
 
-    const columnsWithSuggestions = Array.from(activeSuggestions);
+    const columnsWithSuggestions = Array.from(suggestionsToProcess);
     const column = columnsWithSuggestions[currentKeyIndex];
-    const sortedSuggestions = suggestionsMapping[column];
+    const sortedSuggestions = getSuggestionsForColumn(column);
 
     const shouldShowOtherSuggestionsButton = sortedSuggestions.length > MAX_SUGGESTIONS;
     const visibleSuggestions = shouldShowOtherSuggestionsButton ? sortedSuggestions.slice(0, MAX_SUGGESTIONS) : sortedSuggestions;

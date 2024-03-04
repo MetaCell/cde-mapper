@@ -1,15 +1,11 @@
 import {PropsWithChildren, useMemo, useState} from 'react';
-import {Collection, DatasetMapping, InitParams, OptionDetail, STEPS} from "./models.ts";
-import theme from "./theme/index.tsx";
-import {ThemeProvider} from "@mui/material";
-import CssBaseline from '@mui/material/CssBaseline';
-import {validateDataset, validateDatasetMapping,} from "./services/validatorsService.ts";
-import {getDatasetMapping} from "./services/initialMappingService.ts";
-import {updateDatasetMappingRow} from "./services/updateMappingService.ts";
-import ErrorPage from "./components/ErrorPage.tsx";
-import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "./settings.ts";
-import {CdeContext} from './CdeContext.ts';
-import {computeSuggestions} from "./services/suggestionsService.ts";
+import {Collection, DataInitParams, DatasetMapping} from "../../models.ts";
+import {validateDataset, validateDatasetMapping,} from "../../services/validatorsService.ts";
+import {getDatasetMapping} from "../../services/initialMappingService.ts";
+import ErrorPage from "../../components/ErrorPage.tsx";
+import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
+import {DataContext} from './DataContext.ts';
+import {computeSuggestions} from "../../services/suggestionsService.ts";
 
 
 const defaultHeaderIndexes = {
@@ -19,27 +15,21 @@ const defaultHeaderIndexes = {
     interlexId: INTERLEX_ID_INDEX,
 };
 
-export const CdeContextProvider = ({
-                                       datasetSample,
-                                       datasetMapping: rawDatasetMapping,
-                                       additionalDatasetMappings: rawAdditionalDatasetMappings = [],
-                                       headerIndexes: providedHeaderIndexes = defaultHeaderIndexes,
-                                       collections: rawCollections,
-                                       config,
-                                       name,
-                                       callback,
-                                       children
-                                   }: PropsWithChildren<InitParams>) => {
-
-    const [step, setStep] = useState(STEPS.HOME);
-    const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export const DataContextProvider = ({
+                                        datasetSample,
+                                        datasetMapping: rawDatasetMapping,
+                                        additionalDatasetMappings: rawAdditionalDatasetMappings = [],
+                                        headerIndexes: providedHeaderIndexes = defaultHeaderIndexes,
+                                        collections: rawCollections,
+                                        config,
+                                        name,
+                                        children
+                                    }: PropsWithChildren<DataInitParams>) => {
 
     const checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
     const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
     // Defines the mapping of the mandatory columns in the dataset mapping file
-
     const headerIndexes = useMemo(() => {
         // If the dataset mapping is not provided or has no data we use the default header indexes
         if (!rawDatasetMapping || rawDatasetMapping.length === 0) {
@@ -54,7 +44,6 @@ export const CdeContextProvider = ({
 
 
     // validate dataset sample
-
     const isDatasetInvalid = useMemo(() => {
         let tmpIsDatasetInvalid = false;
 
@@ -71,9 +60,7 @@ export const CdeContextProvider = ({
     }, [datasetSample]);
 
     // Validate and process datasetMapping
-
     const [initialDatasetMapping, initialDatasetMappingHeader, isDatasetMappingInvalid] = useMemo(() => {
-
         try {
             validateDatasetMapping(rawDatasetMapping, headerIndexes.variableName);
         } catch (error) {
@@ -91,7 +78,6 @@ export const CdeContextProvider = ({
 
     const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
     const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
-
 
     const additionalDatasetMappings: DatasetMapping[] = rawAdditionalDatasetMappings.map((additionalMapping, index) => {
         try {
@@ -113,10 +99,6 @@ export const CdeContextProvider = ({
         return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, headerIndexes);
     }, [initialDatasetMapping, additionalDatasetMappings, headerIndexes]);
 
-    const getSuggestions = () => {
-        return suggestions
-    };
-
     const collectionsDictionary = useMemo(() => {
         return rawCollections.reduce((acc, collection, index) => {
             acc[collection.id] = {
@@ -127,55 +109,23 @@ export const CdeContextProvider = ({
         }, {} as { [key: string]: Collection });
     }, [rawCollections]);
 
-    const handleClose = () => {
-        setErrorMessage(null);
-        setLoadingMessage(null);
-        callback(datasetMapping)
-    };
-
-    const handleUpdateDatasetMappingRow = (key: string, newData: OptionDetail[]) => {
-        updateDatasetMappingRow(
-            key,
-            newData,
-            datasetMapping,
-            datasetMappingHeader,
-            setDatasetMapping,
-            setDatasetMappingHeader,
-        );
-    };
-
-    const contextValue = {
+    const dataContextValue = {
         name,
         datasetSample,
         datasetMapping,
         datasetMappingHeader,
-        handleUpdateDatasetMappingRow,
-        getSuggestions,
+        suggestions,
         headerIndexes,
         collections: collectionsDictionary,
         config,
-        step,
-        setStep,
-        loadingMessage,
-        setLoadingMessage,
-        errorMessage,
-        setErrorMessage,
-        handleClose,
-        isTourOpen, 
-        setIsTourOpen
+        setDatasetMapping,
+        setDatasetMappingHeader,
     };
 
     const hasErrors = isDatasetInvalid || isDatasetMappingInvalid || rawCollections.length == 0
-    return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline/>
-            {hasErrors ? <ErrorPage/> : (
-                <CdeContext.Provider value={contextValue}>
-                    {children}
-                </CdeContext.Provider>
-            )}
-
-        </ThemeProvider>
-
+    return hasErrors ? <ErrorPage/> : (
+        <DataContext.Provider value={dataContextValue}>
+            {children}
+        </DataContext.Provider>
     );
 };

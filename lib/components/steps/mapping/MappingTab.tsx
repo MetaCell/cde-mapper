@@ -18,13 +18,12 @@ import {
 import CustomEntitiesDropdown from "../../common/CustomMappingDropdown.tsx";
 import PreviewBox from "../../common/PreviewBox.tsx";
 import MappingSearch from "./MappingSearch.tsx";
-import {useCdeContext} from "../../../CdeContext.ts";
+import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType} from "../../../helpers/getters.ts";
-import Tour from "../../common/Tour.tsx";
-import { tutorial, TourSteps } from "../../common/tutorial.tsx";
+import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 
 const styles = {
     root: {
@@ -94,8 +93,10 @@ interface MappingProps {
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
-    const {datasetMapping, headerIndexes, collections, handleUpdateDatasetMappingRow, isTourOpen} = useCdeContext();
-    const [visibleRows, setVisibleRows] = useState([]);
+    const {datasetMapping, headerIndexes, collections} = useDataContext();
+    const {updateDatasetMappingRow} = useServicesContext();
+
+    const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [searchResultsDictionary, setSearchResultsDictionary] = useState<{ [id: string]: Option }>({});
     const [stepIndex, setStepIndex] = useState(0);
@@ -165,17 +166,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const handleSelection = (variableName: string, optionId: string, newIsSelectedState: boolean) => {
         const option = searchResultsDictionary[optionId];
         if (option) {
-            handleUpdateDatasetMappingRow(variableName, newIsSelectedState ? option.content : []);
+            updateDatasetMappingRow(variableName, newIsSelectedState ? option.content : []);
         } else {
             console.error("Option not found: " + optionId);
         }
     }
 
 
-    const handleFiltering = () => {
-        // TODO: to implement
-        void visibleRows
-        setVisibleRows([])
+    const handleFiltering = (searchTerm: string) => {
+        const filteredData = Object.keys(datasetMapping).filter(variableName => {
+            const columnHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
+            const cdeValues = searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)]?.label.toLowerCase().includes(searchTerm.toLowerCase())
+            return columnHeaders || cdeValues
+        })
+        setVisibleRows(filteredData)
     }
 
     const getChipComponent = (key: string) => {
@@ -248,7 +252,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
-                            {Object.keys(datasetMapping).map((variableName, index) => (
+                            {visibleRows.map((variableName, index) => (
                                 <Box key={index} sx={styles.row}>
                                     <Box sx={styles.col} className="mapping-chip">
                                         {getChipComponent(variableName)}

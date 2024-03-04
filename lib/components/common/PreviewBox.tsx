@@ -1,8 +1,9 @@
-import { Box, Typography, Chip, Button } from "@mui/material";
-import { useCdeContext } from "../../CdeContext";
+import {Box, Typography, Chip, Button} from "@mui/material";
+import {useDataContext} from "../../contexts/data/DataContext.ts";
 // import PreviewTable from "./PreviewTable";
-import { GlobeIcon, ArrowDropDown, BulletIcon } from "../../icons";
-import { StyledTable } from "./StyledTable";
+import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
+import {StyledTable} from "./StyledTable";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
 
 interface PreviewBoxProps {
     togglePreview: boolean;
@@ -11,7 +12,8 @@ interface PreviewBoxProps {
 }
 
 const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }: PreviewBoxProps) => {
-    const { step, datasetSample, setStep } = useCdeContext();
+    const {datasetSample} = useDataContext();
+    const {step, setStep} = useUIContext();
 
     const handlePreviewToggle = () => {
         setTogglePreview(!togglePreview)
@@ -40,7 +42,8 @@ const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }
                     fontWeight: 600,
                     lineHeight: '142.857%'
                 }}>
-                    <ArrowDropDown style={{ transform: togglePreview ? 'rotate(90deg)' : 'rotate(0deg)' }} color="#676C74" />
+                    <ArrowDropDown style={{transform: togglePreview ? 'rotate(90deg)' : 'rotate(0deg)'}}
+                                   color="#676C74"/>
                     Preview
                 </Typography>
 
@@ -53,8 +56,8 @@ const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }
                         124 total number of column headers
                     </Typography>
 
-                    <Chip icon={<BulletIcon />} color="success" label="87 mapped" size="small" />
-                    <Chip icon={<BulletIcon color="#676C74" />} label="37 unmapped" size="small" />
+                    <Chip icon={<BulletIcon/>} color="success" label="87 mapped" size="small"/>
+                    <Chip icon={<BulletIcon color="#676C74"/>} label="37 unmapped" size="small"/>
                 </Box>
             </Box>
 
@@ -83,13 +86,15 @@ const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }
                         }
                     }}>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="GUID" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="GUID" size="medium"/>
                         </Box>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="SmallSpeciesStrainTyp" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
+                                  size="medium"/>
                         </Box>
                         <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48" />} label="SmallSpeciesStrainTyp" size="medium" />
+                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
+                                  size="medium"/>
                         </Box>
                         <Box>
                             <Typography sx={{
@@ -166,7 +171,8 @@ const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }
                 </Box>
             )}
             {
-                step === -1 && <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '2px solid #ECEDEE' }}>
+                step === -1 &&
+                <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{borderTop: '2px solid #ECEDEE'}}>
                     <Button variant='text' onClick={() => setStep(0)}>Cancel</Button>
                     <Button variant='contained'>Create template</Button>
                 </Box>
