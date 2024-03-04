@@ -18,7 +18,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
 
     const handleFiltersClose = () => {
         setAnchorEl(null);
-        // onChange(searchString)
+        onChange(debouncedSearchValue)
     };
 
     const open = Boolean(anchorEl);
