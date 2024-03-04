@@ -3,15 +3,28 @@ import { StyledTable } from '../common/StyledTable.tsx';
 import { CircleChipDefault, CircleChipSuccess } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 import { STEPS } from "../../models.ts";
-import { useCdeContext } from "../../CdeContext.ts";
+import { useDataContext } from "../../contexts/data/DataContext.ts";
+import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
 
 const { primary600, gray600, drodownDetailBg, gray200 } = vars;
 
 function Home() {
     const {
+        name,
+        datasetSample,
+    } = useDataContext();
+
+    const {
+        getTotalRowsCount,
+        getMappedRowsCount,
+        getUnmappedRowsCount,
+        getSuggestionsCount,
+    } = useServicesContext();
+
+    const {
         setStep,
-        datasetSample
-    } = useCdeContext();
+    } = useUIContext();
 
     return (
         <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
@@ -24,7 +37,7 @@ function Home() {
                 maxWidth: '31.25rem',
                 textAlign: 'center',
             }}>
-                You’ve selected column headers from the [Lab name]’s dataset on ODC’s website to map.
+                You’ve selected column headers from the {name}’s dataset on ODC’s website to map.
             </Typography>
             <Box my={6}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} width={1}>
@@ -47,12 +60,12 @@ function Home() {
                             }
                         }}
                     >
-                        <Typography variant="h6">124</Typography>
+                        <Typography variant="h6">{getTotalRowsCount()}</Typography>
                         <Typography variant="body2">total number of column headers</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" gap={1}>
-                        <Chip size="small" label="41 mapped" color="success" icon={<CircleChipSuccess />} />
-                        <Chip size="small" label="83 unmapped, 13 suggestions available" color="default"
+                        <Chip size="small" label={`${getMappedRowsCount()} mapped`} color="success" icon={<CircleChipSuccess />} />
+                        <Chip size="small" label={`${getUnmappedRowsCount()} unmapped, ${getSuggestionsCount()} suggestions available`} color="default"
                             icon={<CircleChipDefault />} />
                     </Box>
                 </Box>

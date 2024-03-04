@@ -6,14 +6,14 @@ import Modal from './common/Modal.tsx'
 import MappingStep from './steps/mapping/MappingStep.tsx';
 import TemplateStep from './steps/TemplateStep.tsx';
 import Header from "./common/Header.tsx";
-import {useCdeContext} from "../CdeContext.ts";
 import {CommonCircularProgress} from "./common/CommonCircularProgress.tsx";
+import {useUIContext} from "../contexts/ui/UIContext.ts";
 
 const CdeModal: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose} = useCdeContext();
+    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose} = useUIContext();
 
     const onClose = () => {
         setIsModalOpen(false)

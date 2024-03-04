@@ -2,7 +2,7 @@ import {DatasetMapping, OptionDetail} from "../models.ts";
 import React from "react";
 
 // Function to update a specific row in datasetMapping
-export const updateDatasetMappingRow = (
+export const updateRow = (
     variableName: string,
     newRowContent: OptionDetail[],
     datasetMapping: DatasetMapping,
