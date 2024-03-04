@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Stack, Typography, Box, Button, Link} from '@mui/material';
 import StyledCard from '../../common/StyledCard.tsx';
-import {useCdeContext} from "../../../CdeContext.ts";
+import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx";
 
 
@@ -13,7 +13,7 @@ interface CollectionsProps {
 function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProps) {
     const {
         collections,
-    } = useCdeContext();
+    } = useDataContext();
 
     const collectionKeys = Object.keys(collections);
 
