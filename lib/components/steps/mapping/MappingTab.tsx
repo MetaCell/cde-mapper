@@ -96,7 +96,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const {datasetMapping, headerIndexes, collections} = useDataContext();
     const {updateDatasetMappingRow} = useServicesContext();
 
-    const [visibleRows, setVisibleRows] = useState([]);
+    const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [searchResultsDictionary, setSearchResultsDictionary] = useState<{ [id: string]: Option }>({});
 
@@ -166,10 +166,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
 
-    const handleFiltering = () => {
-        // TODO: to implement
-        void visibleRows
-        setVisibleRows([])
+    const handleFiltering = (searchTerm: string) => {
+        const filteredData = Object.keys(datasetMapping).filter(variableName => {
+            const columnHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
+            const cdeValues = searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)]?.label.toLowerCase().includes(searchTerm.toLowerCase())
+            return columnHeaders || cdeValues
+        })
+        setVisibleRows(filteredData)
     }
 
     const getChipComponent = (key: string) => {
@@ -242,7 +245,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
-                            {Object.keys(datasetMapping).map((variableName, index) => (
+                            {visibleRows.map((variableName, index) => (
                                 <Box key={index} sx={styles.row}>
                                     <Box sx={styles.col}>
                                         {getChipComponent(variableName)}
