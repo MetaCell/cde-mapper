@@ -33,6 +33,11 @@ export const ServicesContextProvider = ({
                 headerIndexes
             );
         };
+
+        const isColumnMapped = (column: string) => {
+            return datasetMapping[column] && isRowMapped(datasetMapping[column], headerIndexes)
+        };
+
         const onClose = () => {
             callback(datasetMapping)
         };
@@ -42,6 +47,7 @@ export const ServicesContextProvider = ({
             getMappedRowsCount,
             getUnmappedRowsCount,
             updateDatasetMappingRow,
+            isColumnMapped,
             onClose
         };
     }, [datasetMapping, callback, datasetMappingHeader, headerIndexes, setDatasetMapping, setDatasetMappingHeader,]);
