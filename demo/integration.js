@@ -74,7 +74,8 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                             variableName: 0,
                             preciseAbbreviation: 1,
                             title: 2,
-                            interlexId: 11
+                            id: 11,
+                            cdeLevel: 12,
                         }
                     });
                 },

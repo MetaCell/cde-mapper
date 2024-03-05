@@ -201,7 +201,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 color = "success";
                 iconColor = "#12B76A";
                 break;
-            case EntityType.CustomDataDictionary:
+            case EntityType.CustomDictionaryField:
                 label = "Mapped to Custom Data Dictionary";
                 color = "success";
                 iconColor = "#346DDB";

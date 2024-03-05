@@ -3,8 +3,9 @@ import {ArrowIcon, GlobeIcon} from '../../../icons';
 import CdeDetails from '../../common/CdeDetails.tsx';
 import {vars} from '../../../theme/variables.ts';
 import {getCleanUrl} from "../../../helpers/utils.ts";
-import {HeaderIndexes} from "../../../models.ts";
+import {EntityType, HeaderIndexes} from "../../../models.ts";
 import StyledRadio from '../../common/StyledRadio.tsx';
+import {getType} from "../../../helpers/getters.ts";
 
 const {
     gray900,
@@ -24,15 +25,18 @@ function SuggestionDetailUI({row, header, headerIndexes}: SuggestionDetailUIProp
 
     const rowContent = header.map((heading, index) => ({
         heading: heading,
-        text: index === headerIndexes.interlexId ? getCleanUrl(row[index]) : row[index]
+        text: index === headerIndexes.id && getType(row, headerIndexes) == EntityType.CDE ?
+            getCleanUrl(row[index]) : row[index]
     }));
 
     return (
         <Box gap='1.5rem' display='flex' alignItems='start'>
-            <Box height='2.625rem' display='flex' alignItems='center' sx={{"& .MuiRadio-root": {
-                                padding: 0,
-                                color: gray300
-                            },}}>
+            <Box height='2.625rem' display='flex' alignItems='center' sx={{
+                "& .MuiRadio-root": {
+                    padding: 0,
+                    color: gray300
+                },
+            }}>
                 <StyledRadio/>
             </Box>
             <Box flex={1}>
