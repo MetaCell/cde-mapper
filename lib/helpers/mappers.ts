@@ -7,8 +7,9 @@ import {
     TITLE,
     UNIT_OF_MEASURE
 } from "../settings.ts";
-import {Option, OptionDetail} from "../models.ts";
+import {HeaderIndexes, Option, OptionDetail} from "../models.ts";
 import {simpleHash} from "./utils.ts";
+import {getId, getPreciseAbbreviation} from "./getters.ts";
 
 
 type Hit = {
@@ -27,9 +28,9 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
             (source.label ? simpleHash(source.label) : '');
 
         const details: OptionDetail[] = [
-            { title: ABBREVIATION, value: preciseAbbrev },
-            { title: TITLE, value: source.label ?? '' },
-            { title: INTERLEX_ID, value: source.ilx },
+            {title: ABBREVIATION, value: preciseAbbrev},
+            {title: TITLE, value: source.label ?? ''},
+            {title: INTERLEX_ID, value: source.ilx},
         ];
 
         const annotationMapping: { [key: string]: string } = {
@@ -43,7 +44,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
 
         Object.entries(annotationMapping).forEach(([termLabel, title]) => {
             const value = source.annotations.find(a => a.annotation_term_label === termLabel)?.value;
-            if (value) details.push({ title, value });
+            if (value) details.push({title, value});
         });
 
         return {
@@ -54,3 +55,15 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
         };
     });
 }
+
+export const rowToOption = (row: string[], header: string[], headerIndexes: HeaderIndexes): Option => {
+    const id = getId(row, headerIndexes)
+    const label = getPreciseAbbreviation(row, headerIndexes)
+
+    const content = row.map((value: string, i: number) => ({
+        title: header[i],
+        value
+    }))
+
+    return {id, label, group: '', content}
+};
