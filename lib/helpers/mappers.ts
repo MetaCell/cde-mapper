@@ -8,7 +8,6 @@ import {
     UNIT_OF_MEASURE
 } from "../settings.ts";
 import {HeaderIndexes, Option, OptionDetail} from "../models.ts";
-import {simpleHash} from "./utils.ts";
 import {getId, getPreciseAbbreviation} from "./getters.ts";
 
 
@@ -22,15 +21,16 @@ type Hit = {
 };
 
 export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
-    return hits.map(hit => {
+    return hits.filter(hit => hit._source.ilx).map(hit => {
         const source = hit._source;
+        const id = source.ilx;
         const preciseAbbrev = source.synonyms.find(s => s.type === 'abbrev')?.literal ||
-            (source.label ? simpleHash(source.label) : '');
+            (source.label ? source.label.substring(0, 5) + "_" + id : id);
 
         const details: OptionDetail[] = [
             {title: ABBREVIATION, value: preciseAbbrev},
             {title: TITLE, value: source.label ?? ''},
-            {title: INTERLEX_ID, value: source.ilx},
+            {title: INTERLEX_ID, value: id},
         ];
 
         const annotationMapping: { [key: string]: string } = {
@@ -44,11 +44,13 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
 
         Object.entries(annotationMapping).forEach(([termLabel, title]) => {
             const value = source.annotations.find(a => a.annotation_term_label === termLabel)?.value;
-            if (value) details.push({title, value});
+            if (value){
+                details.push({title, value});
+            }
         });
 
         return {
-            id: preciseAbbrev,
+            id,
             label: preciseAbbrev,
             group: '',
             content: details,
@@ -58,7 +60,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
 
 export const rowToOption = (row: string[], header: string[], headerIndexes: HeaderIndexes): Option => {
     const id = getId(row, headerIndexes)
-    const label = getPreciseAbbreviation(row, headerIndexes)
+    const label = getPreciseAbbreviation(row, headerIndexes) || id
 
     const content = row.map((value: string, i: number) => ({
         title: header[i],

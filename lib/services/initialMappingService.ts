@@ -23,8 +23,21 @@ export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, he
     // Populate datasetMapping with datasetMappingRows data
     datasetMappingRows?.forEach(row => {
         const variableNameValue = row[headerMapping.variableName];
+        const id = row[headerMapping.id];
+        const preciseAbbreviation = row[headerMapping.preciseAbbreviation];
+
+        // If variableName already exists in datasetMapping, process the row
         if (variableNameValue in datasetMapping) {
-            datasetMapping[variableNameValue] = row;
+            let updatedRow = [...row];
+            if (!id.trim()) {
+                updatedRow = new Array(datasetMappingHeaders.length).fill('');
+            } else {
+                // Ensure preciseAbbreviation is set to ID if missing
+                if (!preciseAbbreviation.trim()) {
+                    updatedRow[headerMapping.preciseAbbreviation] = id;
+                }
+            }
+            datasetMapping[variableNameValue] = updatedRow;
         }
     });
 
