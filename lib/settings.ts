@@ -4,7 +4,7 @@ export const TITLE_INDEX = 2
 export const ID_INDEX = 11
 export const CDE_LEVEL_INDEX = 12
 
-export const MAX_SUGGESTIONS = 3
+export const MAX_SUGGESTIONS = 1
 
 export const CDE_BASE_URL = "http://uri.interlex.org/base"
 

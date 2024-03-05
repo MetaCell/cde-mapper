@@ -8,6 +8,7 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {MAX_SUGGESTIONS} from "../../../settings.ts";
 import NoSuggestions from "./NoSuggestions.tsx";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {getId} from "../../../helpers/getters.ts";
 
 const {
     gray100,
@@ -39,6 +40,7 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
     const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
 
+    const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
     const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>(getColumnsWithSuggestions());
 
     const handleNext = useCallback(() => {
@@ -147,12 +149,17 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                 </Box>
 
                 <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
-                    {visibleSuggestions.map((suggestion, index) => {
+                    {visibleSuggestions.map((suggestion) => {
+                        const id = getId(suggestion, headerIndexes);
                         return (
-                            <SuggestionDetailUI key={index}
-                                                row={suggestion}
-                                                header={datasetMappingHeader}
-                                                headerIndexes={headerIndexes}/>
+                            <SuggestionDetailUI
+                                key={id}
+                                row={suggestion}
+                                header={datasetMappingHeader}
+                                headerIndexes={headerIndexes}
+                                isSelected={selectedSuggestionId === id}
+                                onSelect={() => setSelectedSuggestionId(id)}
+                            />
                         );
                     })}
                     {shouldShowOtherSuggestionsButton && (
@@ -176,12 +183,19 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
 
                 {showOtherSuggestions && (
                     <Box display='flex' alignItems='start' flexDirection='column' mt='3rem' gap='3rem'>
-                        {otherSuggestions.map((suggestion, index) => (
-                            <SuggestionDetailUI key={index}
-                                                row={suggestion}
-                                                header={datasetMappingHeader}
-                                                headerIndexes={headerIndexes}/>
-                        ))}
+                        {otherSuggestions.map((suggestion) => {
+                            const id = getId(suggestion, headerIndexes);
+                            return (
+                                <SuggestionDetailUI
+                                    key={id}
+                                    row={suggestion}
+                                    header={datasetMappingHeader}
+                                    headerIndexes={headerIndexes}
+                                    isSelected={selectedSuggestionId === id}
+                                    onSelect={() => setSelectedSuggestionId(id)}
+                                />
+                            );
+                        })}
                     </Box>
                 )}
             </ModalHeightWrapper>

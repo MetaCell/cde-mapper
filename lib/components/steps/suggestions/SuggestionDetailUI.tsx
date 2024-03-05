@@ -18,10 +18,12 @@ type SuggestionDetailUIProps = {
     row: string[];
     header: string[]
     headerIndexes: HeaderIndexes
+    isSelected: boolean
+    onSelect: () => void
 }
 
 
-function SuggestionDetailUI({row, header, headerIndexes}: SuggestionDetailUIProps) {
+function SuggestionDetailUI({row, header, headerIndexes, isSelected, onSelect}: SuggestionDetailUIProps) {
 
     const rowContent = header.map((heading, index) => ({
         heading: heading,
@@ -37,7 +39,10 @@ function SuggestionDetailUI({row, header, headerIndexes}: SuggestionDetailUIProp
                     color: gray300
                 },
             }}>
-                <StyledRadio/>
+                <StyledRadio
+                    checked={isSelected}
+                    onChange={onSelect}
+                />
             </Box>
             <Box flex={1}>
                 <Box gap='1.5rem' display='flex' alignItems='center' mb='0.75rem'>
