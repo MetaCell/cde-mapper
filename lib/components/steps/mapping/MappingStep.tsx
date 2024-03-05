@@ -103,6 +103,7 @@ function MappingStep() {
                 <Tabs value={tabIndex} onChange={handleChange} aria-label="basic tabs example">
                     {tabsArr?.map((tab, index) => (
                         <Tooltip
+                            key={index}
                             placement='bottom'
                             title={
                                 <>
