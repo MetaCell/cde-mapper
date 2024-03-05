@@ -4,6 +4,7 @@ import CollectionsTab from './CollectionsTab.tsx';
 import SuggestionsStep from '../suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
 import {vars} from '../../../theme/variables.ts';
+import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 
 const {
     baseWhite,
@@ -69,6 +70,10 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, 
 function MappingStep() {
     const [tabIndex, setTabIndex] = React.useState(0);
     const [defaultCollection, setDefaultCollection] = React.useState("");
+    const {
+        getTotalRowsCount,
+        getUnmappedRowsCount,
+    } = useServicesContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
@@ -139,7 +144,7 @@ function MappingStep() {
                             fontWeight: 500,
                             lineHeight: '150%',
                         }}>
-                            37/120 column headers still unmapped
+                            {getUnmappedRowsCount()}/{getTotalRowsCount()} column headers still unmapped
                         </Typography>
 
                         <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
