@@ -14,7 +14,7 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
-    const [isTourOpen, setIsTourOpen] = useState<boolean>(true);
+    const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
 
 
