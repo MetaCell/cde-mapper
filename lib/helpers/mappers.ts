@@ -58,7 +58,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
     });
 }
 
-export const rowToOption = (row: string[], header: string[], headerIndexes: HeaderIndexes): Option => {
+export const mapRowToOption = (row: string[], header: string[], headerIndexes: HeaderIndexes): Option => {
     const id = getId(row, headerIndexes)
     const label = getPreciseAbbreviation(row, headerIndexes) || id
 

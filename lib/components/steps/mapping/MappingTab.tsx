@@ -24,7 +24,7 @@ import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
-import {rowToOption} from "../../../helpers/mappers.ts";
+import {mapRowToOption} from "../../../helpers/mappers.ts";
 
 const styles = {
     root: {
@@ -116,7 +116,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
             const row = datasetMapping[variableName];
             if (isRowMapped(row, headerIndexes)) {
-                const option = rowToOption(row, datasetMappingHeader, headerIndexes);
+                const option = mapRowToOption(row, datasetMappingHeader, headerIndexes);
                 acc[option.id] = option;
             }
             return acc;
