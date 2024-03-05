@@ -80,7 +80,7 @@ const PreviewBox = () => {
                         {headers.map((header, index) => (
                             <Box key={index}>
                                 {isColumnMapped(header) ? (
-                                    <Chip color="success" icon={<GlobeIcon style={{ color: "#027A48" }} />} label={header} size="medium" />
+                                    <Chip color="success" icon={<GlobeIcon color={"#027A48" } />} label={header} size="medium" />
                                 ) : (
                                     <Typography sx={{
                                         color: '#A9ACB2',
