@@ -27,8 +27,9 @@ function SuggestionDetailUI({row, header, headerIndexes, isSelected, onSelect}: 
 
     const rowContent = header.map((heading, index) => ({
         heading: heading,
-        text: index === headerIndexes.id && getType(row, headerIndexes) == EntityType.CDE ?
-            getCleanUrl(row[index]) : row[index]
+        text: row[index],
+        link: index === headerIndexes.id && getType(row, headerIndexes) == EntityType.CDE ?
+            getCleanUrl(row[index]) : ''
     }));
 
     return (
