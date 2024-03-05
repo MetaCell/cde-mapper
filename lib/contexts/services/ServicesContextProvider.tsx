@@ -30,6 +30,7 @@ export const ServicesContextProvider = ({
                 datasetMappingHeader,
                 setDatasetMapping,
                 setDatasetMappingHeader,
+                headerIndexes
             );
         };
         const onClose = () => {
