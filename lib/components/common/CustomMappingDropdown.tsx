@@ -211,6 +211,10 @@ export default function CustomEntitiesDropdown({
 
 
     useEffect(() => {
+        setSelectedOptions(value ? [value] : []);
+    }, [value]);
+
+    useEffect(() => {
         if (!open) {
             return;
         }
