@@ -5,11 +5,17 @@ import {useDataContext} from "../../contexts/data/DataContext.ts";
 import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
 import {StyledTable} from "./StyledTable";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
+import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
 
 
 const PreviewBox = () => {
     const {datasetSample} = useDataContext();
     const {step, setStep} = useUIContext();
+    const {
+        getTotalRowsCount,
+        getUnmappedRowsCount,
+        getMappedRowsCount
+    } = useServicesContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
 
     return (
@@ -46,11 +52,11 @@ const PreviewBox = () => {
                         fontSize: '0.875rem',
                         lineHeight: '142.857%'
                     }}>
-                        124 total number of column headers
+                        {getTotalRowsCount()} total number of column headers
                     </Typography>
 
-                    <Chip icon={<BulletIcon/>} color="success" label="87 mapped" size="small"/>
-                    <Chip icon={<BulletIcon color="#676C74"/>} label="37 unmapped" size="small"/>
+                    <Chip icon={<BulletIcon/>} color="success" label={`${getMappedRowsCount()} mapped`} size="small"/>
+                    <Chip icon={<BulletIcon color="#676C74"/>} label={`${getUnmappedRowsCount()} unmapped`} size="small"/>
                 </Box>
             </Box>
 
@@ -60,15 +66,6 @@ const PreviewBox = () => {
                     overflow: 'auto',
                     maxHeight: '21.25rem',
 
-                    // '&:after': {
-                    //     content: '""',
-                    //     height: '7.8125rem',
-                    //     minWidth: '100%',
-                    //     position: 'absolute',
-                    //     bottom: 0,
-                    //     left: 0,
-                    //     background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)',
-                    // }
                 }}>
                     <Box display='flex' mb={1} alignItems='center' sx={{
                         '& > div': {
