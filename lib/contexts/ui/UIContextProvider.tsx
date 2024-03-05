@@ -13,6 +13,8 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
     const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const [isTourOpen, setIsTourOpen] = useState<boolean>(true);
 
 
 
@@ -30,7 +32,9 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
         setLoadingMessage,
         errorMessage,
         setErrorMessage,
-        handleClose
+        handleClose,
+        isTourOpen,
+        setIsTourOpen
     };
 
     return (

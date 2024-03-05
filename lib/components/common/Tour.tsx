@@ -4,7 +4,7 @@ import { Box, Typography, Button, IconButton } from '@mui/material';
 import Checkbox from './CheckBox';
 import { TutorialCloseIcon } from '../../icons';
 import { vars } from '../../theme/variables';
-import { useCdeContext } from '../../CdeContext';
+import { useUIContext } from '../../contexts/ui/UIContext';
 
 const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
 
@@ -111,7 +111,7 @@ interface TourProps {
 
 const Tour = (props: TourProps) => {
     const { steps, stepIndex, setStepIndex, isSpotlightOpen, handleSpotlightClose } = props;
-    const { isTourOpen, setIsTourOpen } = useCdeContext();
+    const { isTourOpen, setIsTourOpen } = useUIContext();
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;

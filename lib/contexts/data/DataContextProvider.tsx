@@ -26,9 +26,6 @@ export const DataContextProvider = ({
                                         children
                                     }: PropsWithChildren<DataInitParams>) => {
 
-    const checked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
-    const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
-
     // Defines the mapping of the mandatory columns in the dataset mapping file
     const headerIndexes = useMemo(() => {
         // If the dataset mapping is not provided or has no data we use the default header indexes
@@ -119,7 +116,7 @@ export const DataContextProvider = ({
         collections: collectionsDictionary,
         config,
         setDatasetMapping,
-        setDatasetMappingHeader,
+        setDatasetMappingHeader
     };
 
     const hasErrors = isDatasetInvalid || isDatasetMappingInvalid || rawCollections.length == 0

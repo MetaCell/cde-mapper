@@ -24,6 +24,9 @@ import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {useUIContext} from "../../../contexts/ui/UIContext.ts";
+import Tour from "../../common/Tour.tsx";
+import { tutorial, TourSteps } from "../../common/tutorial.tsx";
 
 const styles = {
     root: {
@@ -95,6 +98,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections} = useDataContext();
     const {updateDatasetMappingRow} = useServicesContext();
+    const {isTourOpen} = useUIContext();
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
@@ -325,8 +329,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 steps={tutorial[TourSteps.Mapping]}
                 stepIndex={stepIndex}
                 setStepIndex={setStepIndex}
-                // isSpotlightOpen={togglePreview}
-                // handleSpotlightClose={() => setTogglePreview(false)}
             />
         </Box>
     )

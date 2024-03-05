@@ -7,6 +7,7 @@ import { useDebounce } from "../../../hooks.ts";
 
 interface MappingSearchProps {
     onChange: (searchTerm: string) => void;
+    handleTourNextStepClick: () => void;
 }
 
 export default function MappingSearch({onChange, handleTourNextStepClick}: MappingSearchProps) {
@@ -19,6 +20,7 @@ export default function MappingSearch({onChange, handleTourNextStepClick}: Mappi
     const handleFiltersClose = () => {
         setAnchorEl(null);
         onChange(debouncedSearchValue)
+        handleTourNextStepClick();
     };
 
     const open = Boolean(anchorEl);

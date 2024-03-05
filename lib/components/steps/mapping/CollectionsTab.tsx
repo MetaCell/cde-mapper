@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Stack, Typography, Box, Button, Link } from '@mui/material';
 import StyledCard from '../../common/StyledCard.tsx';
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
+import {useUIContext} from '../../../contexts/ui/UIContext.ts';
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx";
 import Tour from '../../common/Tour.tsx';
 import { TourSteps, tutorial } from '../../common/tutorial.tsx';
@@ -16,6 +17,9 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
     const {
         collections,
     } = useDataContext();
+    const {
+        isTourOpen
+    } = useUIContext();
 
     const collectionKeys = Object.keys(collections);
 
@@ -36,9 +40,6 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
         setDefaultCollection(selectedCollection);
         changeToNextTab();
     };
-
-    console.log("collections: ", collectionKeys)
-    console.log("chto za hren?: ", collections[collectionKeys[0]].name)
 
     return (
         <>

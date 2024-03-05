@@ -8,6 +8,8 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {MAX_SUGGESTIONS} from "../../../settings.ts";
 import NoSuggestions from "./NoSuggestions.tsx";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import Tour from '../../common/Tour.tsx';
+import { tutorial, TourSteps } from '../../common/tutorial.tsx';
 
 const {
     gray100,

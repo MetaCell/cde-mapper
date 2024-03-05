@@ -14,7 +14,7 @@ const CdeModal: FC = () => {
     const [isInfoOpen, setIsInfoOpen] = useState(false);
     const [homeStepIndex, setHomeStepIndex] = useState(0);
 
-    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose} = useUIContext();
+    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose, isTourOpen, setIsTourOpen} = useUIContext();
 
     const onClose = () => {
         setIsModalOpen(false)
