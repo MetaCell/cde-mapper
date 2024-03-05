@@ -22,7 +22,7 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
-import {getId, getType} from "../../../helpers/getters.ts";
+import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {rowToOption} from "../../../helpers/mappers.ts";
 
@@ -115,10 +115,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     useEffect(() => {
         const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
             const row = datasetMapping[variableName];
-            const option = rowToOption(row, datasetMappingHeader, headerIndexes);
-            acc[option.id] = option;
+            if (isRowMapped(row, headerIndexes)) {
+                const option = rowToOption(row, datasetMappingHeader, headerIndexes);
+                acc[option.id] = option;
+            }
             return acc;
         }, {} as { [id: string]: Option });
+
 
         setOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
@@ -178,14 +181,16 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
 
-    const handleFiltering = (searchTerm: string) => {
+    const handleFiltering = useCallback((searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
-            const columnHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
-            const cdeValues = optionsMap[getId(datasetMapping[variableName], headerIndexes)]?.label.toLowerCase().includes(searchTerm.toLowerCase())
-            return columnHeaders || cdeValues
-        })
-        setVisibleRows(filteredData)
-    }
+            const variableNameMatch = variableName.toLowerCase().includes(searchTerm.toLowerCase());
+            const preciseAbbreviation = datasetMapping[variableName][headerIndexes.preciseAbbreviation] || '';
+            const preciseAbbreviationMatch = preciseAbbreviation.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return variableNameMatch || preciseAbbreviationMatch;
+        });
+        setVisibleRows(filteredData);
+    }, [datasetMapping, headerIndexes]);
 
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
@@ -235,6 +240,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
+
     return (
         <>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -282,7 +288,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]?.label ? optionsMap[getId(datasetMapping[variableName], headerIndexes)] : null
+                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
                                             }}/>
                                     </Box>
 
