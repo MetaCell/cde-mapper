@@ -6,7 +6,7 @@ export const CDE_LEVEL_INDEX = 12
 
 export const MAX_SUGGESTIONS = 3
 
-export const CDE_BASE_URL = "http://uri.interlex.org/base/"
+export const CDE_BASE_URL = "http://uri.interlex.org/base"
 
 export const VARIABLE_NAME_UI = "Variable Name";
 export const ABBREVIATION = "Abbreviation";
