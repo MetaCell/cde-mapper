@@ -14,7 +14,7 @@ export interface DataInitParams {
 }
 
 export interface ServiceInitParams {
-    callback: (cdeFileMapping: DatasetMapping) => void;
+    callback: (datasetMapping: DatasetMapping, datasetMappingHeader: string[]) => void;
 }
 
 export type InitParams = DataInitParams & ServiceInitParams;

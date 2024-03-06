@@ -73,6 +73,7 @@ function MappingStep() {
     const {
         getTotalRowsCount,
         getUnmappedRowsCount,
+        onClose,
     } = useServicesContext();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -149,7 +150,7 @@ function MappingStep() {
 
                         <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
 
-                        <Button variant='contained'>
+                        <Button variant='contained' onClick={onClose}>
                             Save mapping
                         </Button></>)}
                 </Box>

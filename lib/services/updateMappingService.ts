@@ -1,8 +1,9 @@
 import {DatasetMapping, HeaderIndexes, OptionDetail} from "../models.ts";
 import React from "react";
+import {resetRow} from "../helpers/utils.ts";
 
 // Function to update a specific row in datasetMapping
-export const updateRow = (
+export const _updateRow = (
     variableName: string,
     newRowContent: OptionDetail[],
     datasetMapping: DatasetMapping,
@@ -16,8 +17,11 @@ export const updateRow = (
         return;
     }
 
-    const updatedRow = isUnmapping(newRowContent) ? Array(datasetMappingHeader.length).fill('') :
-        [...datasetMapping[variableName]];
+    let updatedRow = [...datasetMapping[variableName]];
+
+    if (isUnmapping(newRowContent)) {
+        updatedRow = resetRow(datasetMappingHeader, headerIndexes, variableName);
+    }
 
     let headersAddedCount = 0;
 
@@ -57,7 +61,7 @@ export const updateRow = (
     datasetMapping[variableName] = updatedRow;
 
     // Update state
-    setDatasetMapping(prevState => ({ ...prevState, [variableName]: updatedRow }));
+    setDatasetMapping(prevState => ({...prevState, [variableName]: updatedRow}));
 };
 
 function isUnmapping(newRowContent: OptionDetail[]) {
