@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useCallback} from "react";
 import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import {FilterIcon, SearchIcon} from "../../../icons";
 import Filters from "../../common/Filters.tsx";
@@ -16,8 +16,10 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const debouncedSearchValue = useDebounce(searchString);
 
-    const handleFiltersClose = () => {
-        setAnchorEl(null);
+    const memoizedOnChange = useCallback(onChange, []);
+
+    const handleFiltersClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
         onChange(debouncedSearchValue)
     };
 
@@ -25,10 +27,10 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
     const id = open ? 'filter-popover' : undefined;
 
     React.useEffect(() => {
-        onChange(debouncedSearchValue);
-    }, [debouncedSearchValue, onChange])
+        memoizedOnChange(debouncedSearchValue);
+    }, [debouncedSearchValue, memoizedOnChange])
 
-
+    console.log("filter open: ", open)
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
         <TextField
             fullWidth
@@ -37,7 +39,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
             InputProps={{
                 startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>
             }}
-            value={searchString}
+            // value={searchString}
             onChange={(event) => setSearchString(event.target.value)}
         />
         <Button
