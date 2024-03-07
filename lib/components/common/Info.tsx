@@ -108,12 +108,12 @@ const styles = {
     }
 };
 
-const Info = (props: { setIsInfoOpen: (b: boolean) => void, handleTourNextStepClick: () => void }) => {
-    const {setIsInfoOpen, handleTourNextStepClick} = props
+const Info = (props: { setIsInfoOpen: (b: boolean) => void, onAfterSidebarToggle?: () => void }) => {
+    const {setIsInfoOpen, onAfterSidebarToggle = () => {}} = props
 
     const handleClose = () => {
         setIsInfoOpen(false);
-        handleTourNextStepClick();
+        onAfterSidebarToggle();
     }
 
     const InfoContent = () => (

@@ -26,12 +26,12 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, setIsTourOpen: (b: boolean) => void, handleTourNextStepClick: () => void }) => {
-    const { onClose, isInfoOpen, setIsInfoOpen, step, setIsTourOpen, handleTourNextStepClick } = props
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, setIsTourOpen: (b: boolean) => void, onAfterSidebarToggle?: () => void }) => {
+    const {onClose, isInfoOpen, setIsInfoOpen, step, setIsTourOpen, onAfterSidebarToggle = () => {}} = props
 
     const handleInfoBtnClick = () => {
         setIsInfoOpen(true)
-        handleTourNextStepClick()
+        onAfterSidebarToggle()
     }
     return (
         <>
@@ -63,7 +63,7 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 </Box>
             </Box>
 
-            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} handleTourNextStepClick={handleTourNextStepClick}/>}
+            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} onAfterSidebarToggle={onAfterSidebarToggle}/>}
         </>
     )
 };

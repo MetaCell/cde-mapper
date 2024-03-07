@@ -8,16 +8,16 @@ import {useUIContext} from "../../contexts/ui/UIContext.ts";
 interface PreviewBoxProps {
     togglePreview: boolean;
     setTogglePreview: (togglePreview: boolean) => void;
-    handleTourNextStepClick?: () => void;
+    onAfterToggle?: () => void;
 }
 
-const PreviewBox = ({ togglePreview, setTogglePreview, handleTourNextStepClick }: PreviewBoxProps) => {
+const PreviewBox = ({togglePreview, setTogglePreview, onAfterToggle = () => {}}: PreviewBoxProps) => {
     const {datasetSample} = useDataContext();
     const {step, setStep} = useUIContext();
 
     const handlePreviewToggle = () => {
         setTogglePreview(!togglePreview)
-        handleTourNextStepClick?.()
+        onAfterToggle()
     }
 
     return (

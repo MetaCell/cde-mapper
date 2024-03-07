@@ -105,13 +105,11 @@ interface TourProps {
     steps: Step[];
     stepIndex: number;
     setStepIndex: (stepIndex: number) => void;
-    isSpotlightOpen?: boolean;
-    handleSpotlightClose?: () => void;
 }
 
 const Tour = (props: TourProps) => {
-    const { steps, stepIndex, setStepIndex, isSpotlightOpen, handleSpotlightClose } = props;
-    const { isTourOpen, setIsTourOpen } = useUIContext();
+    const {steps, stepIndex, setStepIndex} = props;
+    const {isTourOpen, setIsTourOpen} = useUIContext();
 
     const handleJoyrideCallback = (data: CallBackProps) => {
         const { action, index, status, type } = data;
@@ -119,9 +117,6 @@ const Tour = (props: TourProps) => {
             setIsTourOpen(false)
         } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
             const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1)
-            if(isSpotlightOpen && (nextStepIndex === 5 || nextStepIndex===8)){
-                handleSpotlightClose?.()
-            }
             setStepIndex(action === ACTIONS.CLOSE ? 0 : nextStepIndex)
             setIsTourOpen(action === ACTIONS.CLOSE ? false : true)
         } else if (([ACTIONS.CLOSE] as string[]).includes(action)) {

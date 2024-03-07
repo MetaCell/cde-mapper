@@ -159,7 +159,6 @@ interface Header {
 
 interface CustomEntitiesDropdownProps {
     placeholder?: string;
-    handleTourNextStepClick?: () => void | undefined;
     options: {
         errors?: string;
         searchPlaceholder?: string;
@@ -170,13 +169,13 @@ interface CustomEntitiesDropdownProps {
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
+        onAfterSearch?: () => void;
     };
 }
 
 
 export default function CustomEntitiesDropdown({
                                                    placeholder,
-                                                   handleTourNextStepClick,
                                                    options: {
                                                        errors,
                                                        searchPlaceholder,
@@ -187,6 +186,7 @@ export default function CustomEntitiesDropdown({
                                                        header,
                                                        collections,
                                                        onCollectionSelect,
+                                                       onAfterSearch = () => {}
                                                    },
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -198,6 +198,7 @@ export default function CustomEntitiesDropdown({
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
+        onAfterSearch();
     };
 
     const open = Boolean(anchorEl);
@@ -231,8 +232,7 @@ export default function CustomEntitiesDropdown({
 
         setIsLoading(true);
         fetchOptions().then(() => setIsLoading(false));
-        handleTourNextStepClick?.()
-    }, [searchInput, onSearch, open, handleTourNextStepClick]);
+    }, [searchInput, onSearch, open]);
 
     type GroupedOptions = {
         [group: string]: Option[];

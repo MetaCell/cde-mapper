@@ -7,28 +7,30 @@ import { useDebounce } from "../../../hooks.ts";
 
 interface MappingSearchProps {
     onChange: (searchTerm: string) => void;
-    handleTourNextStepClick: () => void;
+    onAfterChange?: () => void;
 }
 
-export default function MappingSearch({onChange, handleTourNextStepClick}: MappingSearchProps) {
+export default function MappingSearch({onChange, onAfterChange = () => {}}: MappingSearchProps) {
 
     const [searchString, setSearchString] = useState('');
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const debouncedSearchValue = useDebounce(searchString);
 
+    const memoizedOnChange = React.useCallback(onChange, []);
+
     const handleFiltersClose = () => {
         setAnchorEl(null);
         onChange(debouncedSearchValue)
-        handleTourNextStepClick();
+        onAfterChange();
     };
 
     const open = Boolean(anchorEl);
     const id = open ? 'filter-popover' : undefined;
 
     React.useEffect(() => {
-        onChange(debouncedSearchValue);
-    }, [debouncedSearchValue, onChange])
+        memoizedOnChange(debouncedSearchValue);
+    }, [debouncedSearchValue, memoizedOnChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
