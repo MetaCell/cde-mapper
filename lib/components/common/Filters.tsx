@@ -1,5 +1,7 @@
-import {Popover, Box, Typography, Button, FormGroup} from '@mui/material';
+import React from 'react';
+import { Popover, Box, Typography, Button, FormGroup } from '@mui/material';
 import Checkbox from "../common/CheckBox";
+import { EntityType } from '../../models';
 
 interface FiltersProps {
     anchorEl: Element | null;
@@ -8,7 +10,27 @@ interface FiltersProps {
     id: string | undefined;
 }
 
-const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
+const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id }) => {
+    const [checked, setChecked] = React.useState({
+        [EntityType.CDE]: false,
+        [EntityType.CustomDataDictionary]: false,
+        [EntityType.Unknown]: false,
+    });
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChecked({
+            ...checked,
+            [event.target.name]: event.target.checked,
+        });
+    }
+
+    const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setChecked({
+            [EntityType.CDE]: event.target.checked,
+            [EntityType.CustomDataDictionary]: event.target.checked,
+            [EntityType.Unknown]: event.target.checked
+        })
+    }
 
     return (
         <Popover
@@ -52,7 +74,7 @@ const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
                 </Button>
             </Box>
 
-            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
+            <Box p='1rem' sx={{ borderBottom: '0.0625rem solid #ECEDEE' }}>
                 <Typography sx={{
                     fontSize: '0.75rem',
                     fontWeight: 500,
@@ -60,7 +82,11 @@ const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
                     color: '#676C74',
                     mb: '0.75rem'
                 }}>Status</Typography>
-                <Checkbox label="All"/>
+                <Checkbox
+                    label="All"
+                    checked={checked[EntityType.CDE] && checked[EntityType.CustomDataDictionary] && checked[EntityType.Unknown]}
+                    onChange={handleAllChange}
+                />
 
                 <Box pl={3} mt="0.75rem" sx={{
                     position: 'relative',
@@ -75,17 +101,17 @@ const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
                     }
                 }}>
                     <FormGroup>
-                        <Checkbox label="Mapped to CDE"/>
-                        <Checkbox label="Mapped to Data Dictionary field"/>
-                        <Checkbox label="Unmapped"/>
+                        <Checkbox checked={checked[EntityType.CDE]} onChange={handleChange} name={EntityType.CDE} label="Mapped to CDE" />
+                        <Checkbox checked={checked[EntityType.CustomDataDictionary]} onChange={handleChange} name={EntityType.CustomDataDictionary} label="Mapped to Data Dictionary field" />
+                        <Checkbox checked={checked[EntityType.Unknown]} onChange={handleChange} name={EntityType.Unknown} label="Unmapped" />
                     </FormGroup>
                 </Box>
             </Box>
-            <Box p='1rem' sx={{borderBottom: '0.0625rem solid #ECEDEE'}}>
+            <Box p='1rem' sx={{ borderBottom: '0.0625rem solid #ECEDEE' }}>
                 <Typography
-                    sx={{fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem'}}>Type
+                    sx={{ fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem' }}>Type
                     of mapping</Typography>
-                <Checkbox label="All"/>
+                <Checkbox label="All" />
                 <Box pl={3} mt="0.75rem" sx={{
                     position: 'relative',
                     '&:before': {
@@ -99,9 +125,9 @@ const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
                     }
                 }}>
                     <FormGroup>
-                        <Checkbox label="Mapped to CDE"/>
-                        <Checkbox label="Mapped to Data Dictionary field"/>
-                        <Checkbox label="Unmapped"/>
+                        <Checkbox label="Mapped to CDE" />
+                        <Checkbox label="Mapped to Data Dictionary field" />
+                        <Checkbox label="Unmapped" />
                     </FormGroup>
                 </Box>
             </Box>
@@ -112,7 +138,7 @@ const Filters: React.FC<FiltersProps> = ({anchorEl, handleClose, open, id}) => {
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-                <Checkbox label="Hide previously mapped columns"/>
+                <Checkbox label="Hide previously mapped columns" />
             </Box>
         </Popover>
     )
