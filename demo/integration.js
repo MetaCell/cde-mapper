@@ -69,12 +69,13 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         collections: getCollections(),
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
-                        callback: (cdeFileMapping) => console.log(cdeFileMapping),
+                        callback: (datasetMapping, datasetMappingHeader) => downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader),
                         headerIndexes: {
                             variableName: 0,
                             preciseAbbreviation: 1,
                             title: 2,
-                            interlexId: 11
+                            id: 11,
+                            cdeLevel: 12,
                         }
                     });
                 },
@@ -130,4 +131,33 @@ async function fetchElasticSearchData(queryString) {
 
     const data = await response.json();
     return mapElasticSearchHitsToOptions(data.hits.hits || [])
+}
+
+
+function downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader) {
+    // Prepare data in the format that Papa Parse expects
+    const data = Object.values(datasetMapping).map(row => {
+        const rowData = {};
+        datasetMappingHeader.forEach((header, index) => {
+            rowData[header] = row[index] || '';
+        });
+        return rowData;
+    });
+
+    // eslint-disable-next-line no-undef
+    const csv = Papa.unparse({
+        fields: datasetMappingHeader,
+        data: data,
+    });
+
+    // Trigger download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "datasetMapping.csv");
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

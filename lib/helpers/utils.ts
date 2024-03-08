@@ -1,4 +1,5 @@
 import {CDE_BASE_URL} from "../settings.ts";
+import {HeaderIndexes} from "../models.ts";
 
 
 export function getCleanUrl(interlexId: string) {
@@ -9,13 +10,8 @@ export function getCleanUrl(interlexId: string) {
     return `${CDE_BASE_URL}/${cleanedInterlexId}`;
 }
 
-
-export function simpleHash(str: string): string {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash |= 0;
-    }
-    return `${str.replace(/\s+/g, '').substring(0, 10)}-${Math.abs(hash)}`;
+export function resetRow(datasetMappingHeaders: string[], headerMapping: HeaderIndexes, variableName: string) {
+    const updatedRow = new Array(datasetMappingHeaders.length).fill('');
+    updatedRow[headerMapping.variableName] = variableName
+    return updatedRow;
 }
