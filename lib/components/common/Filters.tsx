@@ -96,30 +96,6 @@ const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, chec
                     </FormGroup>
                 </Box>
             </Box>
-            <Box p='1rem' sx={{ borderBottom: '0.0625rem solid #ECEDEE' }}>
-                <Typography
-                    sx={{ fontSize: '0.75rem', fontWeight: 500, lineHeight: '150%', color: '#676C74', mb: '0.75rem' }}>Type
-                    of mapping</Typography>
-                <Checkbox label="All" />
-                <Box pl={3} mt="0.75rem" sx={{
-                    position: 'relative',
-                    '&:before': {
-                        content: '""',
-                        width: '0.0625rem',
-                        height: '100%',
-                        background: '#ECEDEE',
-                        position: 'absolute',
-                        top: 0,
-                        left: '0.4688rem'
-                    }
-                }}>
-                    <FormGroup>
-                        <Checkbox label="Mapped to CDE" />
-                        <Checkbox label="Mapped to Data Dictionary field" />
-                        <Checkbox label="Unmapped" />
-                    </FormGroup>
-                </Box>
-            </Box>
 
             <Box sx={{
                 padding: '1rem',
