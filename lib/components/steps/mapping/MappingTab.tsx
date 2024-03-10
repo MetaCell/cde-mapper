@@ -91,6 +91,12 @@ interface MappingProps {
     defaultCollection: string;
 }
 
+interface CheckedState {
+    [EntityType.CDE]: boolean;
+    [EntityType.CustomDictionaryField]: boolean,
+    [EntityType.Unknown]: boolean,
+}
+
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
@@ -180,18 +186,26 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }
 
-
-    const handleFiltering = useCallback((searchTerm: string) => {
+    const handleFiltering = useCallback((searchTerm: string, checked: CheckedState) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
             const variableNameMatch = variableName.toLowerCase().includes(searchTerm.toLowerCase());
-            const preciseAbbreviation = datasetMapping[variableName][headerIndexes.preciseAbbreviation] || '';
+            const row = datasetMapping[variableName]
+            const preciseAbbreviation = row[headerIndexes.preciseAbbreviation] || '';
             const preciseAbbreviationMatch = preciseAbbreviation.toLowerCase().includes(searchTerm.toLowerCase());
 
+            const entityType = getType(row, headerIndexes);
+            const isAnyTrue = Object.values(checked).some(value => value === true);
+    
+            if (isAnyTrue) {
+                return checked[entityType];
+            }
+    
             return variableNameMatch || preciseAbbreviationMatch;
         });
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
+    
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
         const entityType = getType(row, headerIndexes);
@@ -239,7 +253,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-
 
     return (
         <>
