@@ -96,15 +96,6 @@ const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, chec
                     </FormGroup>
                 </Box>
             </Box>
-
-            <Box sx={{
-                padding: '1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <Checkbox label="Hide previously mapped columns" />
-            </Box>
         </Popover>
     )
 }
