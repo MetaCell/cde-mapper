@@ -7,18 +7,12 @@ import {useUIContext} from "../../contexts/ui/UIContext.ts";
 
 interface PreviewBoxProps {
     togglePreview: boolean;
-    setTogglePreview: (togglePreview: boolean) => void;
-    onAfterToggle?: () => void;
+    onToggle: () => void;
 }
 
-const PreviewBox = ({togglePreview, setTogglePreview, onAfterToggle = () => {}}: PreviewBoxProps) => {
+const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
     const {datasetSample} = useDataContext();
     const {step, setStep} = useUIContext();
-
-    const handlePreviewToggle = () => {
-        setTogglePreview(!togglePreview)
-        onAfterToggle()
-    }
 
     return (
         <Box className="preview__toggle" sx={{
@@ -32,7 +26,7 @@ const PreviewBox = ({togglePreview, setTogglePreview, onAfterToggle = () => {}}:
             borderRadius: '0.75rem 0.75rem 0 0',
             border: '0.0625rem solid #ECEDEE',
         }}>
-            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={handlePreviewToggle} className="preview__toggle_false">
+            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={onToggle} className="preview__toggle_false">
                 <Typography sx={{
                     flex: 1,
                     color: '#676C74',

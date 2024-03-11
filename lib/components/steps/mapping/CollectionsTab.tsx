@@ -26,7 +26,7 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
     const [selectedCollection, setSelectedCollection] = useState<string>(collectionKeys.length > 0 ? collectionKeys[0] : '');
     const [stepIndex, setStepIndex] = useState(0);
 
-    const onAfterChange = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
+    const updateHomeTourStep = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
 
     const handleRadioChange = (value: string) => {
         setSelectedCollection(value);
@@ -67,7 +67,7 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                     isSuggested={collections[key].suggested || false}
                                     selectedValue={selectedCollection === key ? collections[key].name : ""}
                                     onChange={() => handleRadioChange(key)}
-                                    onAfterChange={onAfterChange}
+                                    onAfterChange={updateHomeTourStep}
                                 />
                             ))}
                         </Stack>

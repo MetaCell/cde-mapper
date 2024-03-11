@@ -228,9 +228,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         return false
     };
 
+    const onPreviewBoxToggle = () => {
+        setTogglePreview(!togglePreview)
+        handleTourNextStepClick();
+    }
+
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
-    console.log("step index: ", stepIndex)
     return (
         <Box className='mapping-step'>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -279,7 +283,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
                                                 value: searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)] || null,
-                                                onAfterSearch: handleTourNextStepClick
+                                                onDropdownToggle: handleTourNextStepClick,
+                                                dropdownClassname: "cde-field__popper"
                                             }}/>
                                     </Box>
 
@@ -321,7 +326,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 </Box>
             </ModalHeightWrapper>
 
-            <PreviewBox togglePreview={togglePreview} setTogglePreview={setTogglePreview} onAfterToggle={handleTourNextStepClick}/>
+            <PreviewBox togglePreview={togglePreview} onToggle={onPreviewBoxToggle}/>
             <Tour
                 steps={tutorial[TourSteps.Mapping]}
                 stepIndex={stepIndex}

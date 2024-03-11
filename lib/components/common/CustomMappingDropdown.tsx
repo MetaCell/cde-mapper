@@ -169,7 +169,8 @@ interface CustomEntitiesDropdownProps {
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
-        onAfterSearch?: () => void;
+        onDropdownToggle?: () => void;
+        dropdownClassname?: string;
     };
 }
 
@@ -186,7 +187,8 @@ export default function CustomEntitiesDropdown({
                                                        header,
                                                        collections,
                                                        onCollectionSelect,
-                                                       onAfterSearch = () => {}
+                                                       onDropdownToggle = () => {},
+                                                       dropdownClassname
                                                    },
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -197,8 +199,8 @@ export default function CustomEntitiesDropdown({
     };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        onDropdownToggle();
         setAnchorEl(anchorEl ? null : event.currentTarget);
-        onAfterSearch();
     };
 
     const open = Boolean(anchorEl);
@@ -326,7 +328,7 @@ export default function CustomEntitiesDropdown({
                 open={open}
                 placement='bottom-end'
                 anchorEl={anchorEl}
-                className='cde-field__popper'
+                className={dropdownClassname}
                 sx={{
                     height: "21.875rem",
                     borderRadius: '0.5rem',

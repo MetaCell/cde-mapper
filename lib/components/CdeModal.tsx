@@ -21,7 +21,7 @@ const CdeModal: FC = () => {
         handleClose()
     }
 
-    const onAfterSidebarToggle = () => isTourOpen && setHomeStepIndex(prevStepIndex => prevStepIndex + 1);
+    const updateHomeTourStep = () => isTourOpen && setHomeStepIndex(prevStepIndex => prevStepIndex + 1);
 
     useEffect(() => {
         if (errorMessage) {
@@ -47,7 +47,7 @@ const CdeModal: FC = () => {
     return (
         <>
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
-                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step} setIsTourOpen={setIsTourOpen} onAfterSidebarToggle={onAfterSidebarToggle}/>
+                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step} setIsTourOpen={setIsTourOpen} onAfterSidebarToggle={updateHomeTourStep}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent(homeStepIndex, setHomeStepIndex)}
             </Modal>
             <Snackbar

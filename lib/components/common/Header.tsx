@@ -63,7 +63,7 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 </Box>
             </Box>
 
-            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} onAfterSidebarToggle={onAfterSidebarToggle}/>}
+            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} onClose={onAfterSidebarToggle}/>}
         </>
     )
 };
