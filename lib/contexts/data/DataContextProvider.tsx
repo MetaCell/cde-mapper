@@ -23,6 +23,7 @@ export const DataContextProvider = ({
                                         collections: rawCollections,
                                         config,
                                         name,
+                                        emailTemplate,
                                         children
                                     }: PropsWithChildren<DataInitParams>) => {
 
@@ -116,6 +117,7 @@ export const DataContextProvider = ({
         headerIndexes,
         collections: collectionsDictionary,
         config,
+        emailTemplate,
         setDatasetMapping,
         setDatasetMappingHeader,
     };

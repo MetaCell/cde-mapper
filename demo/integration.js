@@ -75,6 +75,11 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                             preciseAbbreviation: 1,
                             title: 2,
                             interlexId: 11
+                        },
+                        emailTemplate: {
+                            email: 'support@interlex.org',
+                            title: 'CDE Mapper collection not found',
+                            description: 'This is an email coming from the cde mapper application to flag that a certain collection is missing.'
                         }
                     });
                 },
