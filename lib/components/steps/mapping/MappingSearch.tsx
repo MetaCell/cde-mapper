@@ -3,13 +3,7 @@ import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import {FilterIcon, SearchIcon} from "../../../icons";
 import Filters from "../../common/Filters.tsx";
 import { useDebounce } from "../../../hooks.ts";
-import { EntityType } from "../../../models.ts";
-
-interface CheckedState {
-    [EntityType.CDE]: boolean;
-    [EntityType.CustomDictionaryField]: boolean,
-    [EntityType.Unknown]: boolean,
-}
+import { EntityType, CheckedState } from "../../../models.ts";
 
 interface MappingSearchProps {
     onChange: (searchTerm: string, checked: CheckedState) => void;
@@ -18,7 +12,7 @@ interface MappingSearchProps {
 export default function MappingSearch({onChange}: MappingSearchProps) {
 
     const [searchString, setSearchString] = useState('');
-    const [checked, setChecked] = React.useState<CheckedState>({
+    const [checked, setChecked] = React.useState({
         [EntityType.CDE]: false,
         [EntityType.CustomDictionaryField]: false,
         [EntityType.Unknown]: false,

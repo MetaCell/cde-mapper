@@ -21,7 +21,7 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection} from "../../../models.ts";
+import {EntityType, Option, SelectableCollection, CheckedState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
@@ -89,12 +89,6 @@ const styles = {
 
 interface MappingProps {
     defaultCollection: string;
-}
-
-interface CheckedState {
-    [EntityType.CDE]: boolean;
-    [EntityType.CustomDictionaryField]: boolean,
-    [EntityType.Unknown]: boolean,
 }
 
 
