@@ -25,6 +25,7 @@ import {EntityType, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
+import {VariableNameFilter, CdeSortingFilter, StatusFilter} from "../../../strategy.ts";
 
 const styles = {
     root: {
@@ -90,6 +91,10 @@ const styles = {
 interface MappingProps {
     defaultCollection: string;
 }
+
+const cdeSortingFilter = new CdeSortingFilter();
+const variableNameFilter = new VariableNameFilter();
+const statusFilter = new StatusFilter();
 
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
@@ -180,6 +185,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }
 
+    const sortVariableNameRows = (direction: string) => {
+        const result = variableNameFilter.doSort(visibleRows, direction);
+        setVisibleRows([...result]);
+    };
+
+    const sortCdeRows = (direction: string) => {
+        const result = cdeSortingFilter.doSort(visibleRows, direction, datasetMapping, headerIndexes);
+        setVisibleRows([...result]);
+    };
+
+    const sortStatusRows = (direction: string) => {
+        const result = statusFilter.doSort(visibleRows, direction, datasetMapping, headerIndexes, getType);
+        setVisibleRows([...result]);
+    };
 
     const handleFiltering = useCallback((searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
@@ -240,7 +259,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
-
     return (
         <>
             <ModalHeightWrapper pb={10} height='15rem'>
@@ -250,16 +268,16 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <SortIcon/>
+                                <SortIcon onClick={() => sortStatusRows('asc')}/>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
-                                <SortIcon/>
+                                <SortIcon onClick={() => sortVariableNameRows('asc')}/>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
-                                <SortIcon/>
+                                <SortIcon onClick={() => sortCdeRows('asc')}/>
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
