@@ -6,7 +6,13 @@ import {
     HeaderIndexes,
     Suggestions
 } from "../../models.ts";
-import {ABBREVIATION_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
+import {
+    ABBREVIATION_INDEX,
+    CDE_LEVEL_INDEX,
+    ID_INDEX,
+    TITLE_INDEX,
+    VARIABLE_NAME_INDEX
+} from "../../settings.ts";
 
 export const DataContext = createContext<{
 
@@ -31,6 +37,7 @@ export const DataContext = createContext<{
         preciseAbbreviation: ABBREVIATION_INDEX,
         title: TITLE_INDEX,
         id: ID_INDEX,
+        cdeLevel: CDE_LEVEL_INDEX
     },
     collections: {},
     config: {
