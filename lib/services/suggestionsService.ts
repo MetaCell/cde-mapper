@@ -27,7 +27,8 @@ export const computeSuggestions = (
     // Populate intermediateResults based on additionalDatasetMappings
     additionalDatasetMappings.forEach((datasetMapping, index) => {
         Object.entries(datasetMapping).forEach(([variableName, row]) => {
-            if (mainDatasetMapping[variableName] !== undefined) { // Only consider keys present in mainDatasetMapping
+            if (mainDatasetMapping[variableName] !== undefined &&
+                !isRowMapped(mainDatasetMapping[variableName], headerIndexes)) { // Only consider keys present but not mapped in mainDatasetMapping
                 if (isRowMapped(row, headerIndexes)) {
                     const entryId = getId(row, headerIndexes);
 

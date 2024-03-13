@@ -3,7 +3,7 @@ import {Collection, DataInitParams, DatasetMapping} from "../../models.ts";
 import {validateDataset, validateDatasetMapping,} from "../../services/validatorsService.ts";
 import {getDatasetMapping} from "../../services/initialMappingService.ts";
 import ErrorPage from "../../components/ErrorPage.tsx";
-import {ABBREVIATION_INDEX, INTERLEX_ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
+import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
 import {DataContext} from './DataContext.ts';
 import {computeSuggestions} from "../../services/suggestionsService.ts";
 
@@ -12,7 +12,8 @@ const defaultHeaderIndexes = {
     variableName: VARIABLE_NAME_INDEX,
     preciseAbbreviation: ABBREVIATION_INDEX,
     title: TITLE_INDEX,
-    interlexId: INTERLEX_ID_INDEX,
+    id: ID_INDEX,
+    cdeLevel: CDE_LEVEL_INDEX,
 };
 
 export const DataContextProvider = ({

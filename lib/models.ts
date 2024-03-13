@@ -15,7 +15,7 @@ export interface DataInitParams {
 }
 
 export interface ServiceInitParams {
-    callback: (cdeFileMapping: DatasetMapping) => void;
+    callback: (datasetMapping: DatasetMapping, datasetMappingHeader: string[]) => void;
 }
 
 export type InitParams = DataInitParams & ServiceInitParams;
@@ -24,7 +24,8 @@ export interface HeaderIndexes {
     variableName: number;
     preciseAbbreviation: number;
     title: number;
-    interlexId: number;
+    id: number;
+    cdeLevel: number;
 }
 
 export interface Collection {
@@ -55,7 +56,7 @@ export type Option = {
 
 export enum EntityType {
     CDE = 'CDE',
-    CustomDataDictionary = 'CustomDataDictionary',
+    CustomDictionaryField = 'CustomDictionaryField',
     Unknown = 'Unknown',
 }
 
