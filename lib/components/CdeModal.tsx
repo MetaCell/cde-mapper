@@ -1,4 +1,4 @@
-import {FC, ReactElement, useEffect, useState, Dispatch, SetStateAction} from 'react';
+import {FC, ReactElement, useEffect, useState} from 'react';
 import {Snackbar} from '@mui/material';
 import Home from "./steps/Home.tsx";
 import {STEPS} from "../models.ts";
@@ -32,7 +32,7 @@ const CdeModal: FC = () => {
         }
     }, [errorMessage, setErrorMessage]);
 
-    const renderStepComponent = (homeStepIndex: number, setHomeStepIndex: Dispatch<SetStateAction<number>>): ReactElement => {
+    const renderStepComponent = (): ReactElement => {
         switch (step) {
             case STEPS.HOME:
                 return <Home homeStepIndex={homeStepIndex} setHomeStepIndex={setHomeStepIndex}/>;
@@ -48,7 +48,7 @@ const CdeModal: FC = () => {
         <>
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
                 <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step} setIsTourOpen={setIsTourOpen} onAfterSidebarToggle={updateHomeTourStep}/>
-                {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent(homeStepIndex, setHomeStepIndex)}
+                {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
             </Modal>
             <Snackbar
                 open={!!errorMessage}
