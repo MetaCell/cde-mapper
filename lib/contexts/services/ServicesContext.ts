@@ -11,6 +11,7 @@ export const ServicesContext = createContext<{
     getColumnsWithSuggestions: () => string[];
     getSuggestionsForColumn: (column: string) => string[][];
     updateDatasetMappingRow: (key: string, newData: OptionDetail[]) => void;
+    isColumnMapped: (column: string) => boolean,
     onClose: () => void;
 }>({
     getTotalRowsCount: () => 0,
@@ -20,6 +21,7 @@ export const ServicesContext = createContext<{
     getColumnsWithSuggestions: () => [],
     getSuggestionsForColumn: () => [],
     updateDatasetMappingRow: () => {},
+    isColumnMapped: () => false,
     onClose: () => {}
 });
 
