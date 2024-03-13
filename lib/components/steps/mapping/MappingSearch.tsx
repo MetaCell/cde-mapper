@@ -17,6 +17,7 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const debouncedSearchValue = useDebounce(searchString);
 
+
     const handleFiltersClose = () => {
         setAnchorEl(null);
         onChange(debouncedSearchValue)
@@ -28,8 +29,7 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
 
     React.useEffect(() => {
         onChange(debouncedSearchValue);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearchValue])
+    }, [debouncedSearchValue, onChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>

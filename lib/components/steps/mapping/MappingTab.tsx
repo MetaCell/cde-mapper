@@ -22,11 +22,12 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection} from "../../../models.ts";
-import {getId, getType} from "../../../helpers/getters.ts";
+import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {useUIContext} from "../../../contexts/ui/UIContext.ts";
 import Tour from "../../common/Tour.tsx";
 import { tutorial, TourSteps } from "../../common/tutorial.tsx";
+import {mapRowToOption} from "../../../helpers/mappers.ts";
 
 const styles = {
     root: {
@@ -96,19 +97,18 @@ interface MappingProps {
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
-    const {datasetMapping, headerIndexes, collections} = useDataContext();
+    const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
     const {updateDatasetMappingRow} = useServicesContext();
     const {isTourOpen} = useUIContext();
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
-    const [searchResultsDictionary, setSearchResultsDictionary] = useState<{ [id: string]: Option }>({});
     const [stepIndex, setStepIndex] = useState(0);
     const [togglePreview, setTogglePreview] = useState(false);
+    const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
 
 
     useEffect(() => {
-        // Initialize the selected collections state
         const initialSelectedCollections = Object.keys(collections).map(key => ({
             id: key,
             name: collections[key].name,
@@ -118,7 +118,23 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setSelectableCollections(initialSelectedCollections);
     }, [collections, defaultCollection]);
 
-    const handleTourNextStepClick = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
+    const handleTourNextStepClick = useCallback(() => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1), [isTourOpen, setStepIndex])
+    
+    useEffect(() => {
+        const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
+            const row = datasetMapping[variableName];
+            if (isRowMapped(row, headerIndexes)) {
+                const option = mapRowToOption(row, datasetMappingHeader, headerIndexes);
+                acc[option.id] = option;
+            }
+            return acc;
+        }, {} as { [id: string]: Option });
+
+
+        setOptionsMap(initialSearchResults);
+    }, [datasetMapping, datasetMappingHeader, headerIndexes]);
+
+
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
         setSelectableCollections(prevCollections =>
@@ -149,7 +165,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         return acc;
                     }, {} as { [id: string]: Option });
 
-                    setSearchResultsDictionary(prev => ({...prev, ...searchResultsDictionary}));
+                    setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
 
                     return searchResults;
                 });
@@ -164,7 +180,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     );
 
     const handleSelection = (variableName: string, optionId: string, newIsSelectedState: boolean) => {
-        const option = searchResultsDictionary[optionId];
+        const option = optionsMap[optionId];
         if (option) {
             updateDatasetMappingRow(variableName, newIsSelectedState ? option.content : []);
         } else {
@@ -173,14 +189,16 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
 
-    const handleFiltering = (searchTerm: string) => {
+    const handleFiltering = useCallback((searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
-            const columnHeaders = variableName.toLowerCase().includes(searchTerm.toLowerCase())
-            const cdeValues = searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)]?.label.toLowerCase().includes(searchTerm.toLowerCase())
-            return columnHeaders || cdeValues
-        })
-        setVisibleRows(filteredData)
-    }
+            const variableNameMatch = variableName.toLowerCase().includes(searchTerm.toLowerCase());
+            const preciseAbbreviation = datasetMapping[variableName][headerIndexes.preciseAbbreviation] || '';
+            const preciseAbbreviationMatch = preciseAbbreviation.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return variableNameMatch || preciseAbbreviationMatch;
+        });
+        setVisibleRows(filteredData);
+    }, [datasetMapping, headerIndexes]);
 
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
@@ -196,7 +214,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 color = "success";
                 iconColor = "#12B76A";
                 break;
-            case EntityType.CustomDataDictionary:
+            case EntityType.CustomDictionaryField:
                 label = "Mapped to Custom Data Dictionary";
                 color = "success";
                 iconColor = "#346DDB";
@@ -282,9 +300,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: searchResultsDictionary[getId(datasetMapping[variableName], headerIndexes)] || null,
                                                 onDropdownToggle: handleTourNextStepClick,
-                                                dropdownClassname: "cde-field__popper"
+                                                dropdownClassname: "cde-field__popper",
+                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
                                             }}/>
                                     </Box>
 

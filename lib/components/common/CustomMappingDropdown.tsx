@@ -199,7 +199,6 @@ export default function CustomEntitiesDropdown({
     };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        onDropdownToggle();
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
 
@@ -214,6 +213,11 @@ export default function CustomEntitiesDropdown({
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    // const memoizedOnDropdownToggle = React.useCallback(onDropdownToggle, [onDropdownToggle]);
+
+    useEffect(() => {
+        setSelectedOptions(value ? [value] : []);
+    }, [value]);
 
     useEffect(() => {
         if (!open) {
@@ -231,10 +235,10 @@ export default function CustomEntitiesDropdown({
                 }
             }
         };
-
+        onDropdownToggle();
         setIsLoading(true);
         fetchOptions().then(() => setIsLoading(false));
-    }, [searchInput, onSearch, open]);
+    }, [searchInput, onSearch, open, onDropdownToggle]);
 
     type GroupedOptions = {
         [group: string]: Option[];
@@ -283,8 +287,9 @@ export default function CustomEntitiesDropdown({
                     <Typography sx={styles.placeholder}>{placeholder ?? 'Choose mapping...'}</Typography>
                 ) : (
                     <Box gap={1} minWidth={0} display='flex' flexWrap='wrap'>
-                        {selectedOptions?.map(() => (
+                        {selectedOptions?.map((option) => (
                             <Box
+                                key={option.id}
                                 minWidth={0}
                                 display='flex'
                                 alignItems='center'
