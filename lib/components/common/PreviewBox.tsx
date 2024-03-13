@@ -4,6 +4,7 @@ import {useDataContext} from "../../contexts/data/DataContext.ts";
 import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
 import {StyledTable} from "./StyledTable";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
+import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
 
 interface PreviewBoxProps {
     togglePreview: boolean;
@@ -13,6 +14,14 @@ interface PreviewBoxProps {
 const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
     const {datasetSample} = useDataContext();
     const {step, setStep} = useUIContext();
+    const {
+        getTotalRowsCount,
+        getUnmappedRowsCount,
+        getMappedRowsCount,
+        isColumnMapped
+    } = useServicesContext();
+
+    const headers = datasetSample[0]
 
     return (
         <Box className="preview__toggle" sx={{
@@ -47,11 +56,11 @@ const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
                         fontSize: '0.875rem',
                         lineHeight: '142.857%'
                     }}>
-                        124 total number of column headers
+                        {getTotalRowsCount()} total number of column headers
                     </Typography>
 
-                    <Chip icon={<BulletIcon/>} color="success" label="87 mapped" size="small"/>
-                    <Chip icon={<BulletIcon color="#676C74"/>} label="37 unmapped" size="small"/>
+                    <Chip icon={<BulletIcon/>} color="success" label={`${getMappedRowsCount()} mapped`} size="small"/>
+                    <Chip icon={<BulletIcon color="#676C74"/>} label={`${getUnmappedRowsCount()} unmapped`} size="small"/>
                 </Box>
             </Box>
 
@@ -61,15 +70,6 @@ const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
                     overflow: 'auto',
                     maxHeight: '21.25rem',
 
-                    // '&:after': {
-                    //     content: '""',
-                    //     height: '7.8125rem',
-                    //     minWidth: '100%',
-                    //     position: 'absolute',
-                    //     bottom: 0,
-                    //     left: 0,
-                    //     background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, #FFF 83.85%)',
-                    // }
                 }}>
                     <Box display='flex' mb={1} alignItems='center' sx={{
                         '& > div': {
@@ -79,87 +79,22 @@ const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
                             boxSizing: 'border-box'
                         }
                     }}>
-                        <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="GUID" size="medium"/>
-                        </Box>
-                        <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
-                                  size="medium"/>
-                        </Box>
-                        <Box>
-                            <Chip color="success" icon={<GlobeIcon color="#027A48"/>} label="SmallSpeciesStrainTyp"
-                                  size="medium"/>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                lineHeight: '142.857%',
-                                fontSize: '0.875rem',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
-                        <Box>
-                            <Typography sx={{
-                                color: '#A9ACB2',
-                                border: '0.0938rem dashed #E4E5E7',
-                                borderRadius: '0.25rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '142.857%',
-                                padding: '0.375rem 0.5rem'
-                            }}>No mapping yet</Typography>
-                        </Box>
+                        {headers.map((header, index) => (
+                            <Box key={index}>
+                                {isColumnMapped(header) ? (
+                                    <Chip color="success" icon={<GlobeIcon color={"#027A48" } />} label={header} size="medium" />
+                                ) : (
+                                    <Typography sx={{
+                                        color: '#A9ACB2',
+                                        border: '0.0938rem dashed #E4E5E7',
+                                        borderRadius: '0.25rem',
+                                        fontSize: '0.875rem',
+                                        lineHeight: '142.857%',
+                                        padding: '0.375rem 0.5rem'
+                                    }}>No mapping yet</Typography>
+                                )}
+                            </Box>
+                        ))}
                     </Box>
                     <StyledTable sample={datasetSample} tableCellMinWidth='10rem' />
                 </Box>

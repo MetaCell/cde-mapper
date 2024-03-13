@@ -10,6 +10,8 @@ import NoSuggestions from "./NoSuggestions.tsx";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import Tour from '../../common/Tour.tsx';
 import { tutorial, TourSteps } from '../../common/tutorial.tsx';
+import {getId} from "../../../helpers/getters.ts";
+import {mapRowToOption} from "../../../helpers/mappers.ts";
 
 const {
     gray100,
@@ -34,7 +36,8 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
 
     const {
         getSuggestionsForColumn,
-        getColumnsWithSuggestions
+        getColumnsWithSuggestions,
+        updateDatasetMappingRow
     } = useServicesContext();
 
     const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
@@ -42,6 +45,7 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
     const [stepIndex, setStepIndex] = useState<number>(0);
 
+    const [selectedSuggestion, setSelectedSuggestion] = useState<string[] | null>(null);
     const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>(getColumnsWithSuggestions());
 
     const handleNext = useCallback(() => {
@@ -63,6 +67,21 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
         }
 
     }, [suggestionsToProcess, currentKeyIndex]);
+
+
+    const acceptSuggestion = useCallback(() => {
+        if (!selectedSuggestion) return;
+
+        const currentColumn = suggestionsToProcess[currentKeyIndex];
+        const selectedSuggestionOption = mapRowToOption(selectedSuggestion, datasetMappingHeader, headerIndexes)
+        updateDatasetMappingRow(currentColumn, selectedSuggestionOption.content);
+
+        setSelectedSuggestion(null);
+
+        completeSuggestion();
+
+    }, [selectedSuggestion, suggestionsToProcess, currentKeyIndex, datasetMappingHeader, headerIndexes,
+        updateDatasetMappingRow, completeSuggestion]);
 
     useEffect(() => {
         const initialActiveSuggestions = getColumnsWithSuggestions()
@@ -152,12 +171,18 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                 </Box>
 
                 <Box display='flex' alignItems='start' flexDirection='column' gap='3rem'>
-                    {visibleSuggestions.map((suggestion, index) => {
+                    {visibleSuggestions.map((suggestion) => {
+                        const id = getId(suggestion, headerIndexes);
+                        const isSelected = selectedSuggestion ? getId(selectedSuggestion, headerIndexes) === id : false
                         return (
-                            <SuggestionDetailUI key={index}
-                                                row={suggestion}
-                                                header={datasetMappingHeader}
-                                                headerIndexes={headerIndexes}/>
+                            <SuggestionDetailUI
+                                key={id}
+                                row={suggestion}
+                                header={datasetMappingHeader}
+                                headerIndexes={headerIndexes}
+                                isSelected={isSelected}
+                                onSelect={() => setSelectedSuggestion(suggestion)}
+                            />
                         );
                     })}
                     {shouldShowOtherSuggestionsButton && (
@@ -181,12 +206,20 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
 
                 {showOtherSuggestions && (
                     <Box display='flex' alignItems='start' flexDirection='column' mt='3rem' gap='3rem'>
-                        {otherSuggestions.map((suggestion, index) => (
-                            <SuggestionDetailUI key={index}
-                                                row={suggestion}
-                                                header={datasetMappingHeader}
-                                                headerIndexes={headerIndexes}/>
-                        ))}
+                        {otherSuggestions.map((suggestion) => {
+                            const id = getId(suggestion, headerIndexes);
+                            const isSelected = selectedSuggestion ? getId(selectedSuggestion, headerIndexes) === id : false
+                            return (
+                                <SuggestionDetailUI
+                                    key={id}
+                                    row={suggestion}
+                                    header={datasetMappingHeader}
+                                    headerIndexes={headerIndexes}
+                                    isSelected={isSelected}
+                                    onSelect={() => setSelectedSuggestion(suggestion)}
+                                />
+                            );
+                        })}
                     </Box>
                 )}
             </ModalHeightWrapper>
@@ -221,7 +254,8 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
 
                 <Box gap='0.5rem' display='flex' alignItems='center' className='suggestions__button-block'>
                     <Button variant='outlined' onClick={completeSuggestion}>Ignore suggestions</Button>
-                    <Button variant='contained'>Accept selected mapping</Button>
+                    <Button variant='contained' onClick={acceptSuggestion} disabled={!selectedSuggestion}>Accept
+                        selected mapping</Button>
                 </Box>
             </Box>
 

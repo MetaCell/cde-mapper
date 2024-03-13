@@ -9,8 +9,8 @@ export const validateDatasetMapping = (datasetMapping: string[][] | undefined, v
         return
     }
     const headers = datasetMapping[0];
-    if (headers.length < 3) {
-        throw new Error("Dataset mapping must have at least 3 columns (VariableName, PreciseAbbreviation, InterlexId).");
+    if (headers.length < 4) {
+        throw new Error("Dataset mapping must have at least 4 columns (VariableName, PreciseAbbreviation, Id, CdeLevel).");
     }
 
     // Create a set to track variableNames

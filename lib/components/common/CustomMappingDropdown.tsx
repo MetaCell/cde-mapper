@@ -216,6 +216,10 @@ export default function CustomEntitiesDropdown({
 
 
     useEffect(() => {
+        setSelectedOptions(value ? [value] : []);
+    }, [value]);
+
+    useEffect(() => {
         if (!open) {
             return;
         }
@@ -283,8 +287,9 @@ export default function CustomEntitiesDropdown({
                     <Typography sx={styles.placeholder}>{placeholder ?? 'Choose mapping...'}</Typography>
                 ) : (
                     <Box gap={1} minWidth={0} display='flex' flexWrap='wrap'>
-                        {selectedOptions?.map(() => (
+                        {selectedOptions?.map((option) => (
                             <Box
+                                key={option.id}
                                 minWidth={0}
                                 display='flex'
                                 alignItems='center'
