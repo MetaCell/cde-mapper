@@ -13,6 +13,7 @@ interface CollectionsProps {
 function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProps) {
     const {
         collections,
+        emailTemplate
     } = useDataContext();
 
     const collectionKeys = Object.keys(collections);
@@ -71,7 +72,9 @@ function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProp
                             </Button>
                         </Box>
                         <Box sx={{mt: 1.5}}>
-                            <Link href={`mailto:${''}`}>Can’t find the repository you’re looking for? Contact us</Link>
+                            <Link href={`mailto:${emailTemplate.email}?subject=${encodeURIComponent(emailTemplate.title) || ''}&body=${encodeURIComponent(emailTemplate.description) || ''}`}>
+                                Can’t find the repository you’re looking for? Contact us
+                            </Link>
                         </Box>
                     </Stack>
                 </Stack>
