@@ -10,7 +10,8 @@ export interface DataInitParams {
     headerIndexes?: HeaderIndexes;
     collections: Collection[];
     config: Config;
-    name: string
+    name: string;
+    emailTemplate: EmailTemplateParams;
 }
 
 export interface ServiceInitParams {
@@ -76,4 +77,10 @@ export interface SelectableCollection {
     id: string;
     name: string;
     selected: boolean;
+}
+
+export interface EmailTemplateParams {
+    email: string;
+    title: string;
+    description: string;
 }

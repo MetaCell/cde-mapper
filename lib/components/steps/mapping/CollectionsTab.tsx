@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Stack, Typography, Box, Button, Link } from '@mui/material';
 import StyledCard from '../../common/StyledCard.tsx';
-import {useDataContext} from "../../../contexts/data/DataContext.ts";
-import {useUIContext} from '../../../contexts/ui/UIContext.ts';
+import { useDataContext } from "../../../contexts/data/DataContext.ts";
+import { useUIContext } from '../../../contexts/ui/UIContext.ts';
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx";
 import Tour from '../../common/Tour.tsx';
 import { TourSteps, tutorial } from '../../common/tutorial.tsx';
@@ -16,6 +16,7 @@ interface CollectionsProps {
 function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsProps) {
     const {
         collections,
+        emailTemplate
     } = useDataContext();
     const {
         isTourOpen
@@ -59,7 +60,7 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                 This can be changed at any time during the process.
                             </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={1.5} className='repository-cards'>
+                        <Stack direction="row" spacing={1.5}>
                             {collectionKeys.map(key => (
                                 <StyledCard
                                     key={key}
@@ -76,14 +77,15 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                 <Button
                                     disableRipple
                                     variant="contained"
-                                    className='repository__select-btn'
                                     onClick={() => handleConfirm()}
                                 >
                                     Select repository
                                 </Button>
                             </Box>
                             <Box sx={{ mt: 1.5 }}>
-                                <Link href={`mailto:${''}`}>Can’t find the repository you’re looking for? Contact us</Link>
+                                <Link href={`mailto:${emailTemplate.email}?subject=${encodeURIComponent(emailTemplate.title) || ''}&body=${encodeURIComponent(emailTemplate.description) || ''}`}>
+                                    Can’t find the repository you’re looking for? Contact us
+                                </Link>
                             </Box>
                         </Stack>
                     </Stack>
