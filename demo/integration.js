@@ -76,6 +76,11 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                             title: 2,
                             id: 11,
                             cdeLevel: 12,
+                        },
+                        emailTemplate: {
+                            email: 'support@interlex.org',
+                            title: 'CDE Mapper collection not found',
+                            description: 'This is an email coming from the cde mapper application to flag that a certain collection is missing.'
                         }
                     });
                 },

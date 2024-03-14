@@ -10,7 +10,8 @@ export interface DataInitParams {
     headerIndexes?: HeaderIndexes;
     collections: Collection[];
     config: Config;
-    name: string
+    name: string;
+    emailTemplate: EmailTemplateParams;
 }
 
 export interface ServiceInitParams {
@@ -82,4 +83,10 @@ export interface CheckedState {
     [EntityType.CDE]: boolean;
     [EntityType.CustomDictionaryField]: boolean,
     [EntityType.Unknown]: boolean,
+}
+
+export interface EmailTemplateParams {
+    email: string;
+    title: string;
+    description: string;
 }
