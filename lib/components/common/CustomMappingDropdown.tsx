@@ -213,8 +213,6 @@ export default function CustomEntitiesDropdown({
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    // const memoizedOnDropdownToggle = React.useCallback(onDropdownToggle, [onDropdownToggle]);
-
     useEffect(() => {
         setSelectedOptions(value ? [value] : []);
     }, [value]);
