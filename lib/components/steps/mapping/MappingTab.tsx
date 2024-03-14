@@ -181,6 +181,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
     const handleFiltering = useCallback((searchTerm: string, checked: CheckedState) => {
+        const allTrue = Object.values(checked).every(value => value === true);
+
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
             const variableNameMatch = variableName.toLowerCase().includes(searchTerm.toLowerCase());
             const row = datasetMapping[variableName]
@@ -190,7 +192,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             const entityType = getType(row, headerIndexes);
             const isAnyTrue = Object.values(checked).some(value => value === true);
     
-            if (isAnyTrue) {
+            if (isAnyTrue && !allTrue) {
                 return checked[entityType];
             }
     

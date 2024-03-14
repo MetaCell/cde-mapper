@@ -25,11 +25,11 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
         });
     };
 
-    const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleReset = () => {
         setChecked({
-            [EntityType.CDE]: event.target.checked,
-            [EntityType.CustomDictionaryField]: event.target.checked,
-            [EntityType.Unknown]: event.target.checked
+            [EntityType.CDE]: false,
+            [EntityType.CustomDictionaryField]: false,
+            [EntityType.Unknown]: false
         })
     };
 
@@ -49,8 +49,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
 
     React.useEffect(() => {
         onChange(debouncedSearchValue, checked);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearchValue, checked])
+    }, [debouncedSearchValue, checked, onChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
@@ -61,7 +60,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
             InputProps={{
                 startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>
             }}
-            // value={searchString}
+            value={searchString}
             onChange={(event) => setSearchString(event.target.value)}
         />
         <Button
@@ -72,6 +71,6 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
             Filter
         </Button>
 
-        <Filters anchorEl={anchorEl} handleClose={handleFiltersClose} open={open} id={id} checked={checked} onChange={handleChange} onAllChange={handleAllChange}/>
+        <Filters anchorEl={anchorEl} handleClose={handleFiltersClose} open={open} id={id} checked={checked} onChange={handleChange} onReset={handleReset}/>
     </Box>;
 }

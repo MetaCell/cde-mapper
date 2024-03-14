@@ -16,10 +16,10 @@ interface FiltersProps {
     id: string | undefined;
     checked: CheckedState;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onAllChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onReset: () => void;
 }
 
-const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, checked, onChange, onAllChange }) => {
+const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, checked, onChange, onReset }) => {
 
     return (
         <Popover
@@ -51,6 +51,7 @@ const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, chec
                 }}>Filter by</Typography>
                 <Button
                     variant="text"
+                    onClick={onReset}
                     sx={{
                         p: 0,
                         fontSize: '0.75rem',
@@ -71,24 +72,8 @@ const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, chec
                     color: '#676C74',
                     mb: '0.75rem'
                 }}>Status</Typography>
-                <Checkbox
-                    label="All"
-                    checked={checked[EntityType.CDE] && checked[EntityType.CustomDictionaryField] && checked[EntityType.Unknown]}
-                    onChange={onAllChange}
-                />
 
-                <Box pl={3} mt="0.75rem" sx={{
-                    position: 'relative',
-                    '&:before': {
-                        content: '""',
-                        width: '0.0625rem',
-                        height: '100%',
-                        background: '#ECEDEE',
-                        position: 'absolute',
-                        top: 0,
-                        left: '0.4688rem'
-                    }
-                }}>
+                <Box mt="0.75rem">
                     <FormGroup>
                         <Checkbox checked={checked[EntityType.CDE]} onChange={onChange} name={EntityType.CDE} label="Mapped to CDE" />
                         <Checkbox checked={checked[EntityType.CustomDictionaryField]} onChange={onChange} name={EntityType.CustomDictionaryField} label="Mapped to Data Dictionary field" />
