@@ -6,7 +6,8 @@ import {
     Box,
     Chip, ChipProps,
     TextField,
-    Typography
+    Typography,
+    IconButton
 } from "@mui/material"
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
@@ -84,6 +85,13 @@ const styles = {
         '& svg': {
             cursor: 'pointer',
         }
+    },
+    sortButton: {
+        padding: '0.25rem',
+        borderRadius: '0.25rem',
+        '&:hover': {
+            backgroundColor: '#ECEDEE'
+        }
     }
 }
 
@@ -105,6 +113,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [variableNameSortOrder, setVariableNameSortOrder] = useState(0);
+    const [cdeSortOrder, setCdeSortOrder] = useState(0);
+    const [statusSortOrder, setStatusSortOrder] = useState(0);
+
 
 
     useEffect(() => {
@@ -185,18 +197,24 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }
 
-    const sortVariableNameRows = (direction: string) => {
-        const result = variableNameFilter.doSort(visibleRows, direction);
+    const sortVariableNameRows = () => {
+        const nextSortOrder = (variableNameSortOrder + 1) % 3;
+        setVariableNameSortOrder(nextSortOrder);
+        const result = nextSortOrder===1 ? variableNameFilter.doSort(visibleRows, 'asc') : nextSortOrder===2 ? variableNameFilter.doSort(visibleRows, 'desc') : Object.keys(datasetMapping)
         setVisibleRows([...result]);
     };
 
-    const sortCdeRows = (direction: string) => {
-        const result = cdeSortingFilter.doSort(visibleRows, direction, datasetMapping, headerIndexes);
+    const sortCdeRows = () => {
+        const nextSortOrder = (cdeSortOrder + 1) % 3;
+        setCdeSortOrder(nextSortOrder);
+        const result = nextSortOrder===1 ? cdeSortingFilter.doSort(visibleRows, 'asc', datasetMapping, headerIndexes) : nextSortOrder===2 ? cdeSortingFilter.doSort(visibleRows, 'desc', datasetMapping, headerIndexes) : Object.keys(datasetMapping)
         setVisibleRows([...result]);
     };
 
-    const sortStatusRows = (direction: string) => {
-        const result = statusFilter.doSort(visibleRows, direction, datasetMapping, headerIndexes, getType);
+    const sortStatusRows = () => {
+        const nextSortOrder = (statusSortOrder + 1) % 3;
+        setStatusSortOrder(nextSortOrder);
+        const result = nextSortOrder===1? statusFilter.doSort(visibleRows, 'asc', datasetMapping, headerIndexes, getType) : nextSortOrder===2? statusFilter.doSort(visibleRows, 'desc', datasetMapping, headerIndexes, getType): Object.keys(datasetMapping)
         setVisibleRows([...result]);
     };
 
@@ -268,16 +286,22 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <SortIcon onClick={() => sortStatusRows('asc')}/>
+                                <IconButton onClick={sortStatusRows} sx={styles.sortButton}>
+                                    <SortIcon direction={statusSortOrder}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
-                                <SortIcon onClick={() => sortVariableNameRows('asc')}/>
+                                <IconButton onClick={sortVariableNameRows} sx={styles.sortButton}>
+                                    <SortIcon direction={variableNameSortOrder}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
-                                <SortIcon onClick={() => sortCdeRows('asc')}/>
+                                <IconButton onClick={sortCdeRows} sx={styles.sortButton}>
+                                    <SortIcon direction={cdeSortOrder}/>
+                                </IconButton>
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
