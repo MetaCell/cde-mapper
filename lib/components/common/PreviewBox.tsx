@@ -1,7 +1,6 @@
 import React from "react";
 import {Box, Typography, Chip, Button} from "@mui/material";
 import {useDataContext} from "../../contexts/data/DataContext.ts";
-// import PreviewTable from "./PreviewTable";
 import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
 import {StyledTable} from "./StyledTable";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
@@ -67,20 +66,27 @@ const PreviewBox = () => {
                     borderTop: '0.0625rem solid #ECEDEE',
                     overflow: 'auto',
                     maxHeight: '21.25rem',
-
+                    overflowY: 'hidden'
                 }}>
                     <Box display='flex' mb={1} alignItems='center' sx={{
                         '& > div': {
                             flexShrink: 0,
                             padding: '0 0.5rem',
-                            width: '10rem',
                             boxSizing: 'border-box'
                         }
                     }}>
                         {headers.map((header, index) => (
-                            <Box key={index}>
+                            <Box key={index} sx={{ height: '2rem' }}>
                                 {isColumnMapped(header) ? (
-                                    <Chip color="success" icon={<GlobeIcon color={"#027A48" } />} label={header} size="medium" />
+                                    <Chip 
+                                        color="success" 
+                                        icon={<GlobeIcon color={"#027A48" } style={{width: 16, height: 16}}/>} 
+                                        label={header} 
+                                        size="medium" 
+                                        sx={{
+                                            '& .MuiChip-label': { fontSize: '0.875rem' }
+                                        }} 
+                                    />
                                 ) : (
                                     <Typography sx={{
                                         color: '#A9ACB2',
@@ -88,7 +94,7 @@ const PreviewBox = () => {
                                         borderRadius: '0.25rem',
                                         fontSize: '0.875rem',
                                         lineHeight: '142.857%',
-                                        padding: '0.375rem 0.5rem'
+                                        padding: '0.3rem 0.5rem'
                                     }}>No mapping yet</Typography>
                                 )}
                             </Box>

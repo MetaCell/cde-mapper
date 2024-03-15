@@ -4,9 +4,13 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import { TargetIcon } from '../../icons';
 import { vars } from '../../theme/variables';
 
-const { gray50, gray200, baseWhite } = vars;
+const { gray50, gray200, gray600, baseWhite } = vars;
 
 
 export const StyledTable = (props: { sample: string[][], tableCellMinWidth: string }) => {
@@ -15,6 +19,7 @@ export const StyledTable = (props: { sample: string[][], tableCellMinWidth: stri
 
     return (
         <Table
+            aria-label="styled table"
             sx={{
                 position: 'relative',
                 borderBottom: 0,
@@ -31,8 +36,9 @@ export const StyledTable = (props: { sample: string[][], tableCellMinWidth: stri
                     borderRight: `0.0625rem solid ${gray200} !important`,
                     padding: '0.75rem 1.5rem !important',
                     fontSize: '0.875rem',
+                    color: gray600,
                     borderBottom: `0.0625rem solid ${gray200}`,
-                    minWidth: '7.5rem',
+                    minWidth: props.tableCellMinWidth,
                     minHeight: '2.75rem',
                     lineHeight: '1.25rem',
                     borderTop: '0.0625rem solid',
@@ -40,28 +46,36 @@ export const StyledTable = (props: { sample: string[][], tableCellMinWidth: stri
                     borderLeft: `0.0625rem solid ${gray200}`,
                 }
             }}
-            aria-label="styled table"
         >
             <TableHead sx={{
                 '& .MuiTableCell-root': {
+                    maxWidth: props.tableCellMinWidth
+                },
+                '& .MuiTypography-root': {
                     fontSize: '0.75rem',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    maxWidth: '7.5rem'
+                    width: '4.75rem'
                 }
             }}>
-                <TableRow>
+                <TableRow sx={{
+                    '& .MuiTableCell-head': {
+                        '&:not(:hover) svg': {
+                            display: 'none'
+                        }
+                    }
+                }}>
                     {
                         columns.map((column, columnIndex) => (
                             <Tooltip key={columnIndex} title={column} placement='top'>
-                                <TableCell
-                                    align="left"
-                                    sx={{
-                                        backgroundColor: gray50
-                                    }}
-                                >
-                                    {column}
+                                <TableCell align="left" sx={{backgroundColor: gray50}}>
+                                    <Box display='flex' alignItems='center' justifyContent='space-between'>
+                                        <Typography>{column}</Typography>
+                                        <IconButton href={'#'+column} sx={{padding: 0, '&:hover': {background: 'transparent'}}}>
+                                            <TargetIcon/>
+                                        </IconButton>
+                                    </Box>
                                 </TableCell>
                             </Tooltip>
                         ))
@@ -70,9 +84,7 @@ export const StyledTable = (props: { sample: string[][], tableCellMinWidth: stri
             </TableHead>
             <TableBody>
                 {rows.map((row, rowIndex) => (
-                    <TableRow
-                        key={rowIndex}
-                    >
+                    <TableRow key={rowIndex}>
                         {
                             row.map((cell, cellIndex) => (
                                 <TableCell key={cellIndex} align="left">{cell}</TableCell>
