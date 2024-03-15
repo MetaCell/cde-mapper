@@ -4,9 +4,16 @@ import {
     Config,
     DatasetMapping,
     HeaderIndexes,
-    Suggestions
+    Suggestions,
+    EmailTemplateParams
 } from "../../models.ts";
-import {ABBREVIATION_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
+import {
+    ABBREVIATION_INDEX,
+    CDE_LEVEL_INDEX,
+    ID_INDEX,
+    TITLE_INDEX,
+    VARIABLE_NAME_INDEX
+} from "../../settings.ts";
 
 export const DataContext = createContext<{
 
@@ -20,6 +27,7 @@ export const DataContext = createContext<{
     config: Config;
     setDatasetMapping:  React.Dispatch<React.SetStateAction<DatasetMapping>>;
     setDatasetMappingHeader:  React.Dispatch<React.SetStateAction<string[]>>;
+    emailTemplate: EmailTemplateParams;
 }>({
     name: '',
     datasetSample: [],
@@ -31,6 +39,7 @@ export const DataContext = createContext<{
         preciseAbbreviation: ABBREVIATION_INDEX,
         title: TITLE_INDEX,
         id: ID_INDEX,
+        cdeLevel: CDE_LEVEL_INDEX
     },
     collections: {},
     config: {
@@ -39,6 +48,11 @@ export const DataContext = createContext<{
     },
     setDatasetMapping: () => {},
     setDatasetMappingHeader: () => {},
+    emailTemplate: {
+        email: 'support@interlex.org',
+        title: 'CDE Mapper collection not found',
+        description: 'This is an email coming from the cde mapper application to flag that a certain collection is missing.'
+    }
 });
 
 export const useDataContext = () => useContext(DataContext);
