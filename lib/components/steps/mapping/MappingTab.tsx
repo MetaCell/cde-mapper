@@ -270,12 +270,17 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const handleSortingStrategy = (newCurrentSortingFilter: any) => {
         if (currentFilter && isSameStrategyType(currentFilter, newCurrentSortingFilter)) {
             currentFilter.toggleSortOrder();
-            const res = currentFilter.doSort(visibleRows, datasetMapping, headerIndexes, getType);
-            setVisibleRows([...res]);
         } else {
             setCurrentFilter(newCurrentSortingFilter)
         }
     }
+
+    useEffect(() => {
+        if(currentFilter){
+            const res = currentFilter.doSort(visibleRows, datasetMapping, headerIndexes, getType);
+            setVisibleRows([...res]);
+        }
+    }, [currentFilter])
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
