@@ -21,7 +21,7 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection, CheckedState} from "../../../models.ts";
+import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
@@ -180,7 +180,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }
 
-    const handleFiltering = useCallback((searchTerm: string, checked: CheckedState) => {
+    const handleFiltering = useCallback((searchTerm: string, checked: FiltersState) => {
         const allTrue = Object.values(checked).every(value => value === true);
 
         const filteredData = Object.keys(datasetMapping).filter(variableName => {

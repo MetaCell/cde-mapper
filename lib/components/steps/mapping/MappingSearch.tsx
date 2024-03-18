@@ -3,30 +3,30 @@ import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import {FilterIcon, SearchIcon} from "../../../icons";
 import Filters from "../../common/Filters.tsx";
 import { useDebounce } from "../../../hooks.ts";
-import { EntityType, CheckedState } from "../../../models.ts";
+import { EntityType, FiltersState } from "../../../models.ts";
 
 interface MappingSearchProps {
-    onChange: (searchTerm: string, checked: CheckedState) => void;
+    onChange: (searchTerm: string, checked: FiltersState) => void;
 }
 
 export default function MappingSearch({onChange}: MappingSearchProps) {
 
     const [searchString, setSearchString] = useState('');
-    const [checked, setChecked] = React.useState({
+    const [filtersState, setFiltersState] = React.useState({
         [EntityType.CDE]: false,
         [EntityType.CustomDictionaryField]: false,
         [EntityType.Unknown]: false,
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked({
-            ...checked,
+        setFiltersState({
+            ...filtersState,
             [event.target.name]: event.target.checked,
         });
     };
 
     const handleReset = () => {
-        setChecked({
+        setFiltersState({
             [EntityType.CDE]: false,
             [EntityType.CustomDictionaryField]: false,
             [EntityType.Unknown]: false
@@ -48,8 +48,8 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
     const id = open ? 'filter-popover' : undefined;
 
     React.useEffect(() => {
-        onChange(debouncedSearchValue, checked);
-    }, [debouncedSearchValue, checked, onChange])
+        onChange(debouncedSearchValue, filtersState);
+    }, [debouncedSearchValue, filtersState, onChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
@@ -71,6 +71,6 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
             Filter
         </Button>
 
-        <Filters anchorEl={anchorEl} handleClose={handleFiltersClose} open={open} id={id} checked={checked} onChange={handleChange} onReset={handleReset}/>
+        <Filters anchorEl={anchorEl} handleClose={handleFiltersClose} open={open} id={id} checked={filtersState} onChange={handleChange} onReset={handleReset}/>
     </Box>;
 }

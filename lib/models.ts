@@ -79,7 +79,7 @@ export interface SelectableCollection {
     selected: boolean;
 }
 
-export interface CheckedState {
+export interface FiltersState {
     [EntityType.CDE]: boolean;
     [EntityType.CustomDictionaryField]: boolean,
     [EntityType.Unknown]: boolean,
