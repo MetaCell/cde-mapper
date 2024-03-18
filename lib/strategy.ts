@@ -1,35 +1,94 @@
 import { HeaderIndexes, DatasetMapping } from "./models";
 
+
 export interface SortingStrategy {
-    doSort(data: string[], direction: string, datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): void;
+    doSort(data: string[], datasetMapping?: DatasetMapping, headerIndexes?: HeaderIndexes, getType?: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+    toggleSortOrder(): void;
 }
 
-export class CdeSortingFilter implements SortingStrategy {
-    public doSort(data: string[], direction: string, datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes): string[] {
-        return data.sort((a, b) => {
+export enum SortState {
+    Off = 0,
+    Ascending = 1,
+    Descending = 2
+}
+
+abstract class SortingStrategyBase implements SortingStrategy {
+    protected sortState: SortState = SortState.Off;
+
+    public toggleSortOrder(): void {
+        this.sortState = (this.sortState + 1) % 3;
+    }
+
+    abstract doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType?: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+}
+
+export class CdeSortingFilter extends SortingStrategyBase {
+    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes): string[] {
+        if (this.sortState === SortState.Off) {
+            return Object.keys(datasetMapping);
+        }
+
+        const sortedData = data.slice();
+
+        sortedData.sort((a, b) => {
             const rowA = datasetMapping[a];
             const rowB = datasetMapping[b];
+            let comparisonResult = rowA[headerIndexes.preciseAbbreviation].localeCompare(rowB[headerIndexes.preciseAbbreviation]);
 
-            if (direction === "asc") return rowA[headerIndexes.preciseAbbreviation].localeCompare(rowB[headerIndexes.preciseAbbreviation]);
-            else return rowB[headerIndexes.preciseAbbreviation].localeCompare(rowA[headerIndexes.preciseAbbreviation]);
-        })
+            if (this.sortState === SortState.Descending) {
+                comparisonResult *= -1;
+            }
+
+            return comparisonResult;
+        });
+
+        return sortedData;
     }
 }
 
-export class VariableNameFilter implements SortingStrategy {
-    public doSort(data: string[], direction: string): string[] {
-        return direction === "desc" ? data.sort().reverse() : data.sort();
+export class VariableNameFilter extends SortingStrategyBase {
+    public doSort(data: string[], datasetMapping: DatasetMapping): string[] {
+        console.log("sort order: ", this.sortState)
+        if (this.sortState === SortState.Off) {
+            return Object.keys(datasetMapping);
+        }
+
+        const sortedData = data.slice();
+
+        sortedData.sort((a, b) => {
+            let comparisonResult = a.localeCompare(b);
+
+            if (this.sortState === SortState.Descending) {
+                comparisonResult *= -1;
+            }
+
+            return comparisonResult;
+        });
+
+        return sortedData;
     }
 }
 
-export class StatusFilter implements SortingStrategy {
-    public doSort(data: string[], direction: string, datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): string[] {
-        return data.sort((a, b) => {
+export class StatusFilter extends SortingStrategyBase {
+    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): string[] {
+        if (this.sortState === SortState.Off) {
+            return Object.keys(datasetMapping)
+        }
+
+        const sortedData = data.slice();
+
+        sortedData.sort((a, b) => {
             const rowA = datasetMapping[a];
             const rowB = datasetMapping[b];
+            let comparisonResult = getType(rowA, headerIndexes).localeCompare(getType(rowB, headerIndexes));
 
-            if (direction === "asc") return getType(rowA, headerIndexes).localeCompare(getType(rowB, headerIndexes));
-            else return getType(rowB, headerIndexes).localeCompare(getType(rowA, headerIndexes));
-        })
+            if (this.sortState === SortState.Descending) {
+                comparisonResult *= -1;
+            }
+
+            return comparisonResult;
+        });
+
+        return sortedData;
     }
 }

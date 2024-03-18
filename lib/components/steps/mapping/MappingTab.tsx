@@ -22,7 +22,7 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection} from "../../../models.ts";
+import {DatasetMapping, EntityType, HeaderIndexes, Option, SelectableCollection} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
@@ -100,9 +100,14 @@ interface MappingProps {
     defaultCollection: string;
 }
 
-const cdeSortingFilter = new CdeSortingFilter();
-const variableNameFilter = new VariableNameFilter();
-const statusFilter = new StatusFilter();
+interface CurrentFilterInterface {
+    doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+    toggleSortOrder(): void;
+}
+
+// const cdeSortingFilter = new CdeSortingFilter();
+// const variableNameFilter = new VariableNameFilter();
+// const statusFilter = new StatusFilter();
 
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
@@ -113,6 +118,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [currentFilter, setCurrentFilter] = useState<CurrentFilterInterface>();
     const [variableNameSortOrder, setVariableNameSortOrder] = useState(0);
     const [cdeSortOrder, setCdeSortOrder] = useState(0);
     const [statusSortOrder, setStatusSortOrder] = useState(0);
@@ -142,7 +148,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
         setOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
-
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
@@ -196,27 +201,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             console.error("Option not found: " + optionId);
         }
     }
-
-    const sortVariableNameRows = () => {
-        const nextSortOrder = (variableNameSortOrder + 1) % 3;
-        setVariableNameSortOrder(nextSortOrder);
-        const result = nextSortOrder===1 ? variableNameFilter.doSort(visibleRows, 'asc') : nextSortOrder===2 ? variableNameFilter.doSort(visibleRows, 'desc') : Object.keys(datasetMapping)
-        setVisibleRows([...result]);
-    };
-
-    const sortCdeRows = () => {
-        const nextSortOrder = (cdeSortOrder + 1) % 3;
-        setCdeSortOrder(nextSortOrder);
-        const result = nextSortOrder===1 ? cdeSortingFilter.doSort(visibleRows, 'asc', datasetMapping, headerIndexes) : nextSortOrder===2 ? cdeSortingFilter.doSort(visibleRows, 'desc', datasetMapping, headerIndexes) : Object.keys(datasetMapping)
-        setVisibleRows([...result]);
-    };
-
-    const sortStatusRows = () => {
-        const nextSortOrder = (statusSortOrder + 1) % 3;
-        setStatusSortOrder(nextSortOrder);
-        const result = nextSortOrder===1? statusFilter.doSort(visibleRows, 'asc', datasetMapping, headerIndexes, getType) : nextSortOrder===2? statusFilter.doSort(visibleRows, 'desc', datasetMapping, headerIndexes, getType): Object.keys(datasetMapping)
-        setVisibleRows([...result]);
-    };
 
     const handleFiltering = useCallback((searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
@@ -275,6 +259,24 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         return false
     };
 
+    const isSameStrategyType = (filter: any, newFilter: any) => {
+        if (!filter || !newFilter) {
+            return false;
+        }
+    
+        return filter.constructor === newFilter.constructor;
+    }
+
+    const handleSortingStrategy = (newCurrentSortingFilter: any) => {
+        if (currentFilter && isSameStrategyType(currentFilter, newCurrentSortingFilter)) {
+            currentFilter.toggleSortOrder();
+            const res = currentFilter.doSort(visibleRows, datasetMapping, headerIndexes, getType);
+            setVisibleRows([...res]);
+        } else {
+            setCurrentFilter(newCurrentSortingFilter)
+        }
+    }
+
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
@@ -286,20 +288,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <IconButton onClick={sortStatusRows} sx={styles.sortButton}>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
                                     <SortIcon direction={statusSortOrder}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
-                                <IconButton onClick={sortVariableNameRows} sx={styles.sortButton}>
+                                <IconButton onClick={() => handleSortingStrategy(new VariableNameFilter())} sx={styles.sortButton}>
                                     <SortIcon direction={variableNameSortOrder}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
-                                <IconButton onClick={sortCdeRows} sx={styles.sortButton}>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new CdeSortingFilter)}>
                                     <SortIcon direction={cdeSortOrder}/>
                                 </IconButton>
                             </Box>
