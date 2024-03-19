@@ -101,13 +101,10 @@ interface MappingProps {
 }
 
 interface CurrentFilterInterface {
-    doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+    doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
     toggleSortOrder(): void;
+    sortState: number;
 }
-
-// const cdeSortingFilter = new CdeSortingFilter();
-// const variableNameFilter = new VariableNameFilter();
-// const statusFilter = new StatusFilter();
 
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
@@ -118,11 +115,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
-    const [currentFilter, setCurrentFilter] = useState<CurrentFilterInterface>();
+    const [currentFilterStrategy, setCurrentFilterStrategy] = useState<CurrentFilterInterface>();
     const [variableNameSortOrder, setVariableNameSortOrder] = useState(0);
     const [cdeSortOrder, setCdeSortOrder] = useState(0);
     const [statusSortOrder, setStatusSortOrder] = useState(0);
-
 
 
     useEffect(() => {
@@ -162,7 +158,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             })
         );
     };
-
 
     const searchInCollections = useCallback(
         async (queryString: string): Promise<Option[]> => {
@@ -259,28 +254,48 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         return false
     };
 
-    const isSameStrategyType = (filter: any, newFilter: any) => {
+    const isSameStrategyType = (filter: CurrentFilterInterface, newFilter: CurrentFilterInterface) => {
         if (!filter || !newFilter) {
             return false;
         }
-    
         return filter.constructor === newFilter.constructor;
     }
 
-    const handleSortingStrategy = (newCurrentSortingFilter: any) => {
-        if (currentFilter && isSameStrategyType(currentFilter, newCurrentSortingFilter)) {
-            currentFilter.toggleSortOrder();
-        } else {
-            setCurrentFilter(newCurrentSortingFilter)
+    const sortRows = useCallback((fitlerStrategy: CurrentFilterInterface) => {
+        const result = fitlerStrategy.doSort(visibleRows, datasetMapping, headerIndexes, getType);
+        setVisibleRows([...result]);
+    }, [datasetMapping, headerIndexes, visibleRows])
+
+    const handleSortOrderChange = useCallback((sortOrder: number) => {
+        if (currentFilterStrategy instanceof StatusFilter) {
+            setStatusSortOrder(sortOrder);
+        } else if (currentFilterStrategy instanceof VariableNameFilter) {
+            setVariableNameSortOrder(sortOrder);
+        } else if (currentFilterStrategy instanceof CdeSortingFilter) {
+            setCdeSortOrder(sortOrder);
         }
+    }, [currentFilterStrategy])
+
+    const handleSortingStrategy = (newCurrentSortingStrategy: CurrentFilterInterface) => {
+        let newSortOrder = 0;
+        if (currentFilterStrategy && isSameStrategyType(currentFilterStrategy, newCurrentSortingStrategy)) {
+            currentFilterStrategy.toggleSortOrder();
+            newSortOrder = currentFilterStrategy.sortState;
+            sortRows(currentFilterStrategy);
+        } else {
+            setCurrentFilterStrategy(newCurrentSortingStrategy)
+        }
+        handleSortOrderChange(newSortOrder);
     }
 
     useEffect(() => {
-        if(currentFilter){
-            const res = currentFilter.doSort(visibleRows, datasetMapping, headerIndexes, getType);
-            setVisibleRows([...res]);
+        let newSortOrder = 0;
+        if(currentFilterStrategy){
+            sortRows(currentFilterStrategy);
+            newSortOrder = currentFilterStrategy.sortState
         }
-    }, [currentFilter])
+        handleSortOrderChange(newSortOrder);
+    }, [currentFilterStrategy, sortRows, handleSortOrderChange])
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 

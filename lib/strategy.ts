@@ -2,7 +2,7 @@ import { HeaderIndexes, DatasetMapping } from "./models";
 
 
 export interface SortingStrategy {
-    doSort(data: string[], datasetMapping?: DatasetMapping, headerIndexes?: HeaderIndexes, getType?: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+    doSort(data: string[], datasetMapping?: DatasetMapping, headerIndexes?: HeaderIndexes, getType?: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
     toggleSortOrder(): void;
 }
 
@@ -13,13 +13,13 @@ export enum SortState {
 }
 
 abstract class SortingStrategyBase implements SortingStrategy {
-    protected sortState: SortState = SortState.Off;
+    public sortState: SortState = SortState.Ascending;
 
     public toggleSortOrder(): void {
         this.sortState = (this.sortState + 1) % 3;
     }
 
-    abstract doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType?: (row: any, headerIndexes: HeaderIndexes) => string): string[];
+    abstract doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType?: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
 }
 
 export class CdeSortingFilter extends SortingStrategyBase {
@@ -48,7 +48,6 @@ export class CdeSortingFilter extends SortingStrategyBase {
 
 export class VariableNameFilter extends SortingStrategyBase {
     public doSort(data: string[], datasetMapping: DatasetMapping): string[] {
-        console.log("sort order: ", this.sortState)
         if (this.sortState === SortState.Off) {
             return Object.keys(datasetMapping);
         }
@@ -70,7 +69,7 @@ export class VariableNameFilter extends SortingStrategyBase {
 }
 
 export class StatusFilter extends SortingStrategyBase {
-    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: any, headerIndexes: HeaderIndexes) => string): string[] {
+    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: string[], headerIndexes: HeaderIndexes) => string): string[] {
         if (this.sortState === SortState.Off) {
             return Object.keys(datasetMapping)
         }
