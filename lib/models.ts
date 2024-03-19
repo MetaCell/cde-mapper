@@ -79,6 +79,12 @@ export interface SelectableCollection {
     selected: boolean;
 }
 
+export interface FiltersState {
+    [EntityType.CDE]: boolean;
+    [EntityType.CustomDictionaryField]: boolean,
+    [EntityType.Unknown]: boolean,
+}
+
 export interface EmailTemplateParams {
     email: string;
     title: string;
