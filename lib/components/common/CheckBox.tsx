@@ -8,9 +8,10 @@ interface ICheckbox {
     sx?: SxProps<Theme>;
     checked?: boolean;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    name?: string;
 }
 
-const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}, checked, onChange}) => {
+const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}, checked, onChange, name}) => {
     return (
         <FormControlLabel
             sx={sx}
@@ -21,6 +22,7 @@ const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}, checked, onChange})
                     checkedIcon={<CheckboxSelected/>}
                     checked={checked}
                     onChange={onChange}
+                    name={name}
                 />
             }
             label={label}

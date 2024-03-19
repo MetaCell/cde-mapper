@@ -21,7 +21,7 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection} from "../../../models.ts";
+import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {useUIContext} from "../../../contexts/ui/UIContext.ts";
@@ -188,18 +188,28 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }
 
+    const handleFiltering = useCallback((searchTerm: string, checked: FiltersState) => {
+        const allTrue = Object.values(checked).every(value => value === true);
 
-    const handleFiltering = useCallback((searchTerm: string) => {
         const filteredData = Object.keys(datasetMapping).filter(variableName => {
             const variableNameMatch = variableName.toLowerCase().includes(searchTerm.toLowerCase());
-            const preciseAbbreviation = datasetMapping[variableName][headerIndexes.preciseAbbreviation] || '';
+            const row = datasetMapping[variableName]
+            const preciseAbbreviation = row[headerIndexes.preciseAbbreviation] || '';
             const preciseAbbreviationMatch = preciseAbbreviation.toLowerCase().includes(searchTerm.toLowerCase());
 
+            const entityType = getType(row, headerIndexes);
+            const isAnyTrue = Object.values(checked).some(value => value === true);
+    
+            if (isAnyTrue && !allTrue) {
+                return checked[entityType];
+            }
+    
             return variableNameMatch || preciseAbbreviationMatch;
         });
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
+    
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
         const entityType = getType(row, headerIndexes);
