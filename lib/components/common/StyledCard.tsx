@@ -15,11 +15,11 @@ interface StyledCardProps {
     value: string;
     isSuggested?: boolean;
     selectedValue: string;
-    onChange: (value: string) => void;
+    onChange: (value: string, selectedValue: string) => void;
     onAfterChange: () => void;
 }
 
-const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange, onAfterChange = () => {}}) => {
+const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValue, onChange}) => {
     const radioGroup = useRadioGroup();
     let checked = false;
 
@@ -28,11 +28,8 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
     }
 
     const handleRadioChange = () => {
-        if (value !== selectedValue) {
-            onChange(value);
-        }
-        onAfterChange();
-    };
+        onChange(value, selectedValue);
+    }
 
     return (
         <Box sx={{minWidth: 320}}>

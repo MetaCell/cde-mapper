@@ -28,3 +28,4 @@ export const DEFAULT_HEADERS = [
 ];
 
 export const CUSTOM_DATA_FIELD_CDE_LEVEL = "Custom"
+export const localStorageTourKey = "skipTutorial"

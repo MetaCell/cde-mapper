@@ -108,13 +108,8 @@ const styles = {
     }
 };
 
-const Info = (props: { setIsInfoOpen: (b: boolean) => void, onClose?: () => void }) => {
-    const {setIsInfoOpen, onClose = () => {}} = props
-
-    const handleClose = () => {
-        setIsInfoOpen(false);
-        onClose();
-    }
+const Info = (props: { handleClose: () => void }) => {
+    const {handleClose} = props
 
     const InfoContent = () => (
         <Box>

@@ -5,6 +5,7 @@ import Checkbox from './CheckBox';
 import { TutorialCloseIcon } from '../../icons';
 import { vars } from '../../theme/variables';
 import { useUIContext } from '../../contexts/ui/UIContext';
+import { localStorageTourKey } from '../../settings';
 
 const { baseWhite, gray300, gray500, gray600, primary600, primary700, tutorialOverlayColor, tooltipBoxShadow, gray100, gray900 } = vars;
 
@@ -32,12 +33,12 @@ const Tooltip = ({
         hideFooter
     } = step;
 
-    const isChecked = JSON.parse(localStorage.getItem('isCheckboxChecked') || 'false');
+    const isChecked = JSON.parse(localStorage.getItem(localStorageTourKey) || 'false');
     const [checked, setChecked] = useState(isChecked);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
-        localStorage.setItem('isCheckboxChecked', JSON.stringify(event.target.checked));
+        localStorage.setItem(localStorageTourKey, JSON.stringify(event.target.checked));
     };
  
     return (

@@ -33,6 +33,11 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
         setIsInfoOpen(true)
         onAfterSidebarToggle()
     }
+
+    const handleClose = () => {
+        setIsInfoOpen(false);
+        onAfterSidebarToggle();
+    }
     return (
         <>
             <Box sx={styles.root}>
@@ -63,7 +68,7 @@ const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen
                 </Box>
             </Box>
 
-            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen} onClose={onAfterSidebarToggle}/>}
+            {isInfoOpen && <Info handleClose={handleClose}/>}
         </>
     )
 };

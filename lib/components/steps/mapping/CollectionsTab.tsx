@@ -29,8 +29,11 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
 
     const updateHomeTourStep = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
 
-    const handleRadioChange = (value: string) => {
-        setSelectedCollection(value);
+    const handleRadioChange = (value: string, selectedValue: string) => {
+        if(value !== selectedValue) {
+            setSelectedCollection(value);
+        }
+        updateHomeTourStep();
     };
 
     const handleConfirm = () => {
@@ -60,14 +63,14 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                 This can be changed at any time during the process.
                             </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={1.5}>
+                        <Stack direction="row" spacing={1.5} className='repository-cards'>
                             {collectionKeys.map(key => (
                                 <StyledCard
                                     key={key}
                                     value={collections[key].name}
                                     isSuggested={collections[key].suggested || false}
                                     selectedValue={selectedCollection === key ? collections[key].name : ""}
-                                    onChange={() => handleRadioChange(key)}
+                                    onChange={handleRadioChange}
                                     onAfterChange={updateHomeTourStep}
                                 />
                             ))}
@@ -78,6 +81,7 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
                                     disableRipple
                                     variant="contained"
                                     onClick={() => handleConfirm()}
+                                    className='repository__select-btn'
                                 >
                                     Select repository
                                 </Button>
