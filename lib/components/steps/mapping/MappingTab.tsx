@@ -290,7 +290,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 cdeSortOrder: newSortOrder
             });
         }
-    }, [currentFilterStrategy])
+    }, [currentFilterStrategy, sortOrder])
 
     const handleSortingStrategy = (newCurrentSortingStrategy: SortingStrategy) => {
         let newSortOrder = 0;
