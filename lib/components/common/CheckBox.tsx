@@ -5,10 +5,13 @@ import {CheckboxDefault, CheckboxSelected} from "../../icons";
 
 interface ICheckbox {
     label: string;
-    sx?: SxProps<Theme>
+    sx?: SxProps<Theme>;
+    checked?: boolean;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    name?: string;
 }
 
-const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}}) => {
+const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}, checked, onChange, name}) => {
     return (
         <FormControlLabel
             sx={sx}
@@ -17,6 +20,9 @@ const Checkbox: React.FC<ICheckbox> = ({label = '', sx = {}}) => {
                     disableRipple
                     icon={<CheckboxDefault/>}
                     checkedIcon={<CheckboxSelected/>}
+                    checked={checked}
+                    onChange={onChange}
+                    name={name}
                 />
             }
             label={label}
