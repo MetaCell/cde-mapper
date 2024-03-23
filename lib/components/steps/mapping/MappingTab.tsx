@@ -22,11 +22,11 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection, FiltersState, DatasetMapping, HeaderIndexes} from "../../../models.ts";
+import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
-import {VariableNameFilter, CdeSortingFilter, StatusFilter} from "../../../strategy.ts";
+import {VariableNameFilter, CdeSortingFilter, StatusFilter, SortingStrategy} from "../../../sortingStrategies.ts";
 
 const styles = {
     root: {
@@ -100,12 +100,6 @@ interface MappingProps {
     defaultCollection: string;
 }
 
-interface CurrentFilterInterface {
-    doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
-    toggleSortOrder(): void;
-    sortState: number;
-}
-
 
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
@@ -115,10 +109,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
-    const [currentFilterStrategy, setCurrentFilterStrategy] = useState<CurrentFilterInterface>();
-    const [variableNameSortOrder, setVariableNameSortOrder] = useState(0);
-    const [cdeSortOrder, setCdeSortOrder] = useState(0);
-    const [statusSortOrder, setStatusSortOrder] = useState(0);
+    const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
+    const [sortOrder, setSortOrder] = useState({
+        variableNameSortOrder: 0,
+        cdeSortOrder: 0,
+        statusSortOrder: 0
+    });
 
 
     useEffect(() => {
@@ -265,29 +261,38 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         return false
     };
 
-    const isSameStrategyType = (filter: CurrentFilterInterface, newFilter: CurrentFilterInterface) => {
+    const isSameStrategyType = (filter: SortingStrategy, newFilter: SortingStrategy) => {
         if (!filter || !newFilter) {
             return false;
         }
         return filter.constructor === newFilter.constructor;
     }
 
-    const sortRows = useCallback((fitlerStrategy: CurrentFilterInterface) => {
-        const result = fitlerStrategy.doSort(visibleRows, datasetMapping, headerIndexes, getType);
+    const sortRows = useCallback((fitlerStrategy: SortingStrategy) => {
+        const result = fitlerStrategy.doSort(visibleRows, datasetMapping, headerIndexes);
         setVisibleRows([...result]);
     }, [datasetMapping, headerIndexes, visibleRows])
 
-    const handleSortOrderChange = useCallback((sortOrder: number) => {
+    const handleSortOrderChange = useCallback((newSortOrder: number) => {
         if (currentFilterStrategy instanceof StatusFilter) {
-            setStatusSortOrder(sortOrder);
+            setSortOrder({
+                ...sortOrder,
+                statusSortOrder: newSortOrder
+            })
         } else if (currentFilterStrategy instanceof VariableNameFilter) {
-            setVariableNameSortOrder(sortOrder);
+            setSortOrder({
+                ...sortOrder,
+                variableNameSortOrder: newSortOrder
+            });
         } else if (currentFilterStrategy instanceof CdeSortingFilter) {
-            setCdeSortOrder(sortOrder);
+            setSortOrder({
+                ...sortOrder,
+                cdeSortOrder: newSortOrder
+            });
         }
     }, [currentFilterStrategy])
 
-    const handleSortingStrategy = (newCurrentSortingStrategy: CurrentFilterInterface) => {
+    const handleSortingStrategy = (newCurrentSortingStrategy: SortingStrategy) => {
         let newSortOrder = 0;
         if (currentFilterStrategy && isSameStrategyType(currentFilterStrategy, newCurrentSortingStrategy)) {
             currentFilterStrategy.toggleSortOrder();
@@ -320,20 +325,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
                                 <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
-                                    <SortIcon direction={statusSortOrder}/>
+                                    <SortIcon direction={sortOrder.statusSortOrder}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
                                 <IconButton onClick={() => handleSortingStrategy(new VariableNameFilter())} sx={styles.sortButton}>
-                                    <SortIcon direction={variableNameSortOrder}/>
+                                    <SortIcon direction={sortOrder.variableNameSortOrder}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
                                 <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new CdeSortingFilter)}>
-                                    <SortIcon direction={cdeSortOrder}/>
+                                    <SortIcon direction={sortOrder.cdeSortOrder}/>
                                 </IconButton>
                             </Box>
                         </Box>

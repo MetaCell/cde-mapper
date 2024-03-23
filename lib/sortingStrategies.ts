@@ -1,9 +1,11 @@
 import { HeaderIndexes, DatasetMapping } from "./models";
+import { getType, getPreciseAbbreviation } from "./helpers/getters";
 
 
 export interface SortingStrategy {
-    doSort(data: string[], datasetMapping?: DatasetMapping, headerIndexes?: HeaderIndexes, getType?: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
+    doSort(data: string[], datasetMapping?: DatasetMapping, headerIndexes?: HeaderIndexes): string[];
     toggleSortOrder(): void;
+    sortState: number;
 }
 
 export enum SortState {
@@ -19,7 +21,7 @@ abstract class SortingStrategyBase implements SortingStrategy {
         this.sortState = (this.sortState + 1) % 3;
     }
 
-    abstract doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType?: (row: string[], headerIndexes: HeaderIndexes) => string): string[];
+    abstract doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes): string[];
 }
 
 export class CdeSortingFilter extends SortingStrategyBase {
@@ -33,7 +35,7 @@ export class CdeSortingFilter extends SortingStrategyBase {
         sortedData.sort((a, b) => {
             const rowA = datasetMapping[a];
             const rowB = datasetMapping[b];
-            let comparisonResult = rowA[headerIndexes.preciseAbbreviation].localeCompare(rowB[headerIndexes.preciseAbbreviation]);
+            let comparisonResult = getPreciseAbbreviation(rowA, headerIndexes).localeCompare(getPreciseAbbreviation(rowB, headerIndexes));
 
             if (this.sortState === SortState.Descending) {
                 comparisonResult *= -1;
@@ -69,7 +71,7 @@ export class VariableNameFilter extends SortingStrategyBase {
 }
 
 export class StatusFilter extends SortingStrategyBase {
-    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes, getType: (row: string[], headerIndexes: HeaderIndexes) => string): string[] {
+    public doSort(data: string[], datasetMapping: DatasetMapping, headerIndexes: HeaderIndexes): string[] {
         if (this.sortState === SortState.Off) {
             return Object.keys(datasetMapping)
         }
