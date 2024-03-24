@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Box, Button, InputAdornment, TextField} from "@mui/material";
 import {FilterIcon, SearchIcon} from "../../../icons";
 import Filters from "../../common/Filters.tsx";
-import { useDebounce } from "../../../hooks.ts";
+import { useDebounce } from "../../../hooks/useDebounce.ts";
 import { EntityType, FiltersState } from "../../../models.ts";
 
 interface MappingSearchProps {
