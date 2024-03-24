@@ -1,40 +1,42 @@
 import { useState, useCallback } from 'react';
-import {Option} from "../models.ts";
+import { Option } from '../models.ts';
 
 interface PairingSuggestions {
     available: Record<string, Option[]>;
-    processed: Set<string>;
 }
 
 export const usePairingSuggestions = () => {
-    const [pairingSuggestions, setPairingSuggestions] = useState<PairingSuggestions>({ available: {}, processed: new Set() });
+    const [pairingSuggestions, setPairingSuggestions] = useState<PairingSuggestions>({ available: {} });
 
     const updateAvailableSuggestions = useCallback((variableName: string, newSuggestions: Option[]) => {
-        setPairingSuggestions((prev) => ({
+        setPairingSuggestions(prev => ({
             ...prev,
             available: { ...prev.available, [variableName]: newSuggestions },
         }));
     }, []);
 
-    const markSuggestionAsProcessed = useCallback((suggestionId: string) => {
-        setPairingSuggestions((prev) => ({
+    const markSuggestionAsProcessed = useCallback((variableName: string, suggestionId: string) => {
+        setPairingSuggestions(prev => ({
             ...prev,
-            processed: new Set(prev.processed).add(suggestionId),
+            available: {
+                ...prev.available,
+                [variableName]: prev.available[variableName]?.filter(suggestion => suggestion.id !== suggestionId) || [],
+            },
         }));
     }, []);
 
-    const hasPairingSuggestions = (variableName: string): boolean => {
-        return pairingSuggestions.available[variableName]?.length > 0;
-    };
+    const hasPairingSuggestions = useCallback((variableName: string): boolean => {
+        return Boolean(pairingSuggestions.available[variableName]?.length);
+    }, [pairingSuggestions.available]);
 
-    const getPairingSuggestions = (variableName: string): Option[] => {
+    const getPairingSuggestions = useCallback((variableName: string): Option[] => {
         return pairingSuggestions.available[variableName] || [];
-    };
+    }, [pairingSuggestions.available]);
 
     return {
         updateAvailableSuggestions,
         markSuggestionAsProcessed,
         hasPairingSuggestions,
-        getPairingSuggestions
+        getPairingSuggestions,
     };
 };

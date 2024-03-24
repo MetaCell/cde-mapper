@@ -9,21 +9,22 @@ interface PairingSuggestionProps {
     label: string;
     description: string;
     rowContent: CdeDetailItem[];
-    onHeaderChange: (selectedHeaderIndex: number) => void;
+    onChange: (selectedHeaderIndex: string | null) => void;
 }
+
+const DEFAULT_VALUE = -1
 
 export function PairingSuggestion({
                                       headerOptions,
                                       label,
                                       description,
                                       rowContent,
-                                      onHeaderChange,
+                                      onChange,
                                   }: PairingSuggestionProps) {
-    const [selectedHeaderIndex, setSelectedHeaderIndex] = useState<number>(-1);
+    const [selectedHeaderIndex, setSelectedHeaderIndex] = useState<number>(DEFAULT_VALUE);
     const handleChange = (event: SelectChangeEvent<number>) => {
         const newValue = Number(event.target.value);
         setSelectedHeaderIndex(newValue);
-        onHeaderChange(newValue);
     };
 
     return (
@@ -116,15 +117,18 @@ export function PairingSuggestion({
                         <IconButton sx={{
                             borderRadius: "0.5rem",
                             padding: "0.4375rem",
-                        }}>
+                        }} onClick={() => onChange(null)}>
                             <CrossIcon/>
                         </IconButton>
-                        <IconButton sx={{
-                            borderRadius: "0.5rem",
-                            padding: "0.4375rem",
-                            border: "0.0625rem solid #D6D8DB",
-                            boxShadow: "0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)"
-                        }}>
+                        <IconButton disabled={selectedHeaderIndex === DEFAULT_VALUE}
+                                    sx={{
+                                        borderRadius: "0.5rem",
+                                        padding: "0.4375rem",
+                                        border: "0.0625rem solid #D6D8DB",
+                                        boxShadow: "0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)"
+                                    }}
+                                    onClick={() => onChange(headerOptions[selectedHeaderIndex].label)}
+                        >
                             <CheckIcon/>
                         </IconButton>
                     </Box>

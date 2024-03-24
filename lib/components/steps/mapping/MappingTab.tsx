@@ -101,11 +101,12 @@ interface MappingProps {
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
-    const {updateDatasetMappingRow} = useServicesContext();
+    const {updateDatasetMappingRow, getUnmappedVariableNames} = useServicesContext();
     const {
         updateAvailableSuggestions,
         getPairingSuggestions,
-        hasPairingSuggestions
+        hasPairingSuggestions,
+        markSuggestionAsProcessed,
     } = usePairingSuggestions();
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
@@ -208,6 +209,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             console.error("Option not found: " + optionId);
         }
     };
+
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
+        markSuggestionAsProcessed(variableName, suggestion.id);
+        if (selectedColumn !== null) {
+            updateDatasetMappingRow(selectedColumn, suggestion.content);
+        }
+    }
 
     const handleFiltering = useCallback((searchTerm: string, checked: FiltersState) => {
         const allTrue = Object.values(checked).every(value => value === true);
@@ -337,7 +345,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
                                                         {getPairingSuggestions(variableName).map((suggestion) => {
-                                                            const headerOptions = datasetMappingHeader.map((label, index) => ({
+                                                            const headerOptions = getUnmappedVariableNames().map((label, index) => ({
                                                                 label,
                                                                 index
                                                             }));
@@ -349,9 +357,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                             return (
                                                                 <PairingSuggestion
                                                                     key={suggestion.id}
-                                                                    onHeaderChange={(headerIndex) => {
-                                                                        console.log(headerIndex)
-                                                                    }}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion(variableName, suggestion, selectedColumn)}
                                                                     headerOptions={headerOptions}
                                                                     label={abbreviation}
                                                                     description={description}
