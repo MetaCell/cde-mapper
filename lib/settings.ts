@@ -28,3 +28,11 @@ export const DEFAULT_HEADERS = [
 ];
 
 export const CUSTOM_DATA_FIELD_CDE_LEVEL = "Custom"
+
+export const UNIT_OF_MEASURE_CDE_KEY = "has unit"
+export const DATA_TYPE_CDE_KEY = "allowedType"
+export const PERMITTED_VALUES_CDE_KEY = "allowedValues"
+export const MINIMUM_VALUE_CDE_KEY = "minValue"
+export const MAXIMUM_VALUE_CDE_KEY = "maxValue"
+export const CDE_LEVEL_CDE_KEY = "hasCDELevel"
+export const DEFINITION_CDE_KEY = "definition"

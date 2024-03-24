@@ -22,10 +22,15 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
-import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
+import {getId, getPreciseAbbreviation, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
+import {
+    getAbbreviationFromOption,
+    getDescriptionFromOption,
+    optionDetailsToCdeDetails
+} from "../../../helpers/optionsHelper.ts";
 
 const styles = {
     root: {
@@ -326,21 +331,34 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         fontWeight: 500,
                                                         lineHeight: '150%'
                                                     }}>Pairing suggestions</Typography>
-                                                    <PairingTooltip datasetMapping={datasetMapping} key={variableName}
-                                                                    headerMapping={headerIndexes}/>
+                                                    <PairingTooltip
+                                                        selectedCdeAbbreviation={getPreciseAbbreviation(datasetMapping[variableName], headerIndexes)}/>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions(variableName).map(() => (
-                                                            <PairingSuggestion
-                                                                value='0'
-                                                                onChange={() => {
-                                                                }}
-                                                                selectOptions={[]}
-                                                                subjectName="To be implemented"
-                                                                subjectDescription="To be implemented"
-                                                            />
-                                                        ))}
+                                                        {getPairingSuggestions(variableName).map((suggestion) => {
+                                                            const headerOptions = datasetMappingHeader.map((label, index) => ({
+                                                                label,
+                                                                index
+                                                            }));
+
+                                                            const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion.content);
+                                                            const description = getDescriptionFromOption(suggestion.content);
+
+                                                            return (
+                                                                <PairingSuggestion
+                                                                    key={suggestion.id}
+                                                                    onHeaderChange={(headerIndex) => {
+                                                                        console.log(headerIndex)
+                                                                    }}
+                                                                    headerOptions={headerOptions}
+                                                                    label={abbreviation}
+                                                                    description={description}
+                                                                    rowContent={rowContent}
+                                                                />
+                                                            );
+                                                        })}
                                                     </Box>
                                                 </AccordionDetails>
                                             </Accordion>
