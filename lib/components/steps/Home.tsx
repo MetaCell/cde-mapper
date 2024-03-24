@@ -75,6 +75,7 @@ function Home() {
                     sx={{
                         maxWidth: '650px',
                         borderRight: `0.0625rem solid ${gray200}`,
+                        borderTop: `0.0625rem solid ${gray200}`,
                         borderBottom: 0,
                         '& .MuiTableCell-head': {
                             '& svg': {

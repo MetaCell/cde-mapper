@@ -1,7 +1,7 @@
 import React from "react";
 import {Box, Typography, Chip, Button} from "@mui/material";
 import {useDataContext} from "../../contexts/data/DataContext.ts";
-import {GlobeIcon, ArrowDropDown, BulletIcon} from "../../icons";
+import {ArrowDropDown, BulletIcon} from "../../icons";
 import {StyledTable} from "./StyledTable";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
@@ -14,7 +14,6 @@ const PreviewBox = () => {
         getTotalRowsCount,
         getUnmappedRowsCount,
         getMappedRowsCount,
-        isColumnMapped
     } = useServicesContext();
     const [togglePreview, setTogglePreview] = React.useState(false);
     const headers = datasetSample[0]
@@ -68,39 +67,7 @@ const PreviewBox = () => {
                     maxHeight: '21.25rem',
                     overflowY: 'hidden'
                 }}>
-                    <Box display='flex' mb={1} alignItems='center' sx={{
-                        '& > div': {
-                            flexShrink: 0,
-                            padding: '0 0.5rem',
-                            boxSizing: 'border-box'
-                        }
-                    }}>
-                        {headers.map((header, index) => (
-                            <Box key={index} sx={{ height: '2rem' }}>
-                                {isColumnMapped(header) ? (
-                                    <Chip 
-                                        color="success" 
-                                        icon={<GlobeIcon color={"#027A48" } style={{width: 16, height: 16}}/>} 
-                                        label={header} 
-                                        size="medium" 
-                                        sx={{
-                                            '& .MuiChip-label': { fontSize: '0.875rem' }
-                                        }} 
-                                    />
-                                ) : (
-                                    <Typography sx={{
-                                        color: '#A9ACB2',
-                                        border: '0.0938rem dashed #E4E5E7',
-                                        borderRadius: '0.25rem',
-                                        fontSize: '0.875rem',
-                                        lineHeight: '142.857%',
-                                        padding: '0.3rem 0.5rem'
-                                    }}>No mapping yet</Typography>
-                                )}
-                            </Box>
-                        ))}
-                    </Box>
-                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem'/>
+                    <StyledTable sample={datasetSample} tableCellMinWidth='10rem' headers={headers} />
                 </Box>
             )}
             {
