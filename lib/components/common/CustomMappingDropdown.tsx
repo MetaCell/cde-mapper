@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
-import {InputAdornment, Popper, Tooltip} from "@mui/material";
+import {InputAdornment, ListSubheader, Popper, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, Chip} from '@mui/material';
 import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
@@ -319,7 +319,6 @@ export default function CustomEntitiesDropdown({
         setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
     };
 
-    // TODO: Add chip to identify custom data dictionary fields
     return (
         <>
             <Box
@@ -614,7 +613,7 @@ export default function CustomEntitiesDropdown({
                                             <SearchCollectionSelector collections={collections}
                                                                       onCollectionSelect={onCollectionSelect}/>
 
-                                            {/*{toggleCustomView &&
+                                            {toggleCustomView &&
                                                 <Box>
                                                     <ListSubheader
                                                         component="div"
@@ -637,29 +636,18 @@ export default function CustomEntitiesDropdown({
                                                         </Typography>
                                                     </ListSubheader>
                                                     <ul>
-                                                        <li className="selected">
-                                                            <Typography
-                                                                sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                            >
-                                                                MotorForceApplied
-                                                            </Typography>
-                                                            <Chip color='secondary' label="Data dictionary"/>
-                                                            <CheckIcon style={{flexShrink: 0}} color="#070808"/>
-                                                        </li>
-
-
                                                         <li className="highlighted">
                                                             <Typography
                                                                 sx={{width: 1, height: 1, padding: "0.625rem"}}
                                                             >
-                                                                MotorForceApplied
+                                                                {variableName}
                                                             </Typography>
                                                             <Chip color='secondary' label="Data dictionary"/>
                                                             <Chip color='warning' label="Draft"/>
                                                         </li>
                                                     </ul>
                                                 </Box>
-                                            }*/}
+                                            }
 
 
                                             <Box>

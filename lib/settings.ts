@@ -38,5 +38,3 @@ export const CDE_LEVEL_CDE_KEY = "hasCDELevel"
 export const DEFINITION_CDE_KEY = "definition"
 
 export const CUSTOM_DATA_FIELD_GROUP = "Custom"
-
-export const DEBOUNCE_MS = 300
