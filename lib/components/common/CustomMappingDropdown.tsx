@@ -1,13 +1,21 @@
-import React, {useEffect, useState} from 'react';
-import {FormControl, InputAdornment, MenuItem, Popper, Select, SelectChangeEvent, Stack, Tooltip} from "@mui/material";
-import {TextField, Box, Typography, Button, ListSubheader, Chip} from '@mui/material';
+import React, {useContext, useEffect, useState} from 'react';
+import {nanoid} from 'nanoid';
+import {InputAdornment, Popper, Tooltip} from "@mui/material";
+import {TextField, Box, Typography, Button, Chip} from '@mui/material';
 import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
 import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
-import {Option, SelectableCollection} from "../../models.ts";
+import {Option, OptionDetail, SelectableCollection} from "../../models.ts";
 import CircularProgress from "@mui/material/CircularProgress";
+import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
+import {
+    CUSTOM_DATA_FIELD_CDE_LEVEL,
+    CUSTOM_DATA_FIELD_GROUP,
+} from '../../settings.ts';
+import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
+import {DataContext} from "../../contexts/data/DataContext.ts";
 
 const {
     buttonOutlinedBorderColor,
@@ -170,7 +178,13 @@ interface CustomEntitiesDropdownProps {
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
     };
+    variableName: string
+    onCustomDictionaryFieldCreation: (option: Option) => void;
 }
+
+type GroupedOptions = {
+    [group: string]: Option[];
+};
 
 
 export default function CustomEntitiesDropdown({
@@ -186,17 +200,10 @@ export default function CustomEntitiesDropdown({
                                                        collections,
                                                        onCollectionSelect,
                                                    },
+                                                   variableName,
+                                                   onCustomDictionaryFieldCreation
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [age, setAge] = React.useState('0');
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
-    };
-
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-    };
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
@@ -209,6 +216,44 @@ export default function CustomEntitiesDropdown({
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
+
+    const getCustomDictionaryFieldOption = () => {
+        const customDictionaryFieldId = nanoid();
+        const initialCustomDictionaryFieldOption: Option = {
+            id: customDictionaryFieldId,
+            label: variableName,
+            group: CUSTOM_DATA_FIELD_GROUP,
+            content: datasetMappingHeader.map((header): OptionDetail => ({
+                title: header,
+                value: '',
+            })),
+        };
+
+        // Set specific fields directly using headerIndexes
+        initialCustomDictionaryFieldOption.content[headerIndexes.variableName].value = variableName;
+        initialCustomDictionaryFieldOption.content[headerIndexes.id].value = customDictionaryFieldId;
+        initialCustomDictionaryFieldOption.content[headerIndexes.cdeLevel].value = CUSTOM_DATA_FIELD_CDE_LEVEL;
+
+        // Update state
+        return initialCustomDictionaryFieldOption
+    };
+
+    const [customDictionaryFieldOption, setCustomDictionaryFieldOption] = useState<Option>(getCustomDictionaryFieldOption());
+
+
+    const handleCustomDictionaryOptionChange = (index: number, value: string) => {
+        setCustomDictionaryFieldOption(prevOption => ({
+            ...prevOption,
+            content: prevOption.content.map((detail, detailIndex) =>
+                detailIndex === index ? {...detail, value} : detail
+            ),
+        }));
+    };
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
 
     useEffect(() => {
         setSelectedOptions(value ? [value] : []);
@@ -234,10 +279,6 @@ export default function CustomEntitiesDropdown({
         setIsLoading(true);
         fetchOptions().then(() => setIsLoading(false));
     }, [searchInput, onSearch, open]);
-
-    type GroupedOptions = {
-        [group: string]: Option[];
-    };
 
     const groupedOptions = searchResults.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
@@ -268,6 +309,17 @@ export default function CustomEntitiesDropdown({
         return selectedOptions.some((selected) => selected.id === option.id);
     };
 
+    const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
+        if (isConfirm) {
+            onCustomDictionaryFieldCreation(customDictionaryFieldOption);
+        }
+
+        // Reset view and custom dictionary field option to initial state
+        setToggleCustomView(false);
+        setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
+    };
+
+    // TODO: Add chip to identify custom data dictionary fields
     return (
         <>
             <Box
@@ -407,104 +459,21 @@ export default function CustomEntitiesDropdown({
                                 ))}
                             </Box>) : (<Box sx={styles.details}>
                                 <HoveredOptionContent
-                                    entity={{
-                                        id: "placeholder",
-                                        label: "Connections",
-                                        group: "placeholder",
-                                        content: [],
-                                    }}
+                                    entity={customDictionaryFieldOption}
                                     padding={0}
-                                    BodyComponent={() => (
-                                        <Box p={3}>
-                                            <Stack spacing={2} flexGrow={1}>
-                                                <Stack direction='row' spacing={1} sx={{mt: 0}}>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">VariableName</Typography>
-                                                        <Typography sx={{p: '0.25rem !important'}}
-                                                                    variant="body2">MotorForceApplied</Typography>
-                                                    </Stack>
-                                                    <Stack>
-                                                        <Chip size='small' variant='filled' color='secondary'
-                                                              label="Data dictionary"/>
-                                                    </Stack>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Title</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Description</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                                <Stack direction='row' spacing={4} sx={{mt: 3}}>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">Unit of measure</Typography>
-                                                        <Typography variant="body2">
-                                                            <TextField fullWidth placeholder='Insert here...'/>
-                                                        </Typography>
-                                                    </Stack>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">Data type</Typography>
-                                                        <Typography variant="body2">
-                                                            <FormControl fullWidth>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    value={age}
-                                                                    placeholder=""
-                                                                    onChange={handleChange}
-                                                                >
-                                                                    <MenuItem disabled value={0} sx={{
-                                                                        color: '#A9ACB2'
-                                                                    }}>
-                                                                        <em>Choose column header to map...</em>
-                                                                    </MenuItem>
-                                                                    <MenuItem value={1}>MotorFoceApplied</MenuItem>
-                                                                    <MenuItem value={2}>Subject</MenuItem>
-                                                                    <MenuItem value={3}>Age</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Comments</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                            </Stack>
-                                        </Box>
+                                    BodyComponent={({entity}) => (
+                                        <CreateCustomDictionaryFieldBody
+                                            entity={entity}
+                                            onBlur={handleCustomDictionaryOptionChange}
+                                            variableNameIndex={headerIndexes.variableName}
+                                            idIndex={headerIndexes.id}
+                                            cdeLevelIndex={headerIndexes.cdeLevel}
+                                        />
                                     )}
                                     HeaderComponent={() => (
-                                        <Box
-                                            position='sticky'
-                                            top={0}
-                                            display='flex'
-                                            alignItems='center'
-                                            justifyContent='space-between'
-                                            sx={{
-                                                background: '#FCFCFD',
-                                                px: '1.5rem',
-                                                py: '0.4375rem',
-                                                borderBottom: '0.0625rem solid #F2F4F7'
-                                            }}
-                                        >
-                                            <Chip size='small' variant='filled' color='warning' label="Draft"/>
-                                            <Box
-                                                gap="0.25rem"
-                                                display='flex'
-                                                alignItems='center'
-                                            >
-                                                <Button onClick={() => setToggleCustomView(false)}>Cancel</Button>
-                                                <Button variant='contained' color='info'
-                                                        onClick={() => setToggleCustomView(false)}>Confirm</Button>
-                                            </Box>
-                                        </Box>
+                                        <CreateCustomDictionaryFieldHeader
+                                            onClose={onCustomDictionaryFieldClose}
+                                        />
                                     )}
                                 />
                             </Box>)
@@ -555,7 +524,8 @@ export default function CustomEntitiesDropdown({
                                 placeholder={searchPlaceholder}
                                 InputProps={{
                                     startAdornment: <InputAdornment
-                                        position='start'><MagnifyGlassIcon/></InputAdornment>
+                                        position='start'><MagnifyGlassIcon/>
+                                    </InputAdornment>
                                 }}
                             />
                         </Box>
@@ -578,17 +548,8 @@ export default function CustomEntitiesDropdown({
                                                 padding: '0 0.625rem',
                                                 height: '1.875rem',
                                                 margin: '0.375rem 0 0.125rem',
-
-                                                // '& .MuiTypography-root': {
-                                                //   fontSize: '0.75rem',
-                                                //   lineHeight: '1.125rem',
-                                                //   fontWeight: 600,
-                                                //   color: buttonOutlinedColor
-                                                // },
                                             },
-                                            // '& .MuiCheckbox-root': {
-                                            //   padding: 0
-                                            // },
+
                                             '& .MuiButton-root': {
                                                 padding: 0,
                                                 height: '1.625rem',
@@ -648,11 +609,12 @@ export default function CustomEntitiesDropdown({
                                                     }
                                                 }
                                             }
-                                        }} key={group}>
+                                        }}
+                                             key={group}>
                                             <SearchCollectionSelector collections={collections}
                                                                       onCollectionSelect={onCollectionSelect}/>
 
-                                            {toggleCustomView &&
+                                            {/*{toggleCustomView &&
                                                 <Box>
                                                     <ListSubheader
                                                         component="div"
@@ -697,7 +659,7 @@ export default function CustomEntitiesDropdown({
                                                         </li>
                                                     </ul>
                                                 </Box>
-                                            }
+                                            }*/}
 
 
                                             <Box>

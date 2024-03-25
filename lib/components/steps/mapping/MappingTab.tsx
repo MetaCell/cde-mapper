@@ -182,8 +182,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         [selectableCollections, collections]
     );
 
-    const handleSelection = async (variableName: string, optionId: string, newIsSelectedState: boolean) => {
-        const option = optionsMap[optionId];
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
         if (option && newIsSelectedState) {
             updateDatasetMappingRow(variableName, option.content);
 
@@ -206,7 +205,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             updateDatasetMappingRow(variableName, []);
 
         } else {
-            console.error("Option not found: " + optionId);
+            console.error("No option provided");
         }
     };
 
@@ -238,6 +237,17 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
+
+    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option) => {
+        // Update optionsMap with the new custom dictionary field
+        setOptionsMap(prevOptionsMap => ({
+            ...prevOptionsMap,
+            [option.id]: option,
+        }));
+
+        // Select the newly created option
+        await handleSelection(variableName, option, true);
+    }
 
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
@@ -321,11 +331,14 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
-                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
+                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionsMap[optionId], newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
                                                 value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
-                                            }}/>
+                                            }}
+                                            variableName={variableName}
+                                            onCustomDictionaryFieldCreation={(option) => onCustomDictionaryFieldCreation(variableName, option)}
+                                        />
                                     </Box>
 
                                     {hasPairingSuggestions(variableName) && (
