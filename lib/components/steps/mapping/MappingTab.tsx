@@ -110,11 +110,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
     const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
-    const [sortOrder, setSortOrder] = useState({
-        variableNameSortOrder: 0,
-        cdeSortOrder: 0,
-        statusSortOrder: 0
-    });
 
 
     useEffect(() => {
@@ -273,45 +268,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setVisibleRows([...result]);
     }, [datasetMapping, headerIndexes, visibleRows])
 
-    const handleSortOrderChange = useCallback((newSortOrder: number) => {
-        if (currentFilterStrategy instanceof StatusFilter) {
-            setSortOrder({
-                ...sortOrder,
-                statusSortOrder: newSortOrder
-            })
-        } else if (currentFilterStrategy instanceof VariableNameFilter) {
-            setSortOrder({
-                ...sortOrder,
-                variableNameSortOrder: newSortOrder
-            });
-        } else if (currentFilterStrategy instanceof CdeSortingFilter) {
-            setSortOrder({
-                ...sortOrder,
-                cdeSortOrder: newSortOrder
-            });
-        }
-    }, [currentFilterStrategy, sortOrder])
-
     const handleSortingStrategy = (newCurrentSortingStrategy: SortingStrategy) => {
-        let newSortOrder = 0;
         if (currentFilterStrategy && isSameStrategyType(currentFilterStrategy, newCurrentSortingStrategy)) {
             currentFilterStrategy.toggleSortOrder();
-            newSortOrder = currentFilterStrategy.sortState;
             sortRows(currentFilterStrategy);
         } else {
             setCurrentFilterStrategy(newCurrentSortingStrategy)
         }
-        handleSortOrderChange(newSortOrder);
     }
 
     useEffect(() => {
-        let newSortOrder = 0;
         if(currentFilterStrategy){
             sortRows(currentFilterStrategy);
-            newSortOrder = currentFilterStrategy.sortState
         }
-        handleSortOrderChange(newSortOrder);
-    }, [currentFilterStrategy, sortRows, handleSortOrderChange])
+    }, [currentFilterStrategy, sortRows])
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
@@ -325,20 +295,20 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
                                 <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
-                                    <SortIcon direction={sortOrder.statusSortOrder}/>
+                                    <SortIcon direction={currentFilterStrategy instanceof StatusFilter ? currentFilterStrategy.sortState : 0}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
                                 <IconButton onClick={() => handleSortingStrategy(new VariableNameFilter())} sx={styles.sortButton}>
-                                    <SortIcon direction={sortOrder.variableNameSortOrder}/>
+                                    <SortIcon direction={currentFilterStrategy instanceof VariableNameFilter ? currentFilterStrategy.sortState : 0}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
                                 <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new CdeSortingFilter)}>
-                                    <SortIcon direction={sortOrder.cdeSortOrder}/>
+                                    <SortIcon direction={currentFilterStrategy instanceof CdeSortingFilter ? currentFilterStrategy.sortState : 0}/>
                                 </IconButton>
                             </Box>
                         </Box>
