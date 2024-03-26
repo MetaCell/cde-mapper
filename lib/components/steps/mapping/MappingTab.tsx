@@ -30,7 +30,7 @@ import {
     optionDetailsToCdeDetails
 } from "../../../helpers/optionsHelper.ts";
 import {getCustomDictionaryFieldCollection} from "../../../helpers/customDictionaryFieldCollection.ts";
-import ChipComponent, {getChipComponent} from "./ChipComponent.tsx";
+import ChipComponent from "./ChipComponent.tsx";
 
 const styles = {
     root: {
@@ -163,12 +163,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 const fetchPromises = selectedCollections.map(async (collection) => {
                     const searchResults = await collection.fetch(queryString);
 
-                    const searchResultsDictionary = searchResults.reduce((acc, option) => {
-                        acc[option.id] = option;
-                        return acc;
-                    }, {} as { [id: string]: Option });
+                    // const searchResultsDictionary = searchResults.reduce((acc, option) => {
+                    //     acc[option.id] = option;
+                    //     return acc;
+                    // }, {} as { [id: string]: Option });
 
-                    setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
+                    //setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
 
                     return searchResults;
                 });
@@ -183,7 +183,14 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     );
 
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+
         if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
             updateDatasetMappingRow(variableName, option.content);
 
             // Get all selected collections
@@ -237,19 +244,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
-
-    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option) => {
-        // Update optionsMap with the new custom dictionary field
-        setOptionsMap(prevOptionsMap => ({
-            ...prevOptionsMap,
-            [option.id]: option,
-        }));
-
-        // Select the newly created option
-        await handleSelection(variableName, option, true);
-    }
-
-
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
@@ -296,13 +290,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
-                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionsMap[optionId], newIsSelectedState),
+                                                onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
                                                 value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
                                             }}
                                             variableName={variableName}
-                                            onCustomDictionaryFieldCreation={(option) => onCustomDictionaryFieldCreation(variableName, option)}
                                         />
                                     </Box>
 

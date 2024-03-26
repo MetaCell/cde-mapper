@@ -12,7 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
 import {
     CUSTOM_DATA_FIELD_CDE_LEVEL,
-    CUSTOM_DATA_FIELD_GROUP,
+    CUSTOM_DICTIONARY_FIELD_GROUP,
 } from '../../settings.ts';
 import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
 import {DataContext} from "../../contexts/data/DataContext.ts";
@@ -172,14 +172,13 @@ interface CustomEntitiesDropdownProps {
         searchPlaceholder?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
-        onSelection: (optionId: string, newIsSelectedState: boolean) => void;
+        onSelection: (option: Option, newIsSelectedState: boolean) => void;
         value: Option | null;
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
     };
     variableName: string
-    onCustomDictionaryFieldCreation: (option: Option) => void;
 }
 
 type GroupedOptions = {
@@ -201,7 +200,6 @@ export default function CustomEntitiesDropdown({
                                                        onCollectionSelect,
                                                    },
                                                    variableName,
-                                                   onCustomDictionaryFieldCreation
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -223,7 +221,7 @@ export default function CustomEntitiesDropdown({
         const initialCustomDictionaryFieldOption: Option = {
             id: customDictionaryFieldId,
             label: variableName,
-            group: CUSTOM_DATA_FIELD_GROUP,
+            group: CUSTOM_DICTIONARY_FIELD_GROUP,
             content: datasetMappingHeader.map((header): OptionDetail => ({
                 title: header,
                 value: '',
@@ -297,7 +295,7 @@ export default function CustomEntitiesDropdown({
         } else {
             setSelectedOptions([...selectedOptions, option]);
         }
-        onSelection(option.id, !isOptionAlreadySelected)
+        onSelection(option, !isOptionAlreadySelected)
     };
 
 
@@ -311,7 +309,7 @@ export default function CustomEntitiesDropdown({
 
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
-            onCustomDictionaryFieldCreation(customDictionaryFieldOption);
+            onSelection(customDictionaryFieldOption, true);
         }
 
         // Reset view and custom dictionary field option to initial state
