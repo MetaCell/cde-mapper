@@ -157,7 +157,7 @@ const Tour = (props: TourProps) => {
                 tooltip: {
                     padding: 0,
                     borderRadius: '0.25rem',
-                    boxShadow: tooltipBoxShadow
+                    boxShadow: tooltipBoxShadow,
                 },
                 tooltipTitle: {
                     color: gray900,

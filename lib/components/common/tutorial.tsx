@@ -8,6 +8,7 @@ export enum TourSteps {
     Home = "home",
     Collection = "collection",
     Suggestions = "suggestions",
+    NoSuggestions = "no suggestions",
     Mapping = "mapping",
 }
 
@@ -15,6 +16,7 @@ export interface TutorialType {
     [TourSteps.Home]: Step[],
     [TourSteps.Collection]: Step[],
     [TourSteps.Suggestions]: Step[],
+    [TourSteps.NoSuggestions]: Step[],
     [TourSteps.Mapping]: Step[]
 }
 
@@ -147,6 +149,16 @@ export const tutorial: TutorialType = {
             target: '.suggestions__cancel-btn',
             placement: 'bottom-end',
             spotlightClicks: true
+        }
+    ],
+    [TourSteps.NoSuggestions]: [
+        {
+            content: 'This is the view where the users should address the suggestions detected by the CDE Mapper. Unfortunately at the moment there aren’t suggestions available, so the only action you can do is move forward to the mapping step',
+            target: '.next_button',
+            title: 'No suggestions',
+            spotlightClicks: true,
+            disableBeacon: true,
+            hideFooter: true
         }
     ],
     [TourSteps.Mapping]: [
