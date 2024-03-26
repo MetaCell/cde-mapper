@@ -1,3 +1,5 @@
+import {HeaderIndexes, Option} from "../models.ts";
+
 export const validateDataset = (dataset: string[][]) => {
     if (dataset.length < 2) {
         throw new Error("Dataset must have at least two rows (one for headers and one for data).");
@@ -31,3 +33,7 @@ export const validateDatasetMapping = (datasetMapping: string[][] | undefined, v
         variableNameSet.add(variableName);
     }
 };
+
+export function isCustomDictionaryValid(option: Option, headerIndexes: HeaderIndexes): boolean {
+    return option.content[headerIndexes.preciseAbbreviation]?.value != '' && option.content[headerIndexes.title]?.value != ''
+}

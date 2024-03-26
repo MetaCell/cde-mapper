@@ -1,5 +1,6 @@
 import {createContext, useContext} from "react";
 import {
+    Option,
     OptionDetail,
 } from "../../models.ts";
 
@@ -13,6 +14,7 @@ export const ServicesContext = createContext<{
     getSuggestionsForColumn: (column: string) => string[][];
     updateDatasetMappingRow: (key: string, newData: OptionDetail[]) => void;
     isColumnMapped: (column: string) => boolean;
+    searchCustomDictionaryFields: (querystring: string, createdCustomDictionaryFields: { [id: string]: Option }) => Option[]
     onClose: () => void;
 }>({
     getTotalRowsCount: () => 0,
@@ -24,7 +26,9 @@ export const ServicesContext = createContext<{
     getSuggestionsForColumn: () => [],
     updateDatasetMappingRow: () => {},
     isColumnMapped: () => false,
-    onClose: () => {},
+    searchCustomDictionaryFields: () => [],
+    onClose: () => {
+    },
 });
 
 

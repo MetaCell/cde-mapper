@@ -11,14 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
 import {
     CUSTOM_DATA_FIELD_CDE_LEVEL,
-    CUSTOM_DICTIONARY_FIELD_GROUP,
+    CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
 } from '../../settings.ts';
 import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
 import {DataContext} from "../../contexts/data/DataContext.ts";
 import NoResultField from "./NoResultField.tsx";
-import {isCustomDictionaryValid} from "../../helpers/customDictionaryFieldHelpers.ts";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
+import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
     buttonOutlinedBorderColor,
@@ -182,6 +182,8 @@ interface CustomEntitiesDropdownProps {
         onCollectionSelect: (collection: SelectableCollection) => void;
     };
     variableName: string
+    onCustomDictionaryFieldCreation: (option: Option, newIsSelectedState: boolean) => void;
+
 }
 
 type GroupedOptions = {
@@ -203,6 +205,7 @@ export default function CustomEntitiesDropdown({
                                                        onCollectionSelect,
                                                    },
                                                    variableName,
+                                                   onCustomDictionaryFieldCreation,
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -226,7 +229,7 @@ export default function CustomEntitiesDropdown({
         const initialCustomDictionaryFieldOption: Option = {
             id: customDictionaryFieldId,
             label: '',
-            group: CUSTOM_DICTIONARY_FIELD_GROUP,
+            group: CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
             content: datasetMappingHeader.map((header): OptionDetail => ({
                 title: header,
                 value: '',
@@ -318,7 +321,7 @@ export default function CustomEntitiesDropdown({
         if (isConfirm) {
             if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
                 customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
-                onSelection(customDictionaryFieldOption, true);
+                onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
             }else{
                 setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
             }

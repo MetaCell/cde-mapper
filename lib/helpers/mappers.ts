@@ -1,5 +1,5 @@
 import {
-    ABBREVIATION, CDE_LEVEL, CDE_LEVEL_CDE_KEY,
+    ABBREVIATION, CDE_LEVEL, CDE_LEVEL_CDE_KEY, CDE_OPTIONS_GROUP,
     DATA_TYPE, DATA_TYPE_CDE_KEY, DESCRIPTION,
     INTERLEX_ID, MAXIMUM_VALUE, MAXIMUM_VALUE_CDE_KEY,
     MINIMUM_VALUE, MINIMUM_VALUE_CDE_KEY,
@@ -9,6 +9,7 @@ import {
 } from "../settings.ts";
 import {HeaderIndexes, Option} from "../models.ts";
 import {getId, getPreciseAbbreviation} from "./rowHelpers.ts";
+import {getOptionGroupFromRow} from "./optionsHelpers.ts";
 
 
 type Hit = {
@@ -85,7 +86,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: Header
         return {
             id,
             label: preciseAbbrev,
-            group: '',
+            group: CDE_OPTIONS_GROUP,
             content: details,
         };
     });
@@ -101,5 +102,5 @@ export const mapRowToOption = (row: string[], header: string[], headerIndexes: H
         value
     }))
 
-    return {id, label, group: '', content}
+    return {id, label, group: getOptionGroupFromRow(row, headerIndexes), content}
 };
