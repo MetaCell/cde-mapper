@@ -112,7 +112,6 @@ export const getQueryById = (id) => {
 export const getRelatedQuery = (id) => {
     if (id) {
         return {
-            "size": 20,
             "from": 0,
             "query": {
                 "bool": {
