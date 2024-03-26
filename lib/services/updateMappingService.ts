@@ -27,6 +27,9 @@ export const _updateRow = (
 
     // Update values for mandatory properties using headerIndexes
     Object.values(headerIndexes).forEach((index) => {
+        // VariableName should not be modified
+        if (index === headerIndexes.variableName) return;
+
         const detail = newRowContent[index];
         if (detail) {
             updatedRow[index] = detail.value;
