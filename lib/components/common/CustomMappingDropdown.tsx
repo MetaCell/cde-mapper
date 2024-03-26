@@ -309,6 +309,7 @@ export default function CustomEntitiesDropdown({
 
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
+            // TODO: validate if includes mandatory fields
             onSelection(customDictionaryFieldOption, true);
         }
 

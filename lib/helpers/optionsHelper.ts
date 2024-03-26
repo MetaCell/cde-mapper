@@ -7,7 +7,7 @@ import {
 } from "../settings.ts";
 
 export const optionDetailsToCdeDetails = (optionDetails: OptionDetail[]): CdeDetailItem[] => {
-    return optionDetails.map(detail => ({
+    return optionDetails.filter((detail) => detail !== null && detail.value !== '').map(detail => ({
         heading: detail.title,
         text: detail.value
     }));
@@ -15,7 +15,7 @@ export const optionDetailsToCdeDetails = (optionDetails: OptionDetail[]): CdeDet
 
 
 const findDetailValue = (details: OptionDetail[], title: string): string => {
-    const detail = details.find(detail => detail.title === title);
+    const detail = details.filter((detail) => detail !== null && detail.value !== '').find(detail => detail.title === title);
     return detail ? detail.value : '';
 };
 

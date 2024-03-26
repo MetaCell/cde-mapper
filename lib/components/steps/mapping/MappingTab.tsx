@@ -115,7 +115,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
-    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<Option[]>([]);
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
 
 
     useEffect(() => {
@@ -189,7 +189,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             }));
 
             if (isCustomDictionaryField(option)) {
-                setCreatedCustomDictionaryFields(prev => ([...prev, option]))
+                setCreatedCustomDictionaryFields(prev => ({
+                    ...prev,
+                    [option.id]: option,
+                }));
             }
 
             updateDatasetMappingRow(variableName, option.content);

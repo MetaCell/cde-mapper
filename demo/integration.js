@@ -1,6 +1,14 @@
 import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
 import {getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
 
+const headersIndexes = {
+    variableName: 0,
+    preciseAbbreviation: 1,
+    title: 2,
+    id: 11,
+    cdeLevel: 12,
+}
+
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
     let datasetMappings = [];
     let additionalDatasetMappings = [];
@@ -69,13 +77,7 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
                         callback: (datasetMapping, datasetMappingHeader) => downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader),
-                        headerIndexes: {
-                            variableName: 0,
-                            preciseAbbreviation: 1,
-                            title: 2,
-                            id: 11,
-                            cdeLevel: 12,
-                        },
+                        headerIndexes: headersIndexes,
                         emailTemplate: {
                             email: 'support@interlex.org',
                             title: 'CDE Mapper collection not found',
@@ -119,7 +121,7 @@ function getCollections() {
 async function fetchElasticSearchData(queryString) {
     const query = getQueryByName(queryString)
     const data = await queryInterlex(query);
-    return mapElasticSearchHitsToOptions(data.hits.hits || [])
+    return mapElasticSearchHitsToOptions(data.hits.hits || [], headersIndexes)
 }
 
 
@@ -134,7 +136,7 @@ async function getPairingSuggestions(id) {
             // Fetch related suggestions based on the superclass ID
             const relatedQuery = getRelatedQuery(superclassId);
             const relatedData = await queryInterlex(relatedQuery);
-            return mapElasticSearchHitsToOptions(relatedData.hits.hits || []);
+            return mapElasticSearchHitsToOptions(relatedData.hits.hits || [], headersIndexes);
         }
     }
 

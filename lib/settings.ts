@@ -35,7 +35,6 @@ export const PERMITTED_VALUES_CDE_KEY = "allowedValues"
 export const MINIMUM_VALUE_CDE_KEY = "minValue"
 export const MAXIMUM_VALUE_CDE_KEY = "maxValue"
 export const CDE_LEVEL_CDE_KEY = "hasCDELevel"
-export const DEFINITION_CDE_KEY = "definition"
 
 export const CUSTOM_DICTIONARY_FIELD_GROUP = "Custom"
 export const CUSTOM_DICTIONARY_FIELD_COLLECTION_ID = "Custom"
