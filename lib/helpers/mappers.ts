@@ -1,6 +1,6 @@
 import {
     ABBREVIATION, CDE_LEVEL, CDE_LEVEL_CDE_KEY,
-    DATA_TYPE, DATA_TYPE_CDE_KEY,
+    DATA_TYPE, DATA_TYPE_CDE_KEY, DESCRIPTION,
     INTERLEX_ID, MAXIMUM_VALUE, MAXIMUM_VALUE_CDE_KEY,
     MINIMUM_VALUE, MINIMUM_VALUE_CDE_KEY,
     PERMITTED_VALUES, PERMITTED_VALUES_CDE_KEY,
@@ -8,7 +8,7 @@ import {
     UNIT_OF_MEASURE, UNIT_OF_MEASURE_CDE_KEY, VARIABLE_NAME_UI
 } from "../settings.ts";
 import {HeaderIndexes, Option} from "../models.ts";
-import {getId, getPreciseAbbreviation} from "./getters.ts";
+import {getId, getPreciseAbbreviation} from "./rowHelpers.ts";
 
 
 type Hit = {
@@ -30,6 +30,14 @@ interface AnnotationMapping {
     [MAXIMUM_VALUE_CDE_KEY]: string,
 }
 
+const annotationMapping : AnnotationMapping = {
+    [UNIT_OF_MEASURE_CDE_KEY]: UNIT_OF_MEASURE,
+    [DATA_TYPE_CDE_KEY]: DATA_TYPE,
+    [PERMITTED_VALUES_CDE_KEY]: PERMITTED_VALUES,
+    [MINIMUM_VALUE_CDE_KEY]: MINIMUM_VALUE,
+    [MAXIMUM_VALUE_CDE_KEY]: MAXIMUM_VALUE,
+};
+
 export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: HeaderIndexes): Option[] {
     return hits.filter(hit => hit._source.ilx).map(hit => {
         const source = hit._source;
@@ -45,15 +53,17 @@ export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: Header
         details[headerIndexes.id] = {title: INTERLEX_ID, value: id};
         details[headerIndexes.variableName] = { title: VARIABLE_NAME_UI, value: '' }
 
+        // Description and other relevant but non-mandatory fields
 
-        // Add annotationMapping and process non-mandatory details
-        const annotationMapping : AnnotationMapping = {
-            [UNIT_OF_MEASURE_CDE_KEY]: UNIT_OF_MEASURE,
-            [DATA_TYPE_CDE_KEY]: DATA_TYPE,
-            [PERMITTED_VALUES_CDE_KEY]: PERMITTED_VALUES,
-            [MINIMUM_VALUE_CDE_KEY]: MINIMUM_VALUE,
-            [MAXIMUM_VALUE_CDE_KEY]: MAXIMUM_VALUE,
-        };
+        const description = source.definition || null
+        if(description){
+            const firstNullIndex = details.findIndex(detail => detail === null);
+            if (firstNullIndex !== -1) {
+                details[firstNullIndex] = { title: DESCRIPTION, value: description };
+            } else {
+                details.push({ title: DESCRIPTION, value: description });
+            }
+        }
 
         source.annotations.forEach(annotation => {
             const title = annotationMapping[annotation.annotation_term_label] || null;

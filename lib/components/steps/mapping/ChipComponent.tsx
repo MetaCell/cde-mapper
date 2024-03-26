@@ -1,6 +1,6 @@
 import { Chip, ChipProps } from "@mui/material";
 import { BulletIcon } from "../../../icons";
-import { getType } from "../../../helpers/getters";
+import { getType } from "../../../helpers/rowHelpers.ts";
 import { EntityType } from "../../../models";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 

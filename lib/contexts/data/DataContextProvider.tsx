@@ -6,7 +6,7 @@ import ErrorPage from "../../components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
 import {DataContext} from './DataContext.ts';
 import {computeSuggestions} from "../../services/suggestionsService.ts";
-import {getCustomDictionaryFieldCollection} from "../../helpers/customDictionaryFieldCollection.ts";
+import {getCustomDictionaryFieldCollection} from "../../helpers/customDictionaryFieldCollectionHelpers.ts";
 
 
 const defaultHeaderIndexes = {

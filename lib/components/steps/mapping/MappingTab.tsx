@@ -20,7 +20,7 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
-import {getId, getPreciseAbbreviation, getType, isRowMapped} from "../../../helpers/getters.ts";
+import {getId, getPreciseAbbreviation, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
@@ -28,10 +28,10 @@ import {
     getAbbreviationFromOption,
     getDescriptionFromOption, isCustomDictionaryField,
     optionDetailsToCdeDetails
-} from "../../../helpers/optionsHelper.ts";
+} from "../../../helpers/optionsHelpers.ts";
 import {
     searchCurrentCustomDictionaryFields
-} from "../../../helpers/customDictionaryFieldCollection.ts";
+} from "../../../helpers/customDictionaryFieldCollectionHelpers.ts";
 import ChipComponent from "./ChipComponent.tsx";
 import {CUSTOM_DICTIONARY_FIELD_COLLECTION_ID} from "../../../settings.ts";
 
@@ -326,7 +326,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                             }));
 
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                            const abbreviation = getAbbreviationFromOption(suggestion);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
                                                             const description = getDescriptionFromOption(suggestion);
 
                                                             return (

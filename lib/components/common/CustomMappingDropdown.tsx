@@ -16,6 +16,9 @@ import {
 import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
 import {DataContext} from "../../contexts/data/DataContext.ts";
 import NoResultField from "./NoResultField.tsx";
+import {isCustomDictionaryValid} from "../../helpers/customDictionaryFieldHelpers.ts";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
+import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
 
 const {
     buttonOutlinedBorderColor,
@@ -215,12 +218,14 @@ export default function CustomEntitiesDropdown({
     const [isLoading, setIsLoading] = useState(false);
 
     const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
+    const {setErrorMessage} = useUIContext();
+
 
     const getCustomDictionaryFieldOption = () => {
         const customDictionaryFieldId = nanoid();
         const initialCustomDictionaryFieldOption: Option = {
             id: customDictionaryFieldId,
-            label: variableName,
+            label: '',
             group: CUSTOM_DICTIONARY_FIELD_GROUP,
             content: datasetMappingHeader.map((header): OptionDetail => ({
                 title: header,
@@ -232,6 +237,8 @@ export default function CustomEntitiesDropdown({
         initialCustomDictionaryFieldOption.content[headerIndexes.variableName].value = variableName;
         initialCustomDictionaryFieldOption.content[headerIndexes.id].value = customDictionaryFieldId;
         initialCustomDictionaryFieldOption.content[headerIndexes.cdeLevel].value = CUSTOM_DATA_FIELD_CDE_LEVEL;
+        initialCustomDictionaryFieldOption.content[headerIndexes.title].value = '';
+        initialCustomDictionaryFieldOption.content[headerIndexes.preciseAbbreviation].value = '';
 
         // Update state
         return initialCustomDictionaryFieldOption
@@ -309,8 +316,12 @@ export default function CustomEntitiesDropdown({
 
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
-            // TODO: validate if includes mandatory fields
-            onSelection(customDictionaryFieldOption, true);
+            if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
+                customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
+                onSelection(customDictionaryFieldOption, true);
+            }else{
+                setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
+            }
         }
 
         // Reset view and custom dictionary field option to initial state

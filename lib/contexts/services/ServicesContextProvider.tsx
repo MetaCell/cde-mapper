@@ -2,7 +2,7 @@ import {PropsWithChildren, useMemo} from "react";
 import {useDataContext} from "../data/DataContext.ts";
 import {OptionDetail, ServiceInitParams} from "../../models.ts";
 import {ServicesContext} from "./ServicesContext.ts";
-import {isRowMapped} from "../../helpers/getters.ts";
+import {isRowMapped} from "../../helpers/rowHelpers.ts";
 import {_updateRow} from "../../services/updateMappingService.ts";
 
 export const ServicesContextProvider = ({
