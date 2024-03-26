@@ -1,6 +1,10 @@
-import {OptionDetail} from "../models.ts";
+import {Option, OptionDetail} from "../models.ts";
 import {CdeDetailItem} from "../components/common/CdeDetails.tsx";
-import {ABBREVIATION, DESCRIPTION} from "../settings.ts";
+import {
+    ABBREVIATION,
+    CUSTOM_DICTIONARY_FIELD_GROUP,
+    DESCRIPTION, TITLE
+} from "../settings.ts";
 
 export const optionDetailsToCdeDetails = (optionDetails: OptionDetail[]): CdeDetailItem[] => {
     return optionDetails.map(detail => ({
@@ -15,5 +19,8 @@ const findDetailValue = (details: OptionDetail[], title: string): string => {
     return detail ? detail.value : '';
 };
 
-export const getAbbreviationFromOption = (details: OptionDetail[]): string => findDetailValue(details, ABBREVIATION);
-export const getDescriptionFromOption = (details: OptionDetail[]): string => findDetailValue(details, DESCRIPTION);
+export const getAbbreviationFromOption = (option: Option): string => findDetailValue(option.content, ABBREVIATION);
+export const getTitleFromOption = (option: Option): string => findDetailValue(option.content, TITLE);
+export const getDescriptionFromOption = (option: Option): string => findDetailValue(option.content, DESCRIPTION);
+
+export const isCustomDictionaryField = (option: Option): boolean => option.group === CUSTOM_DICTIONARY_FIELD_GROUP

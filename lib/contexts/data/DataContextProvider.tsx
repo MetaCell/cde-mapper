@@ -6,6 +6,7 @@ import ErrorPage from "../../components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
 import {DataContext} from './DataContext.ts';
 import {computeSuggestions} from "../../services/suggestionsService.ts";
+import {getCustomDictionaryFieldCollection} from "../../helpers/customDictionaryFieldCollection.ts";
 
 
 const defaultHeaderIndexes = {
@@ -100,7 +101,7 @@ export const DataContextProvider = ({
     }, [initialDatasetMapping, additionalDatasetMappings, headerIndexes]);
 
     const collectionsDictionary = useMemo(() => {
-        return rawCollections.reduce((acc, collection, index) => {
+        return [...rawCollections, getCustomDictionaryFieldCollection()].reduce((acc, collection, index) => {
             acc[collection.id] = {
                 ...collection,
                 suggested: index === 0 // Set 'suggested' for the first collection, false for others

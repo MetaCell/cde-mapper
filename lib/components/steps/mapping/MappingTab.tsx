@@ -26,11 +26,14 @@ import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
 import {
     getAbbreviationFromOption,
-    getDescriptionFromOption,
+    getDescriptionFromOption, isCustomDictionaryField,
     optionDetailsToCdeDetails
 } from "../../../helpers/optionsHelper.ts";
-import {getCustomDictionaryFieldCollection} from "../../../helpers/customDictionaryFieldCollection.ts";
+import {
+    searchCurrentCustomDictionaryFields
+} from "../../../helpers/customDictionaryFieldCollection.ts";
 import ChipComponent from "./ChipComponent.tsx";
+import {CUSTOM_DICTIONARY_FIELD_COLLECTION_ID} from "../../../settings.ts";
 
 const styles = {
     root: {
@@ -111,7 +114,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
-    const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<Option[]>([]);
 
 
     useEffect(() => {
@@ -121,7 +125,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             selected: key === defaultCollection
         }));
 
-        setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldCollection()]);
+        setSelectableCollections(initialSelectedCollections);
     }, [collections, defaultCollection]);
 
     useEffect(() => {
@@ -135,7 +139,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }, {} as { [id: string]: Option });
 
 
-        setOptionsMap(initialSearchResults);
+        setSelectedOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
 
 
@@ -162,15 +166,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             try {
                 const fetchPromises = selectedCollections.map(async (collection) => {
                     const searchResults = await collection.fetch(queryString);
-
-                    // const searchResultsDictionary = searchResults.reduce((acc, option) => {
-                    //     acc[option.id] = option;
-                    //     return acc;
-                    // }, {} as { [id: string]: Option });
-
-                    //setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
-
-                    return searchResults;
+                    return collection.id !== CUSTOM_DICTIONARY_FIELD_COLLECTION_ID ? searchResults :
+                        [...searchResults, ...searchCurrentCustomDictionaryFields(queryString, createdCustomDictionaryFields)] as Option[]
                 });
                 const results = await Promise.all(fetchPromises);
                 return results.flat();
@@ -179,17 +176,21 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 return [];
             }
         },
-        [selectableCollections, collections]
+        [selectableCollections, collections, createdCustomDictionaryFields]
     );
 
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
 
         if (option && newIsSelectedState) {
             // Update optionsMap with the new selected option
-            setOptionsMap(prevOptionsMap => ({
+            setSelectedOptionsMap(prevOptionsMap => ({
                 ...prevOptionsMap,
                 [option.id]: option,
             }));
+
+            if (isCustomDictionaryField(option)) {
+                setCreatedCustomDictionaryFields(prev => ([...prev, option]))
+            }
 
             updateDatasetMappingRow(variableName, option.content);
 
@@ -293,7 +294,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
+                                                value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)]
                                             }}
                                             variableName={variableName}
                                         />
@@ -322,8 +323,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                             }));
 
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                            const abbreviation = getAbbreviationFromOption(suggestion.content);
-                                                            const description = getDescriptionFromOption(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion);
+                                                            const description = getDescriptionFromOption(suggestion);
 
                                                             return (
                                                                 <PairingSuggestion

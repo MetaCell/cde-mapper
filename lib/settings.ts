@@ -37,4 +37,6 @@ export const MAXIMUM_VALUE_CDE_KEY = "maxValue"
 export const CDE_LEVEL_CDE_KEY = "hasCDELevel"
 export const DEFINITION_CDE_KEY = "definition"
 
-export const CUSTOM_DATA_FIELD_GROUP = "Custom"
+export const CUSTOM_DICTIONARY_FIELD_GROUP = "Custom"
+export const CUSTOM_DICTIONARY_FIELD_COLLECTION_ID = "Custom"
+export const CUSTOM_DICTIONARY_FIELD_COLLECTION_NAME = "Data Dictionary"
