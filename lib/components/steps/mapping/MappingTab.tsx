@@ -4,14 +4,12 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Chip, ChipProps,
     TextField,
     Typography
 } from "@mui/material"
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
     ArrowIcon,
-    BulletIcon,
     PairIcon,
     SortIcon
 } from "../../../icons";
@@ -21,7 +19,7 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
+import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getPreciseAbbreviation, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
@@ -31,6 +29,8 @@ import {
     getDescriptionFromOption,
     optionDetailsToCdeDetails
 } from "../../../helpers/optionsHelper.ts";
+import {getCustomDictionaryFieldCollection} from "../../../helpers/customDictionaryFieldCollection.ts";
+import ChipComponent, {getChipComponent} from "./ChipComponent.tsx";
 
 const styles = {
     root: {
@@ -121,7 +121,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             selected: key === defaultCollection
         }));
 
-        setSelectableCollections(initialSelectedCollections);
+        setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldCollection()]);
     }, [collections, defaultCollection]);
 
     useEffect(() => {
@@ -249,41 +249,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         await handleSelection(variableName, option, true);
     }
 
-    const getChipComponent = (key: string) => {
-        const row = datasetMapping[key];
-        const entityType = getType(row, headerIndexes);
-
-        let label: string;
-        let color: ChipProps['color'];
-        let iconColor: string;
-
-        switch (entityType) {
-            case EntityType.CDE:
-                label = "Mapped to CDE";
-                color = "success";
-                iconColor = "#12B76A";
-                break;
-            case EntityType.CustomDictionaryField:
-                label = "Mapped to Custom Data Dictionary";
-                color = "success";
-                iconColor = "#346DDB";
-                break;
-            default:
-                label = "Unmapped";
-                color = "default";
-                iconColor = "#676C74";
-                break;
-        }
-
-        return (
-            <Chip
-                label={label}
-                size="small"
-                color={color}
-                icon={<BulletIcon color={iconColor}/>}
-            />
-        );
-    };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
@@ -312,7 +277,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                             {visibleRows.map((variableName, index) => (
                                 <Box key={index} sx={styles.row}>
                                     <Box sx={styles.col}>
-                                        {getChipComponent(variableName)}
+                                        <ChipComponent variableName={variableName}/>
                                     </Box>
                                     <Box sx={styles.col}>
                                         <TextField
