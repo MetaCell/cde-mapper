@@ -5,7 +5,8 @@ import {
     AccordionSummary,
     Box,
     TextField,
-    Typography
+    Typography,
+    IconButton
 } from "@mui/material"
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
@@ -23,6 +24,7 @@ import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
+import {VariableNameFilter, CdeSortingFilter, StatusFilter, SortingStrategy} from "../../../sortingStrategies.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
 import {
     getAbbreviationFromOption,
@@ -93,6 +95,13 @@ const styles = {
         '& svg': {
             cursor: 'pointer',
         }
+    },
+    sortButton: {
+        padding: '0.25rem',
+        borderRadius: '0.25rem',
+        '&:hover': {
+            backgroundColor: '#ECEDEE'
+        }
     }
 }
 
@@ -115,6 +124,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
+    const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
     const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
     const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
 
@@ -157,7 +167,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             })
         );
     };
-
 
     const searchInCollections = useCallback(
         async (queryString: string): Promise<Option[]> => {
@@ -253,6 +262,33 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         await handleSelection(variableName, option, newIsSelectedState)
     }
 
+    const isSameStrategyType = (filter: SortingStrategy, newFilter: SortingStrategy) => {
+        if (!filter || !newFilter) {
+            return false;
+        }
+        return filter.constructor === newFilter.constructor;
+    }
+
+    const sortRows = useCallback((fitlerStrategy: SortingStrategy) => {
+        const result = fitlerStrategy.doSort(visibleRows, datasetMapping, headerIndexes);
+        setVisibleRows([...result]);
+    }, [datasetMapping, headerIndexes, visibleRows])
+
+    const handleSortingStrategy = (newCurrentSortingStrategy: SortingStrategy) => {
+        if (currentFilterStrategy && isSameStrategyType(currentFilterStrategy, newCurrentSortingStrategy)) {
+            currentFilterStrategy.toggleSortOrder();
+            sortRows(currentFilterStrategy);
+        } else {
+            setCurrentFilterStrategy(newCurrentSortingStrategy)
+        }
+    }
+
+    useEffect(() => {
+        if(currentFilterStrategy){
+            sortRows(currentFilterStrategy);
+        }
+    }, [currentFilterStrategy, sortRows])
+
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
@@ -264,16 +300,22 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <SortIcon/>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
+                                    <SortIcon direction={currentFilterStrategy instanceof StatusFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
-                                <SortIcon/>
+                                <IconButton onClick={() => handleSortingStrategy(new VariableNameFilter())} sx={styles.sortButton}>
+                                    <SortIcon direction={currentFilterStrategy instanceof VariableNameFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
-                                <SortIcon/>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new CdeSortingFilter)}>
+                                    <SortIcon direction={currentFilterStrategy instanceof CdeSortingFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
