@@ -197,12 +197,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             // Get all selected collections
             const selectedCollections = selectableCollections
                 .filter(collection => collection.selected)
-                .map(collection => collections[collection.id]);
 
             // Fetch pairing suggestions from all selected collections
             let aggregatedPairingSuggestions: Option[] = [];
-            for (const collection of selectedCollections) {
-                if (collection.getPairingSuggestions) {
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
                     const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
                     aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
                 }
