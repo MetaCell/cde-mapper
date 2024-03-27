@@ -278,7 +278,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         </Box>
                         <Box sx={styles.wrap}>
                             {visibleRows.map((variableName, index) => (
-                                <Box key={index} sx={styles.row}>
+                                <Box key={index} sx={styles.row} id={variableName}>
                                     <Box sx={styles.col}>
                                         <ChipComponent variableName={variableName}/>
                                     </Box>
