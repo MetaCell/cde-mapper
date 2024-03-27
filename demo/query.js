@@ -1,4 +1,4 @@
-export const getQueryObject = (queryString) => {
+export const getQueryByName = (queryString) => {
     if (queryString) {
         return {
             "size": 20,
@@ -72,7 +72,68 @@ export const getQueryObject = (queryString) => {
             }
         }
     }
-
 };
 
+
+export const getQueryById = (id) => {
+    if (id) {
+        return {
+            "size": 1,
+            "from": 0,
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "query_string": {
+                                "fields": [
+                                    "ilx"
+                                ],
+                                "query": `${id}`
+                            }
+                        }
+                    ],
+
+                    "filter": [
+                        {
+                            "terms": {
+                                "type.aggregate": [
+                                    "cde"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "aggregations": {}
+        }
+    }
+};
+
+export const getRelatedQuery = (id) => {
+    if (id) {
+        return {
+            "from": 0,
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "term": {
+                                "superclasses.ilx": {
+                                    "value": `${id}`
+                                }
+                            }
+                        },
+                        {
+                            "term": {
+                                "type.aggregate": {
+                                    "value": "cde"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+};
 

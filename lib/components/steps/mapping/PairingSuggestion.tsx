@@ -1,14 +1,32 @@
-import {Box, FormControl, IconButton, MenuItem, Select, Typography} from "@mui/material";
+import {Box, FormControl, IconButton, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
 import {ArrowIcon, CheckIcon, CrossIcon, GlobeIcon} from "../../../icons";
-import CdeDetails from "../../common/CdeDetails.tsx";
+import CdeDetails, {CdeDetailItem} from "../../common/CdeDetails.tsx";
+import {useState} from "react";
 
-export function PairingSuggestion(props: {
-    value: string,
-    onChange: () => void,
-    selectOptions: { value: string, label: string }[],
-    subjectName: string,
-    subjectDescription: string
-}) {
+
+interface PairingSuggestionProps {
+    headerOptions: { index: number, label: string }[];
+    label: string;
+    description: string;
+    rowContent: CdeDetailItem[];
+    onChange: (selectedHeaderIndex: string | null) => void;
+}
+
+const DEFAULT_VALUE = -1
+
+export function PairingSuggestion({
+                                      headerOptions,
+                                      label,
+                                      description,
+                                      rowContent,
+                                      onChange,
+                                  }: PairingSuggestionProps) {
+    const [selectedHeaderIndex, setSelectedHeaderIndex] = useState<number>(DEFAULT_VALUE);
+    const handleChange = (event: SelectChangeEvent<number>) => {
+        const newValue = Number(event.target.value);
+        setSelectedHeaderIndex(newValue);
+    };
+
     return (
         <Box sx={{
             position: "relative",
@@ -48,11 +66,17 @@ export function PairingSuggestion(props: {
                 <Box sx={{width: "18.75rem"}}>
                     <FormControl fullWidth>
                         <Select
-                            value={props.value}
-                            onChange={props.onChange}
+                            value={selectedHeaderIndex}
+                            onChange={handleChange}
                         >
-                            {props.selectOptions.map(option => (
-                                <MenuItem key={option.value} value={option.value}>
+                            <MenuItem disabled value={-1}
+                                      sx={{
+                                          color: '#A9ACB2'
+                                      }}>
+                                <em>Choose column header to map...</em>
+                            </MenuItem>
+                            {headerOptions.map(option => (
+                                <MenuItem key={option.index} value={option.index}>
                                     {option.label}
                                 </MenuItem>
                             ))}
@@ -77,7 +101,7 @@ export function PairingSuggestion(props: {
                             lineHeight: "142.857%",
                             color: "#070808"
                         }}>
-                            {props.subjectName}
+                            {label}
                         </Typography>
                         <Typography sx={{
                             fontSize: "0.875rem",
@@ -85,7 +109,7 @@ export function PairingSuggestion(props: {
                             lineHeight: "142.857%",
                             color: "#676C74"
                         }}>
-                            {props.subjectDescription}
+                            {description}
                         </Typography>
                     </Box>
 
@@ -93,21 +117,24 @@ export function PairingSuggestion(props: {
                         <IconButton sx={{
                             borderRadius: "0.5rem",
                             padding: "0.4375rem",
-                        }}>
+                        }} onClick={() => onChange(null)}>
                             <CrossIcon/>
                         </IconButton>
-                        <IconButton sx={{
-                            borderRadius: "0.5rem",
-                            padding: "0.4375rem",
-                            border: "0.0625rem solid #D6D8DB",
-                            boxShadow: "0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)"
-                        }}>
+                        <IconButton disabled={selectedHeaderIndex === DEFAULT_VALUE}
+                                    sx={{
+                                        borderRadius: "0.5rem",
+                                        padding: "0.4375rem",
+                                        border: "0.0625rem solid #D6D8DB",
+                                        boxShadow: "0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)"
+                                    }}
+                                    onClick={() => onChange(headerOptions[selectedHeaderIndex].label)}
+                        >
                             <CheckIcon/>
                         </IconButton>
                     </Box>
                 </Box>
             </Box>
-            <CdeDetails/>
+            <CdeDetails data={rowContent}/>
         </Box>
     );
 }

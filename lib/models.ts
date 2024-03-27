@@ -32,7 +32,8 @@ export interface Collection {
     id: string;
     name: string;
     fetch: (queryString: string) => Promise<Option[]>;
-    suggested: boolean | null
+    getPairingSuggestions?: (id: string) => Promise<Option[]>
+    suggested?: boolean | null
 }
 
 export interface Config {
