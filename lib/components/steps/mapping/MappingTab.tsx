@@ -20,7 +20,7 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
-import {getId, getPreciseAbbreviation, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
+import {getId, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
@@ -142,6 +142,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
         setSelectedOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
+
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
@@ -319,8 +320,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         fontWeight: 500,
                                                         lineHeight: '150%'
                                                     }}>Pairing suggestions</Typography>
-                                                    <PairingTooltip
-                                                        selectedCdeAbbreviation={getPreciseAbbreviation(datasetMapping[variableName], headerIndexes)}/>
+                                                    <PairingTooltip/>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
