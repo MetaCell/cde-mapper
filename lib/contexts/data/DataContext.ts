@@ -5,7 +5,7 @@ import {
     DatasetMapping,
     HeaderIndexes,
     Suggestions,
-    EmailTemplateParams
+    EmailTemplateParams, Option
 } from "../../models.ts";
 import {
     ABBREVIATION_INDEX,
@@ -22,6 +22,7 @@ export const DataContext = createContext<{
     datasetMapping: DatasetMapping;
     datasetMappingHeader: string[];
     suggestions: Suggestions;
+    customDictionaryFields: Option[];
     headerIndexes: HeaderIndexes;
     collections: { [key: string]: Collection };
     config: Config;
@@ -34,6 +35,7 @@ export const DataContext = createContext<{
     datasetMapping: {},
     datasetMappingHeader: [],
     suggestions:{},
+    customDictionaryFields:[],
     headerIndexes: {
         variableName: VARIABLE_NAME_INDEX,
         preciseAbbreviation: ABBREVIATION_INDEX,

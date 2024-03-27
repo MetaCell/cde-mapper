@@ -4,7 +4,6 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Chip, ChipProps,
     TextField,
     Typography,
     IconButton
@@ -12,7 +11,6 @@ import {
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
     ArrowIcon,
-    BulletIcon,
     PairIcon,
     SortIcon
 } from "../../../icons";
@@ -22,8 +20,8 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
-import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
+import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
+import {getId, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {VariableNameFilter, CdeSortingFilter, StatusFilter, SortingStrategy} from "../../../sortingStrategies.ts";
@@ -32,7 +30,13 @@ import {
     getAbbreviationFromOption,
     getDescriptionFromOption,
     optionDetailsToCdeDetails
-} from "../../../helpers/optionsHelper.ts";
+} from "../../../helpers/optionsHelpers.ts";
+
+import ChipComponent from "./ChipComponent.tsx";
+import {CUSTOM_DICTIONARY_FIELD_COLLECTION_ID} from "../../../settings.ts";
+import {
+    getCustomDictionaryFieldSelectableCollection,
+} from "../../../services/customDictionaryFieldService.ts";
 
 const styles = {
     root: {
@@ -110,7 +114,7 @@ interface MappingProps {
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
-    const {updateDatasetMappingRow, getUnmappedVariableNames} = useServicesContext();
+    const {updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields} = useServicesContext();
     const {
         updateAvailableSuggestions,
         getPairingSuggestions,
@@ -120,8 +124,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
-    const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
     const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
+    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
 
 
     useEffect(() => {
@@ -131,7 +136,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             selected: key === defaultCollection
         }));
 
-        setSelectableCollections(initialSelectedCollections);
+        setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
 
     useEffect(() => {
@@ -145,8 +150,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }, {} as { [id: string]: Option });
 
 
-        setOptionsMap(initialSearchResults);
+        setSelectedOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
+
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
@@ -166,20 +172,15 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         async (queryString: string): Promise<Option[]> => {
             const selectedCollections = selectableCollections
                 .filter(collection => collection.selected)
-                .map(collection => collections[collection.id]);
 
             try {
                 const fetchPromises = selectedCollections.map(async (collection) => {
-                    const searchResults = await collection.fetch(queryString);
+                    if (collection.id === CUSTOM_DICTIONARY_FIELD_COLLECTION_ID) {
+                        return searchCustomDictionaryFields(queryString, createdCustomDictionaryFields)
+                    } else {
+                        return await collections[collection.id].fetch(queryString);
+                    }
 
-                    const searchResultsDictionary = searchResults.reduce((acc, option) => {
-                        acc[option.id] = option;
-                        return acc;
-                    }, {} as { [id: string]: Option });
-
-                    setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
-
-                    return searchResults;
                 });
                 const results = await Promise.all(fetchPromises);
                 return results.flat();
@@ -188,23 +189,29 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 return [];
             }
         },
-        [selectableCollections, collections]
+        [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
-    const handleSelection = async (variableName: string, optionId: string, newIsSelectedState: boolean) => {
-        const option = optionsMap[optionId];
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+
         if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
             updateDatasetMappingRow(variableName, option.content);
 
             // Get all selected collections
             const selectedCollections = selectableCollections
                 .filter(collection => collection.selected)
-                .map(collection => collections[collection.id]);
 
             // Fetch pairing suggestions from all selected collections
             let aggregatedPairingSuggestions: Option[] = [];
-            for (const collection of selectedCollections) {
-                if (collection.getPairingSuggestions) {
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
                     const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
                     aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
                 }
@@ -215,7 +222,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             updateDatasetMappingRow(variableName, []);
 
         } else {
-            console.error("Option not found: " + optionId);
+            console.error("No option provided");
         }
     };
 
@@ -247,42 +254,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
-
-    const getChipComponent = (key: string) => {
-        const row = datasetMapping[key];
-        const entityType = getType(row, headerIndexes);
-
-        let label: string;
-        let color: ChipProps['color'];
-        let iconColor: string;
-
-        switch (entityType) {
-            case EntityType.CDE:
-                label = "Mapped to CDE";
-                color = "success";
-                iconColor = "#12B76A";
-                break;
-            case EntityType.CustomDictionaryField:
-                label = "Mapped to Custom Data Dictionary";
-                color = "success";
-                iconColor = "#346DDB";
-                break;
-            default:
-                label = "Unmapped";
-                color = "default";
-                iconColor = "#676C74";
-                break;
-        }
-
-        return (
-            <Chip
-                label={label}
-                size="small"
-                color={color}
-                icon={<BulletIcon color={iconColor}/>}
-            />
-        );
-    };
+    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+        setCreatedCustomDictionaryFields(prev => ({
+            ...prev,
+            [option.id]: option,
+        }));
+        await handleSelection(variableName, option, newIsSelectedState)
+    }
 
     const isSameStrategyType = (filter: SortingStrategy, newFilter: SortingStrategy) => {
         if (!filter || !newFilter) {
@@ -342,9 +320,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         </Box>
                         <Box sx={styles.wrap}>
                             {visibleRows.map((variableName, index) => (
-                                <Box key={index} sx={styles.row}>
+                                <Box key={index} sx={styles.row} id={variableName}>
                                     <Box sx={styles.col}>
-                                        {getChipComponent(variableName)}
+                                        <ChipComponent variableName={variableName}/>
                                     </Box>
                                     <Box sx={styles.col}>
                                         <TextField
@@ -363,11 +341,14 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
-                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
+                                                onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
-                                            }}/>
+                                                value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)]
+                                            }}
+                                            variableName={variableName}
+                                            onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(variableName, option, newIsSelectedState)}
+                                        />
                                     </Box>
 
                                     {hasPairingSuggestions(variableName) && (
@@ -392,8 +373,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                             }));
 
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                            const abbreviation = getAbbreviationFromOption(suggestion.content);
-                                                            const description = getDescriptionFromOption(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                            const description = getDescriptionFromOption(suggestion);
 
                                                             return (
                                                                 <PairingSuggestion

@@ -75,7 +75,13 @@ function Home() {
                     sx={{
                         maxWidth: '650px',
                         borderRight: `0.0625rem solid ${gray200}`,
-                        borderBottom: 0
+                        borderTop: `0.0625rem solid ${gray200}`,
+                        borderBottom: 0,
+                        '& .MuiTableCell-head': {
+                            '& svg': {
+                                display: 'none'
+                            }
+                        }
                     }}
                 >
                     <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem'/>
