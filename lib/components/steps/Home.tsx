@@ -81,33 +81,21 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
                     <TableContainer
                         component={Paper}
                         elevation={0}
-                        className='dataset-table'
                         sx={{
                             maxWidth: '650px',
                             borderRight: `0.0625rem solid ${gray200}`,
-                            borderBottom: 0
+                            borderTop: `0.0625rem solid ${gray200}`,
+                            borderBottom: 0,
+                            '& .MuiTableCell-head': {
+                                '& svg': {
+                                    display: 'none'
+                                }
+                            }
                         }}
                     >
                         <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem' />
                     </TableContainer>
                 </Box>
-                <TableContainer
-                    component={Paper}
-                    elevation={0}
-                    sx={{
-                        maxWidth: '650px',
-                        borderRight: `0.0625rem solid ${gray200}`,
-                        borderTop: `0.0625rem solid ${gray200}`,
-                        borderBottom: 0,
-                        '& .MuiTableCell-head': {
-                            '& svg': {
-                                display: 'none'
-                            }
-                        }
-                    }}
-                >
-                    <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem' />
-                </TableContainer>
             </Box>
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>

@@ -40,11 +40,11 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
 
     const handleFiltersClose = () => {
         setAnchorEl(null);
-        onAfterChange();
     };
 
     const handleFiltersOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
+        onAfterChange();
     }
 
     const open = Boolean(anchorEl);

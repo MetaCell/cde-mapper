@@ -185,21 +185,21 @@ export const tutorial: TutorialType = {
             content: 'Dealing with possibly hundreds of column headers, simply search the name of a column header or mapped CDEs here.',
             target: '.mapping__search-input'
         },
-        // {
-        //     target: '.mapping__filter-btn',
-        //     title: 'Click to open filter options',
-        //     content: 'Filter through column headers and only showing those that are relevant to you.',
-        //     spotlightClicks: true,
-        //     hideFooter: true,
-        //     placement: 'bottom-end'
-        // },
-        // {
-        //     content: 'Filter through column headers and only showing those that are relevant to you.',
-        //     title: 'Filter',
-        //     target: '.mapping__filter-popover',
-        //     placement: 'right',
-        //     hideBackButton: true
-        // },
+        {
+            target: '.mapping__filter-btn',
+            title: 'Click to open filter options',
+            content: 'Filter through column headers and only showing those that are relevant to you.',
+            spotlightClicks: true,
+            hideFooter: true,
+            placement: 'bottom-end'
+        },
+        {
+            content: 'Filter through column headers and only showing those that are relevant to you.',
+            title: 'Filter',
+            target: '.mapping__filter-popover',
+            placement: 'right',
+            hideBackButton: true
+        },
         {
             title: 'Sort by Unmapped or Mapped first',
             content: <Box display="flex" flexDirection="column">
