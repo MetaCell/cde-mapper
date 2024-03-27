@@ -6,11 +6,12 @@ import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx";
 
 
 interface CollectionsProps {
+    defaultCollection: string
     changeToNextTab: () => void;
     setDefaultCollection: (collectionId: string) => void
 }
 
-function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProps) {
+function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTab}: CollectionsProps) {
     const {
         collections,
         emailTemplate
@@ -18,7 +19,7 @@ function CollectionsTab({changeToNextTab, setDefaultCollection}: CollectionsProp
 
     const collectionKeys = Object.keys(collections);
 
-    const [selectedCollection, setSelectedCollection] = useState<string>(collectionKeys.length > 0 ? collectionKeys[0] : '');
+    const [selectedCollection, setSelectedCollection] = useState<string>(defaultCollection);
 
     const handleRadioChange = (value: string) => {
         setSelectedCollection(value);
