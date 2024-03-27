@@ -8,7 +8,7 @@ import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {MAX_SUGGESTIONS} from "../../../settings.ts";
 import NoSuggestions from "./NoSuggestions.tsx";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
-import {getId} from "../../../helpers/getters.ts";
+import {getId} from "../../../helpers/rowHelpers.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 
 const {

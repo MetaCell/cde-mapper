@@ -6,6 +6,9 @@ import ErrorPage from "../../components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
 import {DataContext} from './DataContext.ts';
 import {computeSuggestions} from "../../services/suggestionsService.ts";
+import {
+    getCustomDictionaryFields
+} from "../../services/customDictionaryFieldService.ts";
 
 
 const defaultHeaderIndexes = {
@@ -99,6 +102,11 @@ export const DataContextProvider = ({
         return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, headerIndexes);
     }, [initialDatasetMapping, additionalDatasetMappings, headerIndexes]);
 
+
+    const customDictionaryFields = useMemo(() => {
+        return getCustomDictionaryFields(additionalDatasetMappings, datasetMappingHeader, headerIndexes)
+    }, [additionalDatasetMappings, datasetMappingHeader, headerIndexes]);
+
     const collectionsDictionary = useMemo(() => {
         return rawCollections.reduce((acc, collection, index) => {
             acc[collection.id] = {
@@ -115,6 +123,7 @@ export const DataContextProvider = ({
         datasetMapping,
         datasetMappingHeader,
         suggestions,
+        customDictionaryFields,
         headerIndexes,
         collections: collectionsDictionary,
         config,

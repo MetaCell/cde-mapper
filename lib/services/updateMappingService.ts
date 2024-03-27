@@ -26,28 +26,38 @@ export const _updateRow = (
     let headersAddedCount = 0;
 
     // Update values for mandatory properties using headerIndexes
-    Object.entries(headerIndexes).forEach(([key, index]) => {
-        const property = newRowContent.find(p => p.title === key);
-        if (property) {
-            updatedRow[index] = property.value;
+    Object.values(headerIndexes).forEach((index) => {
+        // VariableName should not be modified
+        if (index === headerIndexes.variableName) return;
+
+        const detail = newRowContent[index];
+        if (detail) {
+            updatedRow[index] = detail.value;
         }
     });
 
-    // Update or add values for additional properties
-    newRowContent.forEach(property => {
-        if (!Object.keys(headerIndexes).includes(property.title)) {
-            const index = datasetMappingHeader.indexOf(property.title);
-            if (index !== -1) {
+    const mandatoryFieldIndexes = new Set(Object.values(headerIndexes))
+    newRowContent.forEach((property, index) => {
+        // Determine if the current index is a mandatory field index
+        const isMandatoryField = mandatoryFieldIndexes.has(index);
+
+        if (!isMandatoryField && property !== null) {
+            // For non-mandatory fields, check if the datasetMappingHeader already includes this field
+            const headerTitle = property.title;
+            const headerIndex = datasetMappingHeader.indexOf(headerTitle);
+
+            if (headerIndex !== -1) {
                 // The header exists, update the value
-                updatedRow[index] = property.value;
+                updatedRow[headerIndex] = property.value;
             } else {
                 // The header doesn't exist, add new header and value
-                datasetMappingHeader.push(property.title);
+                datasetMappingHeader.push(headerTitle);
                 updatedRow.push(property.value);
                 headersAddedCount++;
             }
         }
     });
+
 
     // If new headers were added, ensure all rows in datasetMapping have the correct length
     if (headersAddedCount > 0) {

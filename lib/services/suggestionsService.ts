@@ -1,5 +1,5 @@
 import {DatasetMapping, EntityType, HeaderIndexes, Suggestions} from "../models.ts";
-import {getId, getType, isRowMapped} from "../helpers/getters.ts";
+import {getId, getType, isRowMapped} from "../helpers/rowHelpers.ts";
 
 
 type SortingEntity = {

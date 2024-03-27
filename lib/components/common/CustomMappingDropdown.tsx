@@ -4,7 +4,6 @@ import {InputAdornment, ListSubheader, Popper, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, Chip} from '@mui/material';
 import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
-import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
 import {Option, OptionDetail, SelectableCollection} from "../../models.ts";
@@ -12,10 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
 import {
     CUSTOM_DATA_FIELD_CDE_LEVEL,
-    CUSTOM_DATA_FIELD_GROUP,
+    CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
 } from '../../settings.ts';
 import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
 import {DataContext} from "../../contexts/data/DataContext.ts";
+import NoResultField from "./NoResultField.tsx";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
+import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
+import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
     buttonOutlinedBorderColor,
@@ -172,14 +175,15 @@ interface CustomEntitiesDropdownProps {
         searchPlaceholder?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
-        onSelection: (optionId: string, newIsSelectedState: boolean) => void;
+        onSelection: (option: Option, newIsSelectedState: boolean) => void;
         value: Option | null;
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
     };
     variableName: string
-    onCustomDictionaryFieldCreation: (option: Option) => void;
+    onCustomDictionaryFieldCreation: (option: Option, newIsSelectedState: boolean) => void;
+
 }
 
 type GroupedOptions = {
@@ -201,7 +205,7 @@ export default function CustomEntitiesDropdown({
                                                        onCollectionSelect,
                                                    },
                                                    variableName,
-                                                   onCustomDictionaryFieldCreation
+                                                   onCustomDictionaryFieldCreation,
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -217,13 +221,15 @@ export default function CustomEntitiesDropdown({
     const [isLoading, setIsLoading] = useState(false);
 
     const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
+    const {setErrorMessage} = useUIContext();
+
 
     const getCustomDictionaryFieldOption = () => {
         const customDictionaryFieldId = nanoid();
         const initialCustomDictionaryFieldOption: Option = {
             id: customDictionaryFieldId,
-            label: variableName,
-            group: CUSTOM_DATA_FIELD_GROUP,
+            label: '',
+            group: CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
             content: datasetMappingHeader.map((header): OptionDetail => ({
                 title: header,
                 value: '',
@@ -234,6 +240,8 @@ export default function CustomEntitiesDropdown({
         initialCustomDictionaryFieldOption.content[headerIndexes.variableName].value = variableName;
         initialCustomDictionaryFieldOption.content[headerIndexes.id].value = customDictionaryFieldId;
         initialCustomDictionaryFieldOption.content[headerIndexes.cdeLevel].value = CUSTOM_DATA_FIELD_CDE_LEVEL;
+        initialCustomDictionaryFieldOption.content[headerIndexes.title].value = '';
+        initialCustomDictionaryFieldOption.content[headerIndexes.preciseAbbreviation].value = '';
 
         // Update state
         return initialCustomDictionaryFieldOption
@@ -297,7 +305,7 @@ export default function CustomEntitiesDropdown({
         } else {
             setSelectedOptions([...selectedOptions, option]);
         }
-        onSelection(option.id, !isOptionAlreadySelected)
+        onSelection(option, !isOptionAlreadySelected)
     };
 
 
@@ -311,7 +319,12 @@ export default function CustomEntitiesDropdown({
 
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
-            onCustomDictionaryFieldCreation(customDictionaryFieldOption);
+            if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
+                customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
+                onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
+            }else{
+                setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
+            }
         }
 
         // Reset view and custom dictionary field option to initial state
@@ -537,18 +550,71 @@ export default function CustomEntitiesDropdown({
                             >
                                 <CircularProgress/>
                             </Box>
-                        ) : searchResults.length > 0 ? (
+                        ) : (
                             <>
-                                <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
-                                    {Object.keys(groupedOptions).map((group) => (
+                                <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'
+                                     sx={{
+                                         '& .MuiListSubheader-root': {
+                                             padding: '0 0.625rem',
+                                             height: '1.875rem',
+                                             margin: '0.375rem 0 0.125rem',
+                                         },
+
+                                         '& ul': {
+                                             margin: 0,
+                                             listStyle: 'none',
+                                             padding: '0',
+                                             display: 'flex',
+                                             flexDirection: 'column',
+                                             gap: '0.375rem',
+
+                                             '& li': {
+                                                 padding: '0.6875rem 0.625rem',
+                                                 display: 'flex',
+                                                 alignItems: 'center',
+                                                 gap: '0.5rem',
+                                                 cursor: 'pointer',
+
+                                                 '&:hover': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5'
+                                                 },
+
+                                                 '&.selected': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5'
+                                                 },
+
+                                                 '&.highlighted': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5',
+                                                     border: '0.0938rem dashed #5925DC'
+                                                 },
+
+                                                 '& .MuiTypography-body1': {
+                                                     color: '#070808',
+                                                     fontSize: '0.875rem',
+                                                     fontWeight: 500,
+                                                     lineHeight: '142.857%',
+                                                     padding: 0
+                                                 },
+
+                                                 '& .MuiTypography-body2': {
+                                                     color: captionColor,
+                                                     fontSize: '0.75rem',
+                                                     fontWeight: 400,
+                                                     lineHeight: '150%',
+                                                     padding: 0,
+                                                     whiteSpace: 'nowrap'
+                                                 }
+                                             }
+                                         }
+                                     }}>
+                                    <SearchCollectionSelector collections={collections}
+                                                              onCollectionSelect={onCollectionSelect}/>
+                                    {Object.keys(groupedOptions).length > 0 ? Object.keys(groupedOptions).map((group) => (
                                         <Box sx={{
                                             padding: '0 0.375rem',
-                                            '& .MuiListSubheader-root': {
-                                                padding: '0 0.625rem',
-                                                height: '1.875rem',
-                                                margin: '0.375rem 0 0.125rem',
-                                            },
-
                                             '& .MuiButton-root': {
                                                 padding: 0,
                                                 height: '1.625rem',
@@ -558,61 +624,8 @@ export default function CustomEntitiesDropdown({
                                                 fontWeight: 600,
                                                 color: darkBlue
                                             },
-
-                                            '& ul': {
-                                                margin: 0,
-                                                listStyle: 'none',
-                                                padding: '0',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '0.375rem',
-
-                                                '& li': {
-                                                    padding: '0.6875rem 0.625rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    cursor: 'pointer',
-
-                                                    '&:hover': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5'
-                                                    },
-
-                                                    '&.selected': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5'
-                                                    },
-
-                                                    '&.highlighted': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5',
-                                                        border: '0.0938rem dashed #5925DC'
-                                                    },
-
-                                                    '& .MuiTypography-body1': {
-                                                        color: '#070808',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: 500,
-                                                        lineHeight: '142.857%',
-                                                        padding: 0
-                                                    },
-
-                                                    '& .MuiTypography-body2': {
-                                                        color: captionColor,
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: 400,
-                                                        lineHeight: '150%',
-                                                        padding: 0,
-                                                        whiteSpace: 'nowrap'
-                                                    }
-                                                }
-                                            }
                                         }}
                                              key={group}>
-                                            <SearchCollectionSelector collections={collections}
-                                                                      onCollectionSelect={onCollectionSelect}/>
-
                                             {toggleCustomView &&
                                                 <Box>
                                                     <ListSubheader
@@ -649,7 +662,6 @@ export default function CustomEntitiesDropdown({
                                                 </Box>
                                             }
 
-
                                             <Box>
                                                 <ul>
                                                     {groupedOptions[group]
@@ -672,7 +684,7 @@ export default function CustomEntitiesDropdown({
                                                 </ul>
                                             </Box>
                                         </Box>
-                                    ))}
+                                    )) : <NoResultField noResultReason={noResultReason}/>}
                                 </Box>
                                 <Box
                                     display="flex"
@@ -711,8 +723,6 @@ export default function CustomEntitiesDropdown({
                                     </Button>
                                 </Box>
                             </>
-                        ) : (
-                            <NoResultField noResultReason={noResultReason}/>
                         )}
                     </Box>
                 </Box>
