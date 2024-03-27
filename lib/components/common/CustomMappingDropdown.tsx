@@ -1,13 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import {FormControl, InputAdornment, MenuItem, Popper, Select, SelectChangeEvent, Stack, Tooltip} from "@mui/material";
-import {TextField, Box, Typography, Button, ListSubheader, Chip} from '@mui/material';
+import React, {useContext, useEffect, useState} from 'react';
+import {nanoid} from 'nanoid';
+import {InputAdornment, ListSubheader, Popper, Tooltip} from "@mui/material";
+import {TextField, Box, Typography, Button, Chip} from '@mui/material';
 import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
-import NoResultField from './NoResultField.tsx';
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
-import {Option, SelectableCollection} from "../../models.ts";
+import {Option, OptionDetail, SelectableCollection} from "../../models.ts";
 import CircularProgress from "@mui/material/CircularProgress";
+import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
+import {
+    CUSTOM_DATA_FIELD_CDE_LEVEL,
+    CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
+} from '../../settings.ts';
+import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHeader.tsx";
+import {DataContext} from "../../contexts/data/DataContext.ts";
+import NoResultField from "./NoResultField.tsx";
+import {useUIContext} from "../../contexts/ui/UIContext.ts";
+import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
+import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
     buttonOutlinedBorderColor,
@@ -164,7 +175,7 @@ interface CustomEntitiesDropdownProps {
         searchPlaceholder?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
-        onSelection: (optionId: string, newIsSelectedState: boolean) => void;
+        onSelection: (option: Option, newIsSelectedState: boolean) => void;
         value: Option | null;
         header?: Header;
         collections: SelectableCollection[];
@@ -172,7 +183,14 @@ interface CustomEntitiesDropdownProps {
         onDropdownToggle?: () => void;
         dropdownClassname?: string;
     };
+    variableName: string
+    onCustomDictionaryFieldCreation: (option: Option, newIsSelectedState: boolean) => void;
+
 }
+
+type GroupedOptions = {
+    [group: string]: Option[];
+};
 
 
 export default function CustomEntitiesDropdown({
@@ -190,17 +208,10 @@ export default function CustomEntitiesDropdown({
                                                        onDropdownToggle = () => {},
                                                        dropdownClassname
                                                    },
+                                                   variableName,
+                                                   onCustomDictionaryFieldCreation,
                                                }: CustomEntitiesDropdownProps) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [age, setAge] = React.useState('0');
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
-    };
-
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-    };
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popper' : undefined;
@@ -212,6 +223,49 @@ export default function CustomEntitiesDropdown({
     const [searchResults, setSearchResults] = useState<Option[]>([]);
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
+    const {setErrorMessage} = useUIContext();
+
+
+    const getCustomDictionaryFieldOption = () => {
+        const customDictionaryFieldId = nanoid();
+        const initialCustomDictionaryFieldOption: Option = {
+            id: customDictionaryFieldId,
+            label: '',
+            group: CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP,
+            content: datasetMappingHeader.map((header): OptionDetail => ({
+                title: header,
+                value: '',
+            })),
+        };
+
+        // Set specific fields directly using headerIndexes
+        initialCustomDictionaryFieldOption.content[headerIndexes.variableName].value = variableName;
+        initialCustomDictionaryFieldOption.content[headerIndexes.id].value = customDictionaryFieldId;
+        initialCustomDictionaryFieldOption.content[headerIndexes.cdeLevel].value = CUSTOM_DATA_FIELD_CDE_LEVEL;
+        initialCustomDictionaryFieldOption.content[headerIndexes.title].value = '';
+        initialCustomDictionaryFieldOption.content[headerIndexes.preciseAbbreviation].value = '';
+
+        // Update state
+        return initialCustomDictionaryFieldOption
+    };
+
+    const [customDictionaryFieldOption, setCustomDictionaryFieldOption] = useState<Option>(getCustomDictionaryFieldOption());
+
+
+    const handleCustomDictionaryOptionChange = (index: number, value: string) => {
+        setCustomDictionaryFieldOption(prevOption => ({
+            ...prevOption,
+            content: prevOption.content.map((detail, detailIndex) =>
+                detailIndex === index ? {...detail, value} : detail
+            ),
+        }));
+    };
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
 
     useEffect(() => {
         setSelectedOptions(value ? [value] : []);
@@ -238,10 +292,6 @@ export default function CustomEntitiesDropdown({
         fetchOptions().then(() => setIsLoading(false));
     }, [searchInput, onSearch, open, onDropdownToggle]);
 
-    type GroupedOptions = {
-        [group: string]: Option[];
-    };
-
     const groupedOptions = searchResults.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
         if (!grouped[group]) {
@@ -259,7 +309,7 @@ export default function CustomEntitiesDropdown({
         } else {
             setSelectedOptions([...selectedOptions, option]);
         }
-        onSelection(option.id, !isOptionAlreadySelected)
+        onSelection(option, !isOptionAlreadySelected)
     };
 
 
@@ -269,6 +319,21 @@ export default function CustomEntitiesDropdown({
 
     const isOptionSelected = (option: Option) => {
         return selectedOptions.some((selected) => selected.id === option.id);
+    };
+
+    const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
+        if (isConfirm) {
+            if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
+                customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
+                onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
+            }else{
+                setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
+            }
+        }
+
+        // Reset view and custom dictionary field option to initial state
+        setToggleCustomView(false);
+        setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
     };
 
     return (
@@ -411,104 +476,21 @@ export default function CustomEntitiesDropdown({
                                 ))}
                             </Box>) : (<Box sx={styles.details}>
                                 <HoveredOptionContent
-                                    entity={{
-                                        id: "placeholder",
-                                        label: "Connections",
-                                        group: "placeholder",
-                                        content: [],
-                                    }}
+                                    entity={customDictionaryFieldOption}
                                     padding={0}
-                                    BodyComponent={() => (
-                                        <Box p={3}>
-                                            <Stack spacing={2} flexGrow={1}>
-                                                <Stack direction='row' spacing={1} sx={{mt: 0}}>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">VariableName</Typography>
-                                                        <Typography sx={{p: '0.25rem !important'}}
-                                                                    variant="body2">MotorForceApplied</Typography>
-                                                    </Stack>
-                                                    <Stack>
-                                                        <Chip size='small' variant='filled' color='secondary'
-                                                              label="Data dictionary"/>
-                                                    </Stack>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Title</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Description</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                                <Stack direction='row' spacing={4} sx={{mt: 3}}>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">Unit of measure</Typography>
-                                                        <Typography variant="body2">
-                                                            <TextField fullWidth placeholder='Insert here...'/>
-                                                        </Typography>
-                                                    </Stack>
-                                                    <Stack flexGrow={1}>
-                                                        <Typography variant="body1">Data type</Typography>
-                                                        <Typography variant="body2">
-                                                            <FormControl fullWidth>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    value={age}
-                                                                    placeholder=""
-                                                                    onChange={handleChange}
-                                                                >
-                                                                    <MenuItem disabled value={0} sx={{
-                                                                        color: '#A9ACB2'
-                                                                    }}>
-                                                                        <em>Choose column header to map...</em>
-                                                                    </MenuItem>
-                                                                    <MenuItem value={1}>MotorFoceApplied</MenuItem>
-                                                                    <MenuItem value={2}>Subject</MenuItem>
-                                                                    <MenuItem value={3}>Age</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Typography>
-                                                    </Stack>
-                                                </Stack>
-                                                <Stack spacing={1} sx={{mt: 3}}>
-                                                    <Typography variant="body1">Comments</Typography>
-                                                    <Typography variant="body2">
-                                                        <TextField fullWidth placeholder='Insert here...'/>
-                                                    </Typography>
-                                                </Stack>
-                                            </Stack>
-                                        </Box>
+                                    BodyComponent={({entity}) => (
+                                        <CreateCustomDictionaryFieldBody
+                                            entity={entity}
+                                            onBlur={handleCustomDictionaryOptionChange}
+                                            variableNameIndex={headerIndexes.variableName}
+                                            idIndex={headerIndexes.id}
+                                            cdeLevelIndex={headerIndexes.cdeLevel}
+                                        />
                                     )}
                                     HeaderComponent={() => (
-                                        <Box
-                                            position='sticky'
-                                            top={0}
-                                            display='flex'
-                                            alignItems='center'
-                                            justifyContent='space-between'
-                                            sx={{
-                                                background: '#FCFCFD',
-                                                px: '1.5rem',
-                                                py: '0.4375rem',
-                                                borderBottom: '0.0625rem solid #F2F4F7'
-                                            }}
-                                        >
-                                            <Chip size='small' variant='filled' color='warning' label="Draft"/>
-                                            <Box
-                                                gap="0.25rem"
-                                                display='flex'
-                                                alignItems='center'
-                                            >
-                                                <Button onClick={() => setToggleCustomView(false)}>Cancel</Button>
-                                                <Button variant='contained' color='info'
-                                                        onClick={() => setToggleCustomView(false)}>Confirm</Button>
-                                            </Box>
-                                        </Box>
+                                        <CreateCustomDictionaryFieldHeader
+                                            onClose={onCustomDictionaryFieldClose}
+                                        />
                                     )}
                                 />
                             </Box>)
@@ -559,7 +541,8 @@ export default function CustomEntitiesDropdown({
                                 placeholder={searchPlaceholder}
                                 InputProps={{
                                     startAdornment: <InputAdornment
-                                        position='start'><MagnifyGlassIcon/></InputAdornment>
+                                        position='start'><MagnifyGlassIcon/>
+                                    </InputAdornment>
                                 }}
                             />
                         </Box>
@@ -572,27 +555,71 @@ export default function CustomEntitiesDropdown({
                             >
                                 <CircularProgress/>
                             </Box>
-                        ) : searchResults.length > 0 ? (
+                        ) : (
                             <>
-                                <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'>
-                                    {Object.keys(groupedOptions).map((group) => (
+                                <Box overflow='auto' height='calc(100% - (2.75rem + 3.125rem))'
+                                     sx={{
+                                         '& .MuiListSubheader-root': {
+                                             padding: '0 0.625rem',
+                                             height: '1.875rem',
+                                             margin: '0.375rem 0 0.125rem',
+                                         },
+
+                                         '& ul': {
+                                             margin: 0,
+                                             listStyle: 'none',
+                                             padding: '0',
+                                             display: 'flex',
+                                             flexDirection: 'column',
+                                             gap: '0.375rem',
+
+                                             '& li': {
+                                                 padding: '0.6875rem 0.625rem',
+                                                 display: 'flex',
+                                                 alignItems: 'center',
+                                                 gap: '0.5rem',
+                                                 cursor: 'pointer',
+
+                                                 '&:hover': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5'
+                                                 },
+
+                                                 '&.selected': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5'
+                                                 },
+
+                                                 '&.highlighted': {
+                                                     borderRadius: '0.375rem',
+                                                     background: '#F4F5F5',
+                                                     border: '0.0938rem dashed #5925DC'
+                                                 },
+
+                                                 '& .MuiTypography-body1': {
+                                                     color: '#070808',
+                                                     fontSize: '0.875rem',
+                                                     fontWeight: 500,
+                                                     lineHeight: '142.857%',
+                                                     padding: 0
+                                                 },
+
+                                                 '& .MuiTypography-body2': {
+                                                     color: captionColor,
+                                                     fontSize: '0.75rem',
+                                                     fontWeight: 400,
+                                                     lineHeight: '150%',
+                                                     padding: 0,
+                                                     whiteSpace: 'nowrap'
+                                                 }
+                                             }
+                                         }
+                                     }}>
+                                    <SearchCollectionSelector collections={collections}
+                                                              onCollectionSelect={onCollectionSelect}/>
+                                    {Object.keys(groupedOptions).length > 0 ? Object.keys(groupedOptions).map((group) => (
                                         <Box sx={{
                                             padding: '0 0.375rem',
-                                            '& .MuiListSubheader-root': {
-                                                padding: '0 0.625rem',
-                                                height: '1.875rem',
-                                                margin: '0.375rem 0 0.125rem',
-
-                                                // '& .MuiTypography-root': {
-                                                //   fontSize: '0.75rem',
-                                                //   lineHeight: '1.125rem',
-                                                //   fontWeight: 600,
-                                                //   color: buttonOutlinedColor
-                                                // },
-                                            },
-                                            // '& .MuiCheckbox-root': {
-                                            //   padding: 0
-                                            // },
                                             '& .MuiButton-root': {
                                                 padding: 0,
                                                 height: '1.625rem',
@@ -602,60 +629,8 @@ export default function CustomEntitiesDropdown({
                                                 fontWeight: 600,
                                                 color: darkBlue
                                             },
-
-                                            '& ul': {
-                                                margin: 0,
-                                                listStyle: 'none',
-                                                padding: '0',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: '0.375rem',
-
-                                                '& li': {
-                                                    padding: '0.6875rem 0.625rem',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '0.5rem',
-                                                    cursor: 'pointer',
-
-                                                    '&:hover': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5'
-                                                    },
-
-                                                    '&.selected': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5'
-                                                    },
-
-                                                    '&.highlighted': {
-                                                        borderRadius: '0.375rem',
-                                                        background: '#F4F5F5',
-                                                        border: '0.0938rem dashed #5925DC'
-                                                    },
-
-                                                    '& .MuiTypography-body1': {
-                                                        color: '#070808',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: 500,
-                                                        lineHeight: '142.857%',
-                                                        padding: 0
-                                                    },
-
-                                                    '& .MuiTypography-body2': {
-                                                        color: captionColor,
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: 400,
-                                                        lineHeight: '150%',
-                                                        padding: 0,
-                                                        whiteSpace: 'nowrap'
-                                                    }
-                                                }
-                                            }
-                                        }} key={group}>
-                                            <SearchCollectionSelector collections={collections}
-                                                                      onCollectionSelect={onCollectionSelect}/>
-
+                                        }}
+                                             key={group}>
                                             {toggleCustomView &&
                                                 <Box>
                                                     <ListSubheader
@@ -679,22 +654,11 @@ export default function CustomEntitiesDropdown({
                                                         </Typography>
                                                     </ListSubheader>
                                                     <ul>
-                                                        <li className="selected">
-                                                            <Typography
-                                                                sx={{width: 1, height: 1, padding: "0.625rem"}}
-                                                            >
-                                                                MotorForceApplied
-                                                            </Typography>
-                                                            <Chip color='secondary' label="Data dictionary"/>
-                                                            <CheckIcon style={{flexShrink: 0}} color="#070808"/>
-                                                        </li>
-
-
                                                         <li className="highlighted">
                                                             <Typography
                                                                 sx={{width: 1, height: 1, padding: "0.625rem"}}
                                                             >
-                                                                MotorForceApplied
+                                                                {variableName}
                                                             </Typography>
                                                             <Chip color='secondary' label="Data dictionary"/>
                                                             <Chip color='warning' label="Draft"/>
@@ -702,7 +666,6 @@ export default function CustomEntitiesDropdown({
                                                     </ul>
                                                 </Box>
                                             }
-
 
                                             <Box>
                                                 <ul>
@@ -726,7 +689,7 @@ export default function CustomEntitiesDropdown({
                                                 </ul>
                                             </Box>
                                         </Box>
-                                    ))}
+                                    )) : <NoResultField noResultReason={noResultReason}/>}
                                 </Box>
                                 <Box
                                     display="flex"
@@ -765,8 +728,6 @@ export default function CustomEntitiesDropdown({
                                     </Button>
                                 </Box>
                             </>
-                        ) : (
-                            <NoResultField noResultReason={noResultReason}/>
                         )}
                     </Box>
                 </Box>

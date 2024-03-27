@@ -5,7 +5,7 @@ import {vars} from '../../../theme/variables.ts';
 import {getCleanUrl} from "../../../helpers/utils.ts";
 import {EntityType, HeaderIndexes} from "../../../models.ts";
 import StyledRadio from '../../common/StyledRadio.tsx';
-import {getType} from "../../../helpers/getters.ts";
+import {getType} from "../../../helpers/rowHelpers.ts";
 
 const {
     gray900,

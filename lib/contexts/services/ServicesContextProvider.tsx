@@ -1,9 +1,14 @@
 import {PropsWithChildren, useMemo} from "react";
 import {useDataContext} from "../data/DataContext.ts";
-import {OptionDetail, ServiceInitParams} from "../../models.ts";
+import {Option, OptionDetail, ServiceInitParams} from "../../models.ts";
 import {ServicesContext} from "./ServicesContext.ts";
-import {isRowMapped} from "../../helpers/getters.ts";
+import {isRowMapped} from "../../helpers/rowHelpers.ts";
 import {_updateRow} from "../../services/updateMappingService.ts";
+import {
+    searchCurrentCustomDictionaryFields,
+    searchPreviousCustomDictionaryFields
+} from "../../services/customDictionaryFieldService.ts";
+
 
 export const ServicesContextProvider = ({
                                             callback,
@@ -16,6 +21,7 @@ export const ServicesContextProvider = ({
         setDatasetMapping,
         setDatasetMappingHeader,
         suggestions,
+        customDictionaryFields
     } = useDataContext();
 
     const datasetMappingService = useMemo(() => {
@@ -34,6 +40,10 @@ export const ServicesContextProvider = ({
             );
         };
 
+        const getUnmappedVariableNames = () => {
+            return Object.keys(datasetMapping).filter(key => !isRowMapped(datasetMapping[key], headerIndexes));
+        };
+
         const isColumnMapped = (column: string) => {
             return datasetMapping[column] && isRowMapped(datasetMapping[column], headerIndexes)
         };
@@ -46,6 +56,7 @@ export const ServicesContextProvider = ({
             getTotalRowsCount,
             getMappedRowsCount,
             getUnmappedRowsCount,
+            getUnmappedVariableNames,
             updateDatasetMappingRow,
             isColumnMapped,
             onClose
@@ -71,10 +82,25 @@ export const ServicesContextProvider = ({
         };
     }, [suggestions]);
 
+    const customDictionaryFieldService = useMemo(() => {
+        const searchCustomDictionaryFields = (queryString: string, createdCustomDictionaryFields: {
+            [id: string]: Option
+        }): Option[] => {
+            return [...searchPreviousCustomDictionaryFields(queryString, customDictionaryFields),
+                ...searchCurrentCustomDictionaryFields(queryString, createdCustomDictionaryFields)]
+        }
+
+        return {
+            searchCustomDictionaryFields
+        }
+
+    }, [customDictionaryFields])
+
     const serviceContextValue = useMemo(() => ({
         ...datasetMappingService,
         ...suggestionService,
-    }), [datasetMappingService, suggestionService]);
+        ...customDictionaryFieldService,
+    }), [datasetMappingService, suggestionService, customDictionaryFieldService]);
 
     return (
         <ServicesContext.Provider value={serviceContextValue}>

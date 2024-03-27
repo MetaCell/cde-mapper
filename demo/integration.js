@@ -1,6 +1,13 @@
-
 import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
-import {getQueryObject} from "./query.js";
+import {getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
+
+const headersIndexes = {
+    variableName: 0,
+    preciseAbbreviation: 1,
+    title: 2,
+    id: 11,
+    cdeLevel: 12,
+}
 
 export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
     let datasetMappings = [];
@@ -70,13 +77,7 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
                         config: {width: '60%', height: '80%'},
                         name: 'TestLabName',
                         callback: (datasetMapping, datasetMappingHeader) => downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader),
-                        headerIndexes: {
-                            variableName: 0,
-                            preciseAbbreviation: 1,
-                            title: 2,
-                            id: 11,
-                            cdeLevel: 12,
-                        },
+                        headerIndexes: headersIndexes,
                         emailTemplate: {
                             email: 'support@interlex.org',
                             title: 'CDE Mapper collection not found',
@@ -111,12 +112,39 @@ function getCollections() {
             id: 'global',
             name: "Global",
             fetch: fetchElasticSearchData,
+            getPairingSuggestions: getPairingSuggestions,
         }
     ]
 }
 
+
 async function fetchElasticSearchData(queryString) {
-    const query = getQueryObject(queryString)
+    const query = getQueryByName(queryString)
+    const data = await queryInterlex(query);
+    return mapElasticSearchHitsToOptions(data.hits.hits || [], headersIndexes)
+}
+
+
+async function getPairingSuggestions(id) {
+    const query = getQueryById(id)
+    const initialData = await queryInterlex(query);
+
+    if (initialData.hits.hits.length === 1 && initialData.hits.hits[0]._source.superclasses?.length) {
+        const superclassId = initialData.hits.hits[0]._source.superclasses[0].ilx;
+
+        if (superclassId) {
+            // Fetch related suggestions based on the superclass ID
+            const relatedQuery = getRelatedQuery(superclassId);
+            const relatedData = await queryInterlex(relatedQuery);
+            return mapElasticSearchHitsToOptions(relatedData.hits.hits || [], headersIndexes);
+        }
+    }
+
+
+    return []
+}
+
+async function queryInterlex(query) {
     const apiKey = import.meta.env.VITE_API_KEY;
     const baseUrl = '/api/1/elastic/Interlex_pr/_search';
 
@@ -135,7 +163,7 @@ async function fetchElasticSearchData(queryString) {
     });
 
     const data = await response.json();
-    return mapElasticSearchHitsToOptions(data.hits.hits || [])
+    return data;
 }
 
 
@@ -156,7 +184,7 @@ function downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader) {
     });
 
     // Trigger download
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);

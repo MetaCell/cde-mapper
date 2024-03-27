@@ -3,7 +3,7 @@ import { Box, Typography, Button, Stack, Tooltip, IconButton, Divider,
     Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { vars } from '../../theme/variables.ts';
 import { PlusIcon } from '../../icons/index.tsx';
-import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
+// import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
 import PreviewBox from '../common/PreviewBox.tsx';
 import CdeDetails from '../common/CdeDetails.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
@@ -36,18 +36,18 @@ function TemplateStep() {
                         {
                             dropdowns.map((dropdownIndex) => (
                                 <Fragment key={dropdownIndex}>
-                                    <CustomEntitiesDropdown
-                                        placeholder="Choose CDE or Data Dictionary fields..."
-                                        options={{
-                                            searchPlaceholder: "Search Spinal Cord Injury (SCI)",
-                                            noResultReason: "We couldn’t find any record with this in the database.",
-                                            onSearch: async () => [],
-                                            onSelection: async () => [],
-                                            collections: [],
-                                            onCollectionSelect: () => [],
-                                            value: null,
-                                        }}
-                                    />
+                                    {/*<CustomEntitiesDropdown*/}
+                                    {/*    placeholder="Choose CDE or Data Dictionary fields..."*/}
+                                    {/*    options={{*/}
+                                    {/*        searchPlaceholder: "Search Spinal Cord Injury (SCI)",*/}
+                                    {/*        noResultReason: "We couldn’t find any record with this in the database.",*/}
+                                    {/*        onSearch: async () => [],*/}
+                                    {/*        onSelection: async () => [],*/}
+                                    {/*        collections: [],*/}
+                                    {/*        onCollectionSelect: () => [],*/}
+                                    {/*        value: null,*/}
+                                    {/*    }}*/}
+                                    {/*/>*/}
                                     <Box width='100%' mt={1.5}>
                                         <Accordion>
                                             <AccordionSummary>

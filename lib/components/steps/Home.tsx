@@ -91,12 +91,29 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
                         <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem' />
                     </TableContainer>
                 </Box>
+                <TableContainer
+                    component={Paper}
+                    elevation={0}
+                    sx={{
+                        maxWidth: '650px',
+                        borderRight: `0.0625rem solid ${gray200}`,
+                        borderTop: `0.0625rem solid ${gray200}`,
+                        borderBottom: 0,
+                        '& .MuiTableCell-head': {
+                            '& svg': {
+                                display: 'none'
+                            }
+                        }
+                    }}
+                >
+                    <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem' />
+                </TableContainer>
+            </Box>
 
-                <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
-                    <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className='mapping__start-btn'>Start mapping</Button>
-                    <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
-                        instead </Button>
-                </Box>
+            <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
+                <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className='mapping__start-btn'>Start mapping</Button>
+                <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
+                    instead </Button>
             </Box>
             {
                 !isTourStartDialogVisible && <Tour
@@ -105,11 +122,13 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
                     setStepIndex={setHomeStepIndex}
                 />
             }
-            {isTourOpen && <WalkthroughStartDialog
-                isTourStartDialogVisible={isTourStartDialogVisible}
-                setIsTourStartDialogVisible={setIsTourStartDialogVisible}
-                setIsTourOpen={setIsTourOpen}
-            />}
+            {
+                isTourOpen && <WalkthroughStartDialog
+                    isTourStartDialogVisible={isTourStartDialogVisible}
+                    setIsTourStartDialogVisible={setIsTourStartDialogVisible}
+                    setIsTourOpen={setIsTourOpen}
+                />
+            }
         </>
     );
 }
