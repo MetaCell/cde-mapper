@@ -1,5 +1,5 @@
 import { HeaderIndexes, DatasetMapping } from "./models";
-import { getType, getPreciseAbbreviation } from "./helpers/getters";
+import { getType, getPreciseAbbreviation } from "./helpers/rowHelpers";
 
 
 export interface SortingStrategy {
