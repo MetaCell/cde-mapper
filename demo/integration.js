@@ -110,7 +110,7 @@ function getCollections() {
     return [
         {
             id: 'global',
-            name: "Global",
+            name: "Interlex",
             fetch: fetchElasticSearchData,
             getPairingSuggestions: getPairingSuggestions,
         }

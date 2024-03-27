@@ -9,11 +9,12 @@ import { TourSteps, tutorial } from '../../common/tutorial.tsx';
 
 
 interface CollectionsProps {
+    defaultCollection: string
     changeToNextTab: () => void;
     setDefaultCollection: (collectionId: string) => void
 }
 
-function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsProps) {
+function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTab}: CollectionsProps) {
     const {
         collections,
         emailTemplate
@@ -24,9 +25,9 @@ function CollectionsTab({ changeToNextTab, setDefaultCollection }: CollectionsPr
 
     const collectionKeys = Object.keys(collections);
 
-    const [selectedCollection, setSelectedCollection] = useState<string>(collectionKeys.length > 0 ? collectionKeys[0] : '');
+    const [selectedCollection, setSelectedCollection] = useState<string>(defaultCollection);
     const [stepIndex, setStepIndex] = useState(0);
-
+    
     const updateHomeTourStep = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
 
     const handleRadioChange = (value: string, selectedValue: string) => {

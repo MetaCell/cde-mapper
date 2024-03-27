@@ -7,7 +7,7 @@ export function getCustomDictionaryFieldSelectableCollection(): SelectableCollec
     return {
         id: CUSTOM_DICTIONARY_FIELD_COLLECTION_ID,
         name: CUSTOM_DICTIONARY_FIELD_COLLECTION_NAME,
-        selected: false,
+        selected: true,
     }
 }
 

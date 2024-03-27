@@ -5,6 +5,7 @@ import SuggestionsStep from '../suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
 import {vars} from '../../../theme/variables.ts';
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {useDataContext} from "../../../contexts/data/DataContext.ts";
 
 const {
     baseWhite,
@@ -69,8 +70,15 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index,
 
 
 function MappingStep() {
+    const {
+        collections,
+    } = useDataContext();
+
+    const collectionKeys = Object.keys(collections);
+    const [defaultCollection, setDefaultCollection] = React.useState(collectionKeys.length > 0 ? collectionKeys[0] : '');
+
     const [tabIndex, setTabIndex] = React.useState(0);
-    const [defaultCollection, setDefaultCollection] = React.useState("");
+
     const {
         getTotalRowsCount,
         getUnmappedRowsCount,
@@ -89,6 +97,7 @@ function MappingStep() {
         switch (tabIndex) {
             case TabsEnum.Collection:
                 return <CollectionsTab
+                    defaultCollection={defaultCollection}
                     setDefaultCollection={setDefaultCollection}
                     changeToNextTab={changeToNextTab}
                 />
