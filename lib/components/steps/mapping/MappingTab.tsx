@@ -25,6 +25,12 @@ import {EntityType, Option, SelectableCollection, FiltersState} from "../../../m
 import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
+import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
+import {
+    getAbbreviationFromOption,
+    getDescriptionFromOption,
+    optionDetailsToCdeDetails
+} from "../../../helpers/optionsHelper.ts";
 
 const styles = {
     root: {
@@ -95,7 +101,13 @@ interface MappingProps {
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
-    const {updateDatasetMappingRow} = useServicesContext();
+    const {updateDatasetMappingRow, getUnmappedVariableNames} = useServicesContext();
+    const {
+        updateAvailableSuggestions,
+        getPairingSuggestions,
+        hasPairingSuggestions,
+        markSuggestionAsProcessed,
+    } = usePairingSuggestions();
 
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
@@ -125,7 +137,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
         setOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
-
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
@@ -171,12 +182,38 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         [selectableCollections, collections]
     );
 
-    const handleSelection = (variableName: string, optionId: string, newIsSelectedState: boolean) => {
+    const handleSelection = async (variableName: string, optionId: string, newIsSelectedState: boolean) => {
         const option = optionsMap[optionId];
-        if (option) {
-            updateDatasetMappingRow(variableName, newIsSelectedState ? option.content : []);
+        if (option && newIsSelectedState) {
+            updateDatasetMappingRow(variableName, option.content);
+
+            // Get all selected collections
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+                .map(collection => collections[collection.id]);
+
+            // Fetch pairing suggestions from all selected collections
+            let aggregatedPairingSuggestions: Option[] = [];
+            for (const collection of selectedCollections) {
+                if (collection.getPairingSuggestions) {
+                    const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
+                    aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
+                }
+            }
+            updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
+        } else if (option && !newIsSelectedState) {
+            updateAvailableSuggestions(variableName, []);
+            updateDatasetMappingRow(variableName, []);
+
         } else {
             console.error("Option not found: " + optionId);
+        }
+    };
+
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
+        markSuggestionAsProcessed(variableName, suggestion.id);
+        if (selectedColumn !== null) {
+            updateDatasetMappingRow(selectedColumn, suggestion.content);
         }
     }
 
@@ -191,17 +228,17 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
             const entityType = getType(row, headerIndexes);
             const isAnyTrue = Object.values(checked).some(value => value === true);
-    
+
             if (isAnyTrue && !allTrue) {
                 return checked[entityType];
             }
-    
+
             return variableNameMatch || preciseAbbreviationMatch;
         });
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
-    
+
     const getChipComponent = (key: string) => {
         const row = datasetMapping[key];
         const entityType = getType(row, headerIndexes);
@@ -236,16 +273,6 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 icon={<BulletIcon color={iconColor}/>}
             />
         );
-    };
-
-    const getPairingSuggestions = (key: string) => {
-        void key
-        return []
-    };
-
-    const hasPairingSuggestions = (key: string) => {
-        void key
-        return false
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
@@ -312,21 +339,31 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                         fontWeight: 500,
                                                         lineHeight: '150%'
                                                     }}>Pairing suggestions</Typography>
-                                                    <PairingTooltip datasetMapping={datasetMapping} key={variableName}
-                                                                    headerMapping={headerIndexes}/>
+                                                    <PairingTooltip/>
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions(variableName).map(() => (
-                                                            <PairingSuggestion
-                                                                value='0'
-                                                                onChange={() => {
-                                                                }}
-                                                                selectOptions={[]}
-                                                                subjectName="To be implemented"
-                                                                subjectDescription="To be implemented"
-                                                            />
-                                                        ))}
+                                                        {getPairingSuggestions(variableName).map((suggestion) => {
+                                                            const headerOptions = getUnmappedVariableNames().map((label, index) => ({
+                                                                label,
+                                                                index
+                                                            }));
+
+                                                            const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion.content);
+                                                            const description = getDescriptionFromOption(suggestion.content);
+
+                                                            return (
+                                                                <PairingSuggestion
+                                                                    key={suggestion.id}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion(variableName, suggestion, selectedColumn)}
+                                                                    headerOptions={headerOptions}
+                                                                    label={abbreviation}
+                                                                    description={description}
+                                                                    rowContent={rowContent}
+                                                                />
+                                                            );
+                                                        })}
                                                     </Box>
                                                 </AccordionDetails>
                                             </Accordion>

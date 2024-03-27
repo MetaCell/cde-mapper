@@ -34,6 +34,10 @@ export const ServicesContextProvider = ({
             );
         };
 
+        const getUnmappedVariableNames = () => {
+            return Object.keys(datasetMapping).filter(key => !isRowMapped(datasetMapping[key], headerIndexes));
+        };
+
         const isColumnMapped = (column: string) => {
             return datasetMapping[column] && isRowMapped(datasetMapping[column], headerIndexes)
         };
@@ -46,6 +50,7 @@ export const ServicesContextProvider = ({
             getTotalRowsCount,
             getMappedRowsCount,
             getUnmappedRowsCount,
+            getUnmappedVariableNames,
             updateDatasetMappingRow,
             isColumnMapped,
             onClose

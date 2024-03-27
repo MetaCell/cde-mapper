@@ -1,11 +1,11 @@
 import {
-    ABBREVIATION, CDE_LEVEL,
-    DATA_TYPE,
-    INTERLEX_ID, MAXIMUM_VALUE,
-    MINIMUM_VALUE,
-    PERMITTED_VALUES,
+    ABBREVIATION, CDE_LEVEL, CDE_LEVEL_CDE_KEY,
+    DATA_TYPE, DATA_TYPE_CDE_KEY, DESCRIPTION,
+    INTERLEX_ID, MAXIMUM_VALUE, MAXIMUM_VALUE_CDE_KEY,
+    MINIMUM_VALUE, MINIMUM_VALUE_CDE_KEY,
+    PERMITTED_VALUES, PERMITTED_VALUES_CDE_KEY,
     TITLE,
-    UNIT_OF_MEASURE
+    UNIT_OF_MEASURE, UNIT_OF_MEASURE_CDE_KEY
 } from "../settings.ts";
 import {HeaderIndexes, Option, OptionDetail} from "../models.ts";
 import {getId, getPreciseAbbreviation} from "./getters.ts";
@@ -17,6 +17,7 @@ type Hit = {
         label?: string;
         ilx: string;
         annotations: { annotation_term_label: string; value?: string }[];
+        definition?: string;
     };
 };
 
@@ -31,20 +32,21 @@ export function mapElasticSearchHitsToOptions(hits: Hit[]): Option[] {
             {title: ABBREVIATION, value: preciseAbbrev},
             {title: TITLE, value: source.label ?? ''},
             {title: INTERLEX_ID, value: id},
+            {title: DESCRIPTION, value: source.definition ?? ''}
         ];
 
         const annotationMapping: { [key: string]: string } = {
-            'has unit': UNIT_OF_MEASURE,
-            'allowedType': DATA_TYPE,
-            'allowedValues': PERMITTED_VALUES,
-            'minValue': MINIMUM_VALUE,
-            'maxValue': MAXIMUM_VALUE,
-            'hasCDELevel': CDE_LEVEL
+            [UNIT_OF_MEASURE_CDE_KEY]: UNIT_OF_MEASURE,
+            [DATA_TYPE_CDE_KEY]: DATA_TYPE,
+            [PERMITTED_VALUES_CDE_KEY]: PERMITTED_VALUES,
+            [MINIMUM_VALUE_CDE_KEY]: MINIMUM_VALUE,
+            [MAXIMUM_VALUE_CDE_KEY]: MAXIMUM_VALUE,
+            [CDE_LEVEL_CDE_KEY]: CDE_LEVEL,
         };
 
         Object.entries(annotationMapping).forEach(([termLabel, title]) => {
             const value = source.annotations.find(a => a.annotation_term_label === termLabel)?.value;
-            if (value){
+            if (value) {
                 details.push({title, value});
             }
         });

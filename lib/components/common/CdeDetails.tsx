@@ -11,7 +11,7 @@ const {
     primary500
 } = vars;
 
-interface CdeDetailItem {
+export interface CdeDetailItem {
     heading: string;
     text: string;
     link?: string;
