@@ -33,7 +33,7 @@ function SuggestionDetailUI({row, header, headerIndexes, isSelected, onSelect}: 
     }));
 
     return (
-        <Box gap='1.5rem' display='flex' alignItems='start'>
+        <Box gap='1.5rem' display='flex' alignItems='start' className='suggestion-details'>
             <Box height='2.625rem' display='flex' alignItems='center' sx={{
                 "& .MuiRadio-root": {
                     padding: 0,

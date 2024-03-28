@@ -12,6 +12,7 @@ const { gray100, gray500, gray600 } = vars
 
 function TemplateStep() {
     const [dropdowns, setDropdowns] = React.useState([1]);
+    const [togglePreview, setTogglePreview] = React.useState(false);
 
     const addAnotherField = () => {
         setDropdowns(prevDropdowns => {
@@ -184,7 +185,7 @@ function TemplateStep() {
                     </Stack>
                 </Box>
             </ModalHeightWrapper>
-            <PreviewBox />
+            <PreviewBox togglePreview={togglePreview} setTogglePreview={setTogglePreview}/>
         </Box>
     );
 }

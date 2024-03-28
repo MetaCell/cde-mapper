@@ -36,51 +36,53 @@ const Filters: React.FC<FiltersProps> = ({ anchorEl, handleClose, open, id, chec
                 horizontal: 'right',
             }}
         >
-            <Box sx={{
-                borderBottom: '0.0625rem solid #ECEDEE',
-                padding: '1rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}>
-                <Typography sx={{
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    lineHeight: '150%',
-                    color: '#676C74'
-                }}>Filter by</Typography>
-                <Button
-                    variant="text"
-                    onClick={onReset}
-                    sx={{
-                        p: 0,
+            <div className='mapping__filter-popover'>
+                <Box sx={{
+                    borderBottom: '0.0625rem solid #ECEDEE',
+                    padding: '1rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+                    <Typography sx={{
                         fontSize: '0.75rem',
-                        '&:hover': {
-                            background: 'transparent'
-                        }
-                    }}
-                >
-                    Reset filters
-                </Button>
-            </Box>
-
-            <Box p='1rem' sx={{ borderBottom: '0.0625rem solid #ECEDEE' }}>
-                <Typography sx={{
-                    fontSize: '0.75rem',
-                    fontWeight: 500,
-                    lineHeight: '150%',
-                    color: '#676C74',
-                    mb: '0.75rem'
-                }}>Status</Typography>
-
-                <Box mt="0.75rem">
-                    <FormGroup>
-                        <Checkbox checked={checked[EntityType.CDE]} onChange={onChange} name={EntityType.CDE} label="Mapped to CDE" />
-                        <Checkbox checked={checked[EntityType.CustomDictionaryField]} onChange={onChange} name={EntityType.CustomDictionaryField} label="Mapped to Data Dictionary field" />
-                        <Checkbox checked={checked[EntityType.Unknown]} onChange={onChange} name={EntityType.Unknown} label="Unmapped" />
-                    </FormGroup>
+                        fontWeight: 500,
+                        lineHeight: '150%',
+                        color: '#676C74'
+                    }}>Filter by</Typography>
+                    <Button
+                        variant="text"
+                        onClick={onReset}
+                        sx={{
+                            p: 0,
+                            fontSize: '0.75rem',
+                            '&:hover': {
+                                background: 'transparent'
+                            }
+                        }}
+                    >
+                        Reset filters
+                    </Button>
                 </Box>
-            </Box>
+
+                <Box p='1rem' sx={{ borderBottom: '0.0625rem solid #ECEDEE' }}>
+                    <Typography sx={{
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        lineHeight: '150%',
+                        color: '#676C74',
+                        mb: '0.75rem'
+                    }}>Status</Typography>
+
+                    <Box mt="0.75rem">
+                        <FormGroup>
+                            <Checkbox checked={checked[EntityType.CDE]} onChange={onChange} name={EntityType.CDE} label="Mapped to CDE" />
+                            <Checkbox checked={checked[EntityType.CustomDictionaryField]} onChange={onChange} name={EntityType.CustomDictionaryField} label="Mapped to Data Dictionary field" />
+                            <Checkbox checked={checked[EntityType.Unknown]} onChange={onChange} name={EntityType.Unknown} label="Unmapped" />
+                        </FormGroup>
+                    </Box>
+                </Box>
+            </div>
         </Popover>
     )
 }

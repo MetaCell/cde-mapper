@@ -180,6 +180,8 @@ interface CustomEntitiesDropdownProps {
         header?: Header;
         collections: SelectableCollection[];
         onCollectionSelect: (collection: SelectableCollection) => void;
+        onDropdownToggle?: () => void;
+        dropdownClassname?: string;
     };
     variableName: string
     onCustomDictionaryFieldCreation: (option: Option, newIsSelectedState: boolean) => void;
@@ -203,6 +205,8 @@ export default function CustomEntitiesDropdown({
                                                        header,
                                                        collections,
                                                        onCollectionSelect,
+                                                       onDropdownToggle = () => {},
+                                                       dropdownClassname
                                                    },
                                                    variableName,
                                                    onCustomDictionaryFieldCreation,
@@ -283,10 +287,10 @@ export default function CustomEntitiesDropdown({
                 }
             }
         };
-
+        onDropdownToggle();
         setIsLoading(true);
         fetchOptions().then(() => setIsLoading(false));
-    }, [searchInput, onSearch, open]);
+    }, [searchInput, onSearch, open, onDropdownToggle]);
 
     const groupedOptions = searchResults.reduce((grouped: GroupedOptions, option: Option) => {
         const group = option.group;
@@ -392,6 +396,7 @@ export default function CustomEntitiesDropdown({
                 open={open}
                 placement='bottom-end'
                 anchorEl={anchorEl}
+                className={dropdownClassname}
                 sx={{
                     height: "21.875rem",
                     borderRadius: '0.5rem',

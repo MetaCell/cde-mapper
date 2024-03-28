@@ -12,13 +12,16 @@ import {useUIContext} from "../contexts/ui/UIContext.ts";
 const CdeModal: FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [homeStepIndex, setHomeStepIndex] = useState(0);
 
-    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose} = useUIContext();
+    const {step, errorMessage, setErrorMessage, loadingMessage, handleClose, isTourOpen, setIsTourOpen} = useUIContext();
 
     const onClose = () => {
         setIsModalOpen(false)
         handleClose()
     }
+
+    const updateHomeTourStep = () => isTourOpen && setHomeStepIndex(prevStepIndex => prevStepIndex + 1);
 
     useEffect(() => {
         if (errorMessage) {
@@ -32,7 +35,7 @@ const CdeModal: FC = () => {
     const renderStepComponent = (): ReactElement => {
         switch (step) {
             case STEPS.HOME:
-                return <Home/>;
+                return <Home homeStepIndex={homeStepIndex} setHomeStepIndex={setHomeStepIndex}/>;
             case STEPS.COLLECTION:
                 return <MappingStep/>;
             // Add cases for other steps
@@ -40,11 +43,11 @@ const CdeModal: FC = () => {
                 return <TemplateStep/>
         }
     };
-
+    
     return (
         <>
             <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
-                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step}/>
+                <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step} setIsTourOpen={setIsTourOpen} onAfterSidebarToggle={updateHomeTourStep}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
             </Modal>
             <Snackbar

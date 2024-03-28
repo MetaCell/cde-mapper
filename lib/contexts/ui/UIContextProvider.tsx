@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {STEPS} from "../../models.ts";
 import {UIContext} from './UIContext.ts';
 import {useServicesContext} from "../services/ServicesContext.ts";
+import { localStorageTourKey } from '../../settings.ts';
 
 
 export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -13,6 +14,8 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
     const [step, setStep] = useState(STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const checked = JSON.parse(localStorage.getItem(localStorageTourKey) || 'false');
+    const [isTourOpen, setIsTourOpen] = useState<boolean>(!checked);
 
 
 
@@ -30,7 +33,9 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
         setLoadingMessage,
         errorMessage,
         setErrorMessage,
-        handleClose
+        handleClose,
+        isTourOpen,
+        setIsTourOpen
     };
 
     return (

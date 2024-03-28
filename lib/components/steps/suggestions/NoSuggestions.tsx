@@ -1,4 +1,7 @@
+import React from 'react';
 import {Stack, Typography, Box, Button} from '@mui/material';
+import {tutorial, TourSteps} from '../../common/tutorial';
+import Tour from '../../common/Tour';
 
 interface NoSuggestionsProps {
     onNext: () => void;
@@ -6,7 +9,7 @@ interface NoSuggestionsProps {
 
 
 function NoSuggestions({onNext}: NoSuggestionsProps) {
-
+    const [stepIndex, setStepIndex] = React.useState(0);
     return (
         <>
             <Box
@@ -19,7 +22,7 @@ function NoSuggestions({onNext}: NoSuggestionsProps) {
                 pt={6}
                 pb={6}
             >
-                <Stack spacing={6} sx={{width: 'max-content'}}>
+                <Stack spacing={6} sx={{ width: 'max-content' }}>
                     <Stack spacing={1}>
                         <Typography variant='h3' textAlign="center">
                             No suggestions available
@@ -29,12 +32,13 @@ function NoSuggestions({onNext}: NoSuggestionsProps) {
                             to the mapping step.
                         </Typography>
                     </Stack>
-                    <Stack alignItems="center" sx={{width: '100%'}}>
+                    <Stack alignItems="center" sx={{ width: '100%' }}>
                         <Box>
                             <Button
                                 disableRipple
                                 variant="contained"
                                 onClick={onNext}
+                                className='next_button'
                             >
                                 Next
                             </Button>
@@ -42,6 +46,11 @@ function NoSuggestions({onNext}: NoSuggestionsProps) {
                     </Stack>
                 </Stack>
             </Box>
+            <Tour
+                steps={tutorial[TourSteps.NoSuggestions]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
         </>
     );
 }

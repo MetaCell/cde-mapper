@@ -1,6 +1,6 @@
-import {Box, Button, Chip, IconButton, Typography} from '@mui/material';
-import {useCallback, useEffect, useState} from 'react';
-import {ArrowDropDown, LeftIcon, RightIcon} from '../../../icons';
+import { Box, Button, Chip, IconButton, Typography } from '@mui/material';
+import { useCallback, useEffect, useState } from 'react';
+import { ArrowDropDown, LeftIcon, RightIcon } from '../../../icons';
 import SuggestionDetailUI from './SuggestionDetailUI.tsx';
 import ModalHeightWrapper from '../../common/ModalHeightWrapper.tsx';
 import {vars} from '../../../theme/variables.ts';
@@ -10,6 +10,8 @@ import NoSuggestions from "./NoSuggestions.tsx";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
 import {getId} from "../../../helpers/rowHelpers.ts";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
+import Tour from '../../common/Tour.tsx';
+import { tutorial, TourSteps } from '../../common/tutorial.tsx';
 
 const {
     gray100,
@@ -41,6 +43,7 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     const [showOtherSuggestions, setShowOtherSuggestions] = useState<boolean>(false);
     const [currentKeyIndex, setCurrentKeyIndex] = useState<number>(0);
     const [hadInitialSuggestions, setHadInitialSuggestions] = useState<boolean>(false);
+    const [stepIndex, setStepIndex] = useState<number>(0);
 
     const [selectedSuggestion, setSelectedSuggestion] = useState<string[] | null>(null);
     const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>(getColumnsWithSuggestions());
@@ -110,42 +113,44 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     return (
         <>
             <ModalHeightWrapper>
-                <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
-                     alignItems='center' justifyContent='space-between'>
+                <div className='column-header'>
+                    <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
+                        alignItems='center' justifyContent='space-between'>
+                        <Typography sx={{
+                            color: gray500,
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            lineHeight: '142.857%'
+                        }}>
+                            Column header from datasets
+                        </Typography>
+                        <Typography sx={{
+                            color: gray500,
+                            fontSize: '0.75rem',
+                            fontWeight: 400,
+                            lineHeight: '150%'
+                        }}>
+                            This is the column header you’re mapping.
+                        </Typography>
+                    </Box>
+
                     <Typography sx={{
-                        color: gray500,
+                        padding: '0.5rem 0.75rem',
+                        borderRadius: '0.5rem',
+                        border: `0.0625rem solid ${gray200}`,
+                        background: gray50,
                         fontSize: '0.875rem',
-                        fontWeight: 500,
-                        lineHeight: '142.857%'
-                    }}>
-                        Column header from datasets
-                    </Typography>
-                    <Typography sx={{
                         color: gray500,
-                        fontSize: '0.75rem',
+                        lineHeight: '142.857%',
                         fontWeight: 400,
-                        lineHeight: '150%'
+                        marginBottom: '3rem'
                     }}>
-                        This is the column header you’re mapping.
+                        {column}
                     </Typography>
-                </Box>
-
-                <Typography sx={{
-                    padding: '0.5rem 0.75rem',
-                    borderRadius: '0.5rem',
-                    border: `0.0625rem solid ${gray200}`,
-                    background: gray50,
-                    fontSize: '0.875rem',
-                    color: gray500,
-                    lineHeight: '142.857%',
-                    fontWeight: 400,
-                    marginBottom: '3rem'
-                }}>
-                    {column}
-                </Typography>
+                </div>
 
                 <Box mb={3} borderBottom={`0.0625rem solid ${gray100}`} py='0.6875rem' display='flex'
-                     alignItems='center' justifyContent='space-between'>
+                    alignItems='center' justifyContent='space-between' className='cde-suggestions__content'>
                     <Typography sx={{
                         color: gray500,
                         fontSize: '0.875rem',
@@ -182,20 +187,20 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                     })}
                     {shouldShowOtherSuggestionsButton && (
                         <Button variant='text' onClick={() => setShowOtherSuggestions(!showOtherSuggestions)}
-                                disableRipple
-                                sx={{
-                                    p: 0, gap: '0.25rem', color: primary600,
+                            disableRipple
+                            className='suggestions__expand-btn'
+                            sx={{
+                                p: 0, gap: '0.25rem', color: primary600,
 
-                                    '& svg': {
-                                        transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
-                                    }
-                                }}>
-                            <ArrowDropDown/>
+                                '& svg': {
+                                    transform: showOtherSuggestions ? 'rotate(90deg)' : 'rotate(0deg)'
+                                }
+                            }}>
+                            <ArrowDropDown />
                             {otherSuggestions.length} other suggestions available for this column. Expand all
                             suggestions.
                         </Button>
                     )}
-
                 </Box>
 
 
@@ -220,8 +225,8 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
             </ModalHeightWrapper>
 
             <Box width='calc(100% - 3rem)' mx='auto' justifyContent='space-between' display='flex' alignItems='center'
-                 sx={{background: baseWhite, zIndex: 9}} py='1rem' borderTop={`0.0625rem solid ${gray100}`}>
-                <Box gap='0.75rem' display='flex' alignItems='center'>
+                sx={{ background: baseWhite, zIndex: 9 }} py='1rem' borderTop={`0.0625rem solid ${gray100}`}>
+                <Box gap='0.75rem' display='flex' alignItems='center' className="suggestions__navigation-block">
                     <Box gap='0.25rem' display='flex' alignItems='center'>
                         <IconButton onClick={handlePrevious} sx={{
                             borderRadius: '0.5rem',
@@ -229,9 +234,9 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                             border: `0.0625rem solid ${gray200}`,
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                         }}
-                                    disabled={currentKeyIndex === 0}
+                            disabled={currentKeyIndex === 0}
                         >
-                            <LeftIcon color={currentKeyIndex === 0 ? gray300 : gray500}/>
+                            <LeftIcon color={currentKeyIndex === 0 ? gray300 : gray500} />
                         </IconButton>
                         <IconButton onClick={handleNext} sx={{
                             borderRadius: '0.5rem',
@@ -240,19 +245,25 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
                             boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
                         }} disabled={currentKeyIndex === columnsWithSuggestions.length - 1}>
                             <RightIcon
-                                color={currentKeyIndex === columnsWithSuggestions.length - 1 ? gray300 : gray500}/>
+                                color={currentKeyIndex === columnsWithSuggestions.length - 1 ? gray300 : gray500} />
                         </IconButton>
                     </Box>
                     <Chip label={`Displaying ${currentKeyIndex + 1}/${columnsWithSuggestions.length} suggestions`}
-                          color='primary'/>
+                        color='primary' />
                 </Box>
 
-                <Box gap='0.5rem' display='flex' alignItems='center'>
+                <Box gap='0.5rem' display='flex' alignItems='center' className='suggestions__button-block'>
                     <Button variant='outlined' onClick={completeSuggestion}>Ignore suggestions</Button>
                     <Button variant='contained' onClick={acceptSuggestion} disabled={!selectedSuggestion}>Accept
                         selected mapping</Button>
                 </Box>
             </Box>
+
+            <Tour
+                steps={tutorial[TourSteps.Suggestions]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
         </>
     );
 }

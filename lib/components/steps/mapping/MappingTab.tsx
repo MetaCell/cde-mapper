@@ -23,6 +23,9 @@ import {PairingSuggestion} from "./PairingSuggestion.tsx";
 import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
 import {getId, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {useUIContext} from "../../../contexts/ui/UIContext.ts";
+import Tour from "../../common/Tour.tsx";
+import { tutorial, TourSteps } from "../../common/tutorial.tsx";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
 import {VariableNameFilter, CdeSortingFilter, StatusFilter, SortingStrategy} from "../../../sortingStrategies.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
@@ -121,7 +124,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         hasPairingSuggestions,
         markSuggestionAsProcessed,
     } = usePairingSuggestions();
-
+    const {isTourOpen} = useUIContext();
+    const [stepIndex, setStepIndex] = useState(0);
+    const [togglePreview, setTogglePreview] = useState(false);
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
@@ -139,6 +144,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
 
+    const handleTourNextStepClick = useCallback(() => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1), [isTourOpen, setStepIndex])
+    
     useEffect(() => {
         const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
             const row = datasetMapping[variableName];
@@ -289,19 +296,24 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }, [currentFilterStrategy, sortRows])
 
-    const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+    const onPreviewBoxToggle = () => {
+        setTogglePreview(!togglePreview)
+        handleTourNextStepClick();
+    }
 
+    const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+    console.log("step index: ", stepIndex)
     return (
-        <>
+        <Box className='mapping-step'>
             <ModalHeightWrapper pb={10} height='15rem'>
-                <MappingSearch onChange={handleFiltering}/>
+                <MappingSearch onChange={handleFiltering} onAfterChange={handleTourNextStepClick}/>
 
                 <Box px={1.5}>
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
                                 <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
-                                    <SortIcon direction={currentFilterStrategy instanceof StatusFilter ? currentFilterStrategy.sortState : 0}/>
+                                    <SortIcon className="mapping__sort-icon" direction={currentFilterStrategy instanceof StatusFilter ? currentFilterStrategy.sortState : 0}/>
                                 </IconButton>
                             </Box>
                             <Box sx={styles.col}>
@@ -321,10 +333,10 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                         <Box sx={styles.wrap}>
                             {visibleRows.map((variableName, index) => (
                                 <Box key={index} sx={styles.row} id={variableName}>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="mapping-chip">
                                         <ChipComponent variableName={variableName}/>
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="mapping__column-header">
                                         <TextField
                                             disabled
                                             fullWidth
@@ -334,7 +346,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                     <Box sx={styles.col}>
                                         <ArrowIcon/>
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="cde-fields__item-first">
                                         <CustomEntitiesDropdown
                                             placeholder={"Choose CDE or Data Dictionary fields... "}
                                             options={{
@@ -344,7 +356,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)]
+                                                value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)],
+                                                onDropdownToggle: handleTourNextStepClick,
+                                                dropdownClassname: "cde-field__popper",
                                             }}
                                             variableName={variableName}
                                             onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(variableName, option, newIsSelectedState)}
@@ -399,8 +413,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 </Box>
             </ModalHeightWrapper>
 
-            <PreviewBox/>
-        </>
+            <PreviewBox togglePreview={togglePreview} onToggle={onPreviewBoxToggle}/>
+            <Tour
+                steps={tutorial[TourSteps.Mapping]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
+        </Box>
     )
 }
 

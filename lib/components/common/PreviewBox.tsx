@@ -1,4 +1,3 @@
-import React from "react";
 import {Box, Typography, Chip, Button} from "@mui/material";
 import {useDataContext} from "../../contexts/data/DataContext.ts";
 import {ArrowDropDown, BulletIcon} from "../../icons";
@@ -6,8 +5,12 @@ import {StyledTable} from "./StyledTable";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
 
+interface PreviewBoxProps {
+    togglePreview: boolean;
+    onToggle: () => void;
+}
 
-const PreviewBox = () => {
+const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
     const {datasetSample} = useDataContext();
     const {step, setStep} = useUIContext();
     const {
@@ -15,11 +18,11 @@ const PreviewBox = () => {
         getUnmappedRowsCount,
         getMappedRowsCount,
     } = useServicesContext();
-    const [togglePreview, setTogglePreview] = React.useState(false);
+
     const headers = datasetSample[0]
 
     return (
-        <Box sx={{
+        <Box className="preview__toggle" sx={{
             position: 'absolute',
             background: '#fff',
             zIndex: 9999999999,
@@ -30,8 +33,7 @@ const PreviewBox = () => {
             borderRadius: '0.75rem 0.75rem 0 0',
             border: '0.0625rem solid #ECEDEE',
         }}>
-            <Box display='flex' gap={1.5} px={3} py={2} sx={{cursor: 'pointer'}} alignItems='center'
-                 onClick={() => setTogglePreview(!togglePreview)}>
+            <Box display='flex' gap={1.5} px={3} py={2} sx={{ cursor: 'pointer' }} alignItems='center' onClick={onToggle} className="preview__toggle_false">
                 <Typography sx={{
                     flex: 1,
                     color: '#676C74',
