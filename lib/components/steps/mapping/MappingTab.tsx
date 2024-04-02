@@ -302,7 +302,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
     }
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-    console.log("step index: ", stepIndex)
+
     return (
         <Box className='mapping-step'>
             <ModalHeightWrapper pb={10} height='15rem'>

@@ -20,6 +20,10 @@ function TemplateStep() {
         })
     };
 
+    const onPreviewBoxToggle = () => {
+        setTogglePreview(!togglePreview)
+    }
+
     return (
         <Box>
             <ModalHeightWrapper height="15rem">
@@ -185,7 +189,7 @@ function TemplateStep() {
                     </Stack>
                 </Box>
             </ModalHeightWrapper>
-            <PreviewBox togglePreview={togglePreview} setTogglePreview={setTogglePreview}/>
+            <PreviewBox togglePreview={togglePreview} onToggle={onPreviewBoxToggle}/>
         </Box>
     );
 }
