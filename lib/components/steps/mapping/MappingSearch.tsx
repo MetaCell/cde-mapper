@@ -44,7 +44,6 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
 
     const handleFiltersOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
-        onAfterChange();
     }
 
     const open = Boolean(anchorEl);
@@ -53,6 +52,13 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
     React.useEffect(() => {
         onChange(debouncedSearchValue, filtersState);
     }, [debouncedSearchValue, filtersState, onChange])
+
+    React.useEffect(() => {
+        if(!open) {
+            return;
+        }
+        onAfterChange();
+    }, [open, onAfterChange])
 
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
