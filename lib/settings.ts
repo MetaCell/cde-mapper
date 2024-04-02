@@ -28,6 +28,7 @@ export const DEFAULT_HEADERS = [
 ];
 
 export const CUSTOM_DATA_FIELD_CDE_LEVEL = "Custom"
+export const localStorageTourKey = "skipTutorial"
 
 export const UNIT_OF_MEASURE_CDE_KEY = "has unit"
 export const DATA_TYPE_CDE_KEY = "allowedType"

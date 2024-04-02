@@ -6,10 +6,11 @@ import { useDebounce } from "../../../hooks/useDebounce.ts";
 import { EntityType, FiltersState } from "../../../models.ts";
 
 interface MappingSearchProps {
+    onAfterChange?: () => void;
     onChange: (searchTerm: string, checked: FiltersState) => void;
 }
 
-export default function MappingSearch({onChange}: MappingSearchProps) {
+export default function MappingSearch({onChange, onAfterChange = () => {}}: MappingSearchProps) {
 
     const [searchString, setSearchString] = useState('');
     const [filtersState, setFiltersState] = React.useState({
@@ -36,6 +37,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const debouncedSearchValue = useDebounce(searchString);
 
+
     const handleFiltersClose = () => {
         setAnchorEl(null);
     };
@@ -51,12 +53,20 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
         onChange(debouncedSearchValue, filtersState);
     }, [debouncedSearchValue, filtersState, onChange])
 
+    React.useEffect(() => {
+        if(!open) {
+            return;
+        }
+        onAfterChange();
+    }, [open, onAfterChange])
+
 
     return <Box alignItems="center" display="flex" gap={1.5} mb={3}>
         <TextField
             fullWidth
             variant="outlined"
             placeholder="Search column headers or mapped CDEs..."
+            className="mapping__search-input"
             InputProps={{
                 startAdornment: <InputAdornment position="start"><SearchIcon/></InputAdornment>
             }}
@@ -65,6 +75,7 @@ export default function MappingSearch({onChange}: MappingSearchProps) {
         />
         <Button
             variant="outlined"
+            className="mapping__filter-btn"
             onClick={handleFiltersOpen}
         >
             <FilterIcon/>
