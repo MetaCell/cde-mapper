@@ -106,6 +106,89 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
     startProcessing();
 }
 
+export function createAndInit(datasetMappingFile, additionalDatasetMappingsFiles, datasetFile) {
+    let datasetMappings = [];
+    let additionalDatasetMappings = [];
+    let datasetSample = [];
+
+    const processCsvFile = (file, isDatasetMapping = false) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const text = event.target.result;
+
+                // eslint-disable-next-line no-undef
+                Papa.parse(text, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function () {
+                        if (isDatasetMapping) {
+                            datasetMappings = mappings;
+                        } else {
+                            additionalDatasetMappings.push(mappings);
+                        }
+                        resolve();
+                    },
+                    error: function (error) {
+                        console.error('Error parsing CSV file:', error.message);
+                        reject(error);
+                    }
+                });
+            };
+            reader.onerror = function (event) {
+                console.error('Error reading CSV file:', event.target.error);
+                reject(event.target.error);
+            };
+            reader.readAsText(file);
+        });
+    };
+
+    const processDatasetFile = () => {
+        const datasetReader = new FileReader();
+        datasetReader.onload = function (event) {
+            const text = event.target.result;
+
+            // eslint-disable-next-line no-undef
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function () {
+                    init({
+                        datasetMapping: datasetMappings,
+                        additionalDatasetMappings: additionalDatasetMappings,
+                        datasetSample: datasetSample,
+                        collections: getCollections(),
+                        config: {width: '60%', height: '80%'},
+                        name: 'TestLabName',
+                        callback: (datasetMapping, datasetMappingHeader) => downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader),
+                        headerIndexes: headersIndexes,
+                        emailTemplate: {
+                            email: 'support@interlex.org',
+                            title: 'CDE Mapper collection not found',
+                            description: 'This is an email coming from the cde mapper application to flag that a certain collection is missing.'
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.error('Error parsing Dataset CSV file:', error.message);
+                }
+            });
+        };
+        datasetReader.readAsText(datasetFile);
+    };
+
+    const startProcessing = async () => {
+        // No need to check for existence, since they're empty arrays by default
+        for (const file of additionalDatasetMappingsFiles) {
+            await processCsvFile(file);
+        }
+        processDatasetFile();
+    };
+
+    startProcessing();
+}
+
+
 function getCollections() {
     return [
         {

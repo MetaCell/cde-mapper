@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {STEPS} from "../../models.ts";
 import {UIContext} from './UIContext.ts';
 import {useServicesContext} from "../services/ServicesContext.ts";
+import {useDataContext} from '../data/DataContext.ts';
 
 
 export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({children}) => {
@@ -10,7 +11,11 @@ export const UIContextProvider: React.FC<{ children: React.ReactNode }> = ({chil
         onClose,
     } = useServicesContext();
 
-    const [step, setStep] = useState(STEPS.HOME);
+    const {
+        datasetSample
+    } = useDataContext();
+    const isDatasetSampleEmpty = datasetSample.length === 0;
+    const [step, setStep] = useState(isDatasetSampleEmpty ? -1 : STEPS.HOME);
     const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 

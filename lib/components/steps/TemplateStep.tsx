@@ -1,17 +1,133 @@
-import React, { Fragment } from 'react';
-import { Box, Typography, Button, Stack, Tooltip, IconButton, Divider, 
-    Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import {
+    Box, Typography, Button, Stack, Accordion, AccordionSummary, AccordionDetails
+} from '@mui/material';
 import { vars } from '../../theme/variables.ts';
 import { PlusIcon } from '../../icons/index.tsx';
-// import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
-import PreviewBox from '../common/PreviewBox.tsx';
-import CdeDetails from '../common/CdeDetails.tsx';
+import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { CheckIcon, CrossIcon, GlobeIcon, InfoIcon, PairIcon } from "../../icons";
+import { PairIcon } from "../../icons";
+import { SelectableCollection, Option } from '../../models.ts';
+import { useDataContext } from '../../contexts/data/DataContext.ts';
+import { useServicesContext } from '../../contexts/services/ServicesContext.ts';
+import { getCustomDictionaryFieldSelectableCollection } from '../../services/customDictionaryFieldService.ts';
+import { CUSTOM_DICTIONARY_FIELD_COLLECTION_ID } from '../../settings.ts';
+import { usePairingSuggestions } from '../../hooks/usePairingSuggestions.ts';
+import { PairingTooltip } from './mapping/PairingTooltip.tsx';
+import { PairingSuggestion } from './mapping/PairingSuggestion.tsx';
+import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../helpers/optionsHelpers.ts';
 const { gray100, gray500, gray600 } = vars
 
 function TemplateStep() {
+    const { collections, headerIndexes } = useDataContext();
+    const { updateDatasetMappingRow, searchCustomDictionaryFields, getUnmappedVariableNames } = useServicesContext();
     const [dropdowns, setDropdowns] = React.useState([1]);
+    const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
+    const collectionKeys = Object.keys(collections);
+    const [defaultCollection, setDefaultCollection] = React.useState(collectionKeys.length > 0 ? collectionKeys[0] : '');
+    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
+    const {
+        updateAvailableSuggestions,
+        getPairingSuggestions,
+        markSuggestionAsProcessed,
+    } = usePairingSuggestions();
+
+    useEffect(() => {
+        const initialSelectedCollections = Object.keys(collections).map(key => ({
+            id: key,
+            name: collections[key].name,
+            selected: key === defaultCollection
+        }));
+
+        setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
+    }, [collections, defaultCollection]);
+
+    const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
+        setSelectableCollections(prevCollections =>
+            prevCollections.map(collection => {
+                if (collection.id === selectedCollection.id) {
+                    // Toggle the 'selected' state
+                    return { ...collection, selected: !collection.selected };
+                } else {
+                    return collection;
+                }
+            })
+        );
+    };
+
+    const searchInCollections = useCallback(
+        async (queryString: string): Promise<Option[]> => {
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+
+            try {
+                const fetchPromises = selectedCollections.map(async (collection) => {
+                    if (collection.id === CUSTOM_DICTIONARY_FIELD_COLLECTION_ID) {
+                        return searchCustomDictionaryFields(queryString, createdCustomDictionaryFields)
+                    } else {
+                        return await collections[collection.id].fetch(queryString);
+                    }
+
+                });
+                const results = await Promise.all(fetchPromises);
+                return results.flat();
+            } catch (error) {
+                console.error("Error searching collections:", error);
+                return [];
+            }
+        },
+        [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
+    );
+
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+
+        if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
+            updateDatasetMappingRow(variableName, option.content);
+
+            // Get all selected collections
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+
+            // Fetch pairing suggestions from all selected collections
+            let aggregatedPairingSuggestions: Option[] = [];
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
+                    const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
+                    aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
+                }
+            }
+            updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
+        } else if (option && !newIsSelectedState) {
+            updateAvailableSuggestions(variableName, []);
+            updateDatasetMappingRow(variableName, []);
+
+        } else {
+            console.error("No option provided");
+        }
+    };
+
+    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+        setCreatedCustomDictionaryFields(prev => ({
+            ...prev,
+            [option.id]: option,
+        }));
+        await handleSelection(variableName, option, newIsSelectedState)
+    }
+
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
+        markSuggestionAsProcessed(variableName, suggestion.id);
+        if (selectedColumn !== null) {
+            updateDatasetMappingRow(selectedColumn, suggestion.content);
+        }
+    }
 
     const addAnotherField = () => {
         setDropdowns(prevDropdowns => {
@@ -19,8 +135,10 @@ function TemplateStep() {
         })
     };
 
+    const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+
     return (
-        <Box>
+        <>
             <ModalHeightWrapper height="15rem">
                 <Box p={1.5} display="flex" flexDirection="column" gap={6}>
                     <Stack>
@@ -35,139 +153,67 @@ function TemplateStep() {
                         {
                             dropdowns.map((dropdownIndex) => (
                                 <Fragment key={dropdownIndex}>
-                                    {/*<CustomEntitiesDropdown*/}
-                                    {/*    placeholder="Choose CDE or Data Dictionary fields..."*/}
-                                    {/*    options={{*/}
-                                    {/*        searchPlaceholder: "Search Spinal Cord Injury (SCI)",*/}
-                                    {/*        noResultReason: "We couldn’t find any record with this in the database.",*/}
-                                    {/*        onSearch: async () => [],*/}
-                                    {/*        onSelection: async () => [],*/}
-                                    {/*        collections: [],*/}
-                                    {/*        onCollectionSelect: () => [],*/}
-                                    {/*        value: null,*/}
-                                    {/*    }}*/}
-                                    {/*/>*/}
-                                    <Box width='100%' mt={1.5}>
+                                    <CustomEntitiesDropdown
+                                        placeholder={"Choose CDE or Data Dictionary fields... "}
+                                        options={{
+                                            searchPlaceholder: searchText,
+                                            noResultReason: "We couldn’t find any results.",
+                                            onSearch: searchInCollections,
+                                            onSelection: (option, newIsSelectedState) => handleSelection("", option, newIsSelectedState),
+                                            collections: selectableCollections,
+                                            onCollectionSelect: handleCollectionSelect,
+                                            value: null
+                                        }}
+                                        variableName={""}
+                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation("", option, newIsSelectedState)}
+                                    />
+                                    <Box
+                                        display="flex"
+                                        sx={{
+                                            boxSizing: 'border-box',
+                                            columnGap: '1.5rem',
+                                            flexWrap: 'wrap',
+                                            padding: '1.5rem 0',
+                                            borderBottom: '0.0625rem solid #ECEDEE',
+                                        }}
+                                    >
                                         <Accordion>
                                             <AccordionSummary>
                                                 <PairIcon />
-                                                <Typography sx={{ fontSize: '0.75rem', color: '#4F5359', fontWeight: 500, lineHeight: '150%' }}>Pairing suggestions</Typography>
-                                                <Tooltip
-                                                    title={
-                                                        <>
-                                                            <Typography sx={{
-                                                                fontSize: '0.75rem',
-                                                                fontWeight: 600,
-                                                                lineHeight: '142.857%',
-                                                                marginBottom: '0.25rem',
-                                                                color: '#fff',
-                                                            }}>This is a Tooltip</Typography>
-                                                            <Typography sx={{
-                                                                fontSize: '0.75rem',
-                                                                fontWeight: 400,
-                                                                lineHeight: '142.857%',
-                                                                color: '#fff',
-                                                            }}>
-                                                                Tooltips are used to describe or identify an element. In most scenarious, tooltips help the user understand meaning, function or alt-text.
-                                                            </Typography>
-                                                        </>
-                                                    }
-                                                >
-                                                    <Box ml='0.25rem' display='flex' alignItems='center'><InfoIcon /></Box>
-                                                </Tooltip>
+                                                <Typography sx={{
+                                                    fontSize: '0.75rem',
+                                                    color: '#4F5359',
+                                                    fontWeight: 500,
+                                                    lineHeight: '150%'
+                                                }}>Pairing suggestions</Typography>
+                                                <PairingTooltip />
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Box pl='2.5625rem'>
-                                                    <Box sx={{
-                                                        position: 'relative',
-                                                        '&:before': {
-                                                            content: '""',
-                                                            position: 'absolute',
-                                                            left: '-1.375rem',
-                                                            height: '2.25rem',
-                                                            top: '-1.1rem',
-                                                            width: '0.125rem',
-                                                            background: '#ECEDEE',
-                                                            borderRadius: '3.125rem',
-                                                        }
-                                                    }}>
-                                                        <Box sx={{
-                                                            position: 'relative',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            columnGap: '1.5rem',
+                                                    {getPairingSuggestions("").map((suggestion) => {
+                                                        const headerOptions = getUnmappedVariableNames().map((label, index) => ({
+                                                            label,
+                                                            index
+                                                        }));
 
-                                                            '& > div': {
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                            },
+                                                        const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                        const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                        const description = getDescriptionFromOption(suggestion);
 
-                                                            '&:before': {
-                                                                content: '""',
-                                                                position: 'absolute',
-                                                                left: '-1.375rem',
-                                                                top: '50%',
-                                                                transform: 'translateY(-50%)',
-                                                                width: '0.75rem',
-                                                                height: '0.125rem',
-                                                                background: '#ECEDEE',
-                                                                borderTopRightRadius: '3.125rem',
-                                                                borderBottomRightRadius: '3.125rem',
-                                                            }
-                                                        }} mb={1.5}>
-                                                            <Box display='flex' gap={1.5} flex={1}>
-                                                                <Box flex={1} sx={{
-                                                                    padding: '0.4375rem 0.875rem',
-                                                                    borderRadius: '0.5rem',
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    gap: '0.5rem',
-                                                                    background: '#F4F5F5',
-                                                                    border: '0.0625rem solid #E4E5E7',
-                                                                }}>
-                                                                    <GlobeIcon />
-                                                                    <Typography sx={{
-                                                                        fontSize: '0.875rem',
-                                                                        fontWeight: 500,
-                                                                        lineHeight: '142.857%',
-                                                                        color: '#070808'
-                                                                    }}>
-                                                                        Subject_name
-                                                                    </Typography>
-                                                                    <Typography sx={{
-                                                                        fontSize: '0.875rem',
-                                                                        fontWeight: 400,
-                                                                        lineHeight: '142.857%',
-                                                                        color: '#676C74'
-                                                                    }}>
-                                                                        Name of each subject in the dataset
-                                                                    </Typography>
-                                                                </Box>
-
-                                                                <Box display='flex' gap={0.5}>
-                                                                    <IconButton sx={{
-                                                                        borderRadius: '0.5rem',
-                                                                        padding: '0.4375rem',
-                                                                    }}>
-                                                                        <CrossIcon />
-                                                                    </IconButton>
-                                                                    <IconButton sx={{
-                                                                        borderRadius: '0.5rem',
-                                                                        padding: '0.4375rem',
-                                                                        border: '0.0625rem solid #D6D8DB',
-                                                                        boxShadow: '0rem 0.0625rem 0.125rem 0rem rgba(7, 8, 8, 0.05)'
-                                                                    }}>
-                                                                        <CheckIcon />
-                                                                    </IconButton>
-                                                                </Box>
-                                                            </Box>
-                                                        </Box>
-                                                        <CdeDetails />
-                                                    </Box>
+                                                        return (
+                                                            <PairingSuggestion
+                                                                key={suggestion.id}
+                                                                onChange={(selectedColumn) => handlePairingSuggestion("", suggestion, selectedColumn)}
+                                                                headerOptions={headerOptions}
+                                                                label={abbreviation}
+                                                                description={description}
+                                                                rowContent={rowContent}
+                                                            />
+                                                        );
+                                                    })}
                                                 </Box>
                                             </AccordionDetails>
                                         </Accordion>
-                                        <Divider sx={{ color: gray100, marginTop: '1.5rem' }}/>
                                     </Box>
                                 </Fragment>
                             ))
@@ -184,8 +230,7 @@ function TemplateStep() {
                     </Stack>
                 </Box>
             </ModalHeightWrapper>
-            <PreviewBox />
-        </Box>
+        </>
     );
 }
 
