@@ -1,9 +1,9 @@
-import {Box, Button, Divider, IconButton, Typography} from "@mui/material";
-import {vars} from "../../theme/variables";
-import {CloseIcon, MapTriFold} from "../../icons";
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { vars } from "../../theme/variables";
+import { CloseIcon, MapTriFold } from "../../icons";
 import Info from "./Info";
 
-const {baseWhite, gray100, gray700} = vars
+const { baseWhite, gray100, gray700 } = vars
 
 const styles = {
     root: {
@@ -26,40 +26,49 @@ const styles = {
     }
 }
 
-const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number }) => {
-    const {onClose, isInfoOpen, setIsInfoOpen, step} = props
+const Header = (props: { onClose: () => void, isInfoOpen: boolean, setIsInfoOpen: (b: boolean) => void, step: number, setIsTourOpen: (b: boolean) => void, onAfterSidebarToggle?: () => void }) => {
+    const {onClose, isInfoOpen, setIsInfoOpen, step, setIsTourOpen, onAfterSidebarToggle = () => {}} = props
 
+    const handleInfoBtnClick = () => {
+        setIsInfoOpen(true)
+        onAfterSidebarToggle()
+    }
+
+    const handleClose = () => {
+        setIsInfoOpen(false);
+        onAfterSidebarToggle();
+    }
     return (
         <>
             <Box sx={styles.root}>
                 <Box display='flex' alignItems='center' flex={1}>
                     <IconButton disableRipple onClick={onClose} sx={{
                         borderRadius: '0.5rem',
-            '&:hover': {
-              background: gray100
-            }
-          }}>
-            <CloseIcon />
-          </IconButton>
-          <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
-          <Typography>
-            {step === -1 ? "Create template" : "Map selected dataset"}
-          </Typography>
-        </Box>
+                        '&:hover': {
+                            background: gray100
+                        }
+                    }}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Divider sx={{ borderRight: `0.0625rem solid ${gray100}`, height: '2.25rem', mx: '1rem' }} />
+                    <Typography>
+                        {step === -1 ? "Create template" : "Map selected dataset"}
+                    </Typography>
+                </Box>
 
                 <Box display='flex' gap={1}>
                     {
-                        step!==-1 && <IconButton sx={{borderRadius: '0.5rem'}}>
-                        <MapTriFold/>
-                    </IconButton>
+                        step !== -1 && <IconButton sx={{ borderRadius: '0.5rem' }} onClick={() => setIsTourOpen(true)}>
+                            <MapTriFold />
+                        </IconButton>
                     }
-                    <Button onClick={() => setIsInfoOpen(true)} disableRipple variant="outlined">
+                    <Button onClick={handleInfoBtnClick} disableRipple variant="outlined" className="about-info__btn">
                         Info
                     </Button>
                 </Box>
             </Box>
 
-            {isInfoOpen && <Info setIsInfoOpen={setIsInfoOpen}/>}
+            {isInfoOpen && <Info handleClose={handleClose}/>}
         </>
     )
 };
