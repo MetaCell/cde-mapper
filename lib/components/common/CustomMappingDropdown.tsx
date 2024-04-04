@@ -193,6 +193,8 @@ type GroupedOptions = {
 };
 
 
+const noop = () => {};
+
 export default function CustomEntitiesDropdown({
                                                    placeholder,
                                                    options: {
@@ -205,7 +207,7 @@ export default function CustomEntitiesDropdown({
                                                        header,
                                                        collections,
                                                        onCollectionSelect,
-                                                       onDropdownToggle = () => {},
+                                                       onDropdownToggle = noop,
                                                        dropdownClassname
                                                    },
                                                    variableName,
