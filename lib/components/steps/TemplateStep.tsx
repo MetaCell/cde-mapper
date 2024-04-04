@@ -1,12 +1,7 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
-import {
-    Box, Typography, Button, Stack, Accordion, AccordionSummary, AccordionDetails
-} from '@mui/material';
-import { vars } from '../../theme/variables.ts';
-import { PlusIcon } from '../../icons/index.tsx';
+import { Box, Typography, Button, Stack, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
 import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { PairIcon } from "../../icons";
 import { SelectableCollection, Option } from '../../models.ts';
 import { useDataContext } from '../../contexts/data/DataContext.ts';
 import { useServicesContext } from '../../contexts/services/ServicesContext.ts';
@@ -16,22 +11,30 @@ import { usePairingSuggestions } from '../../hooks/usePairingSuggestions.ts';
 import { PairingTooltip } from './mapping/PairingTooltip.tsx';
 import { PairingSuggestion } from './mapping/PairingSuggestion.tsx';
 import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../helpers/optionsHelpers.ts';
+import { mapRowToOption } from '../../helpers/mappers.ts';
+import { isRowMapped } from '../../helpers/rowHelpers.ts';
+import { PlusIcon, PairIcon } from '../../icons/index.tsx';
+import { vars } from '../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
 function TemplateStep() {
-    const { collections, headerIndexes } = useDataContext();
-    const { updateDatasetMappingRow, searchCustomDictionaryFields, getUnmappedVariableNames } = useServicesContext();
     const [dropdowns, setDropdowns] = React.useState([1]);
-    const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
+
+    const { datasetMapping, headerIndexes, collections, datasetMappingHeader } = useDataContext();
+    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields } = useServicesContext();
     const collectionKeys = Object.keys(collections);
-    const [defaultCollection, setDefaultCollection] = React.useState(collectionKeys.length > 0 ? collectionKeys[0] : '');
-    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
-    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
+    const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
+
     const {
         updateAvailableSuggestions,
         getPairingSuggestions,
+        hasPairingSuggestions,
         markSuggestionAsProcessed,
     } = usePairingSuggestions();
+
+    const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
+    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
 
     useEffect(() => {
         const initialSelectedCollections = Object.keys(collections).map(key => ({
@@ -42,6 +45,21 @@ function TemplateStep() {
 
         setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
+
+    useEffect(() => {
+        const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
+            const row = datasetMapping[variableName];
+            if (isRowMapped(row, headerIndexes)) {
+                const option = mapRowToOption(row, datasetMappingHeader, headerIndexes);
+                acc[option.id] = option;
+            }
+            return acc;
+        }, {} as { [id: string]: Option });
+
+
+        setSelectedOptionsMap(initialSearchResults);
+    }, [datasetMapping, datasetMappingHeader, headerIndexes]);
+
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
         setSelectableCollections(prevCollections =>
@@ -114,20 +132,20 @@ function TemplateStep() {
         }
     };
 
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
+        markSuggestionAsProcessed(variableName, suggestion.id);
+        if (selectedColumn !== null) {
+            updateDatasetMappingRow(selectedColumn, suggestion.content);
+        }
+    };
+
     const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
         setCreatedCustomDictionaryFields(prev => ({
             ...prev,
             [option.id]: option,
         }));
         await handleSelection(variableName, option, newIsSelectedState)
-    }
-
-    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
-        markSuggestionAsProcessed(variableName, suggestion.id);
-        if (selectedColumn !== null) {
-            updateDatasetMappingRow(selectedColumn, suggestion.content);
-        }
-    }
+    };
 
     const addAnotherField = () => {
         setDropdowns(prevDropdowns => {
@@ -136,7 +154,7 @@ function TemplateStep() {
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-
+    console.log("selectableCollections: ", selectableCollections)
     return (
         <>
             <ModalHeightWrapper height="15rem">
@@ -162,59 +180,61 @@ function TemplateStep() {
                                             onSelection: (option, newIsSelectedState) => handleSelection("", option, newIsSelectedState),
                                             collections: selectableCollections,
                                             onCollectionSelect: handleCollectionSelect,
-                                            value: null
+                                            value: null,
                                         }}
                                         variableName={""}
                                         onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation("", option, newIsSelectedState)}
                                     />
-                                    <Box
-                                        display="flex"
-                                        sx={{
-                                            boxSizing: 'border-box',
-                                            columnGap: '1.5rem',
-                                            flexWrap: 'wrap',
-                                            padding: '1.5rem 0',
-                                            borderBottom: '0.0625rem solid #ECEDEE',
-                                        }}
-                                    >
-                                        <Accordion>
-                                            <AccordionSummary>
-                                                <PairIcon />
-                                                <Typography sx={{
-                                                    fontSize: '0.75rem',
-                                                    color: '#4F5359',
-                                                    fontWeight: 500,
-                                                    lineHeight: '150%'
-                                                }}>Pairing suggestions</Typography>
-                                                <PairingTooltip />
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <Box pl='2.5625rem'>
-                                                    {getPairingSuggestions("").map((suggestion) => {
-                                                        const headerOptions = getUnmappedVariableNames().map((label, index) => ({
-                                                            label,
-                                                            index
-                                                        }));
+                                    {hasPairingSuggestions("") && (
+                                        <Box
+                                            display="flex"
+                                            sx={{
+                                                boxSizing: 'border-box',
+                                                columnGap: '1.5rem',
+                                                flexWrap: 'wrap',
+                                                padding: '1.5rem 0',
+                                                borderBottom: '0.0625rem solid #ECEDEE',
+                                            }}
+                                        >
+                                            <Accordion>
+                                                <AccordionSummary>
+                                                    <PairIcon />
+                                                    <Typography sx={{
+                                                        fontSize: '0.75rem',
+                                                        color: '#4F5359',
+                                                        fontWeight: 500,
+                                                        lineHeight: '150%'
+                                                    }}>Pairing suggestions</Typography>
+                                                    <PairingTooltip />
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Box pl='2.5625rem'>
+                                                        {getPairingSuggestions("").map((suggestion) => {
+                                                            const headerOptions = getUnmappedVariableNames().map((label, index) => ({
+                                                                label,
+                                                                index
+                                                            }));
 
-                                                        const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                        const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
-                                                        const description = getDescriptionFromOption(suggestion);
+                                                            const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                            const description = getDescriptionFromOption(suggestion);
 
-                                                        return (
-                                                            <PairingSuggestion
-                                                                key={suggestion.id}
-                                                                onChange={(selectedColumn) => handlePairingSuggestion("", suggestion, selectedColumn)}
-                                                                headerOptions={headerOptions}
-                                                                label={abbreviation}
-                                                                description={description}
-                                                                rowContent={rowContent}
-                                                            />
-                                                        );
-                                                    })}
-                                                </Box>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    </Box>
+                                                            return (
+                                                                <PairingSuggestion
+                                                                    key={suggestion.id}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion("", suggestion, selectedColumn)}
+                                                                    headerOptions={headerOptions}
+                                                                    label={abbreviation}
+                                                                    description={description}
+                                                                    rowContent={rowContent}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </Box>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        </Box>
+                                    )}
                                 </Fragment>
                             ))
                         }

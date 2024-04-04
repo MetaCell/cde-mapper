@@ -100,8 +100,6 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
 
             <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
                 <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className='mapping__start-btn'>Start mapping</Button>
-                <Button variant='text' onClick={() => setStep(-1)}>No, create an empty template with CDEs
-                    instead </Button>
             </Box>
             {
                 !isTourStartDialogVisible && <Tour

@@ -1,9 +1,9 @@
-import {DatasetMapping, HeaderIndexes} from "../models.ts";
-import {DEFAULT_HEADERS} from "../settings.ts";
-import {resetRow} from "../helpers/utils.ts";
+import { DatasetMapping, HeaderIndexes, HeaderIndexesMapping } from "../models.ts";
+import { DEFAULT_HEADERS } from "../settings.ts";
+import { resetRow } from "../helpers/utils.ts";
 
 export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, headerIndexes: HeaderIndexes,
-                                  datasetHeaders?: string[]): [DatasetMapping, string[]] => {
+    datasetHeaders?: string[]): [DatasetMapping, string[]] => {
     const datasetMapping: DatasetMapping = {};
     let datasetMappingHeader: string[];
 
@@ -41,7 +41,51 @@ export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, he
             datasetMapping[variableName] = updatedRow;
         }
     });
-
+    console.log("datasetMapping in init: ", datasetMapping)
+    console.log("datasetMappingHeaders: ", datasetMappingHeader)
     return [datasetMapping, datasetMappingHeader];
 };
+
+const getMappingValues = (headerIndexes: HeaderIndexes, headersIndexesMapping: HeaderIndexesMapping) => {
+    const mappingValues: { [key: string]: any } = {};
+
+    for (const key in headerIndexes) {
+        const mappingKey = headersIndexesMapping[key as keyof HeaderIndexesMapping];
+        
+        mappingValues[key] = mappingKey;
+    }
+
+    return mappingValues;
+}
+
+
+export const getTemplateDatasetMapping = (headerIndexes: HeaderIndexes, headerIndexesMapping: HeaderIndexesMapping): [DatasetMapping, string[]] => {
+    const datasetMapping: DatasetMapping = {};
+
+    const mappingValues = getMappingValues(headerIndexes, headerIndexesMapping)
+
+    let datasetMappingHeader: string[] = DEFAULT_HEADERS
+
+    for (const [key, index] of Object.entries(headerIndexes)) {
+        // Check if the index is valid
+        if (index >= 0 && index < datasetMappingHeader.length) {
+            const fruit = mappingValues[key];
+            const currentIndex = datasetMappingHeader.indexOf(fruit);
+            if (currentIndex !== -1) {
+                const temp = datasetMappingHeader[index];
+                datasetMappingHeader[index] = datasetMappingHeader[currentIndex];
+                datasetMappingHeader[currentIndex] = temp;
+            }
+        } else {
+            console.log(`Index ${index} is out of bounds for the array.`);
+        }
+    }
+
+    // Initialize empty arrays for each key
+    DEFAULT_HEADERS.forEach(key => {
+        datasetMapping[key] = [];
+    });
+
+    return [datasetMapping, datasetMappingHeader];
+}
 
