@@ -41,8 +41,7 @@ export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, he
             datasetMapping[variableName] = updatedRow;
         }
     });
-    console.log("datasetMapping in init: ", datasetMapping)
-    console.log("datasetMappingHeaders: ", datasetMappingHeader)
+
     return [datasetMapping, datasetMappingHeader];
 };
 
