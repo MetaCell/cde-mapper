@@ -154,7 +154,7 @@ function TemplateStep() {
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-    console.log("selectableCollections: ", selectableCollections)
+    
     return (
         <>
             <ModalHeightWrapper height="15rem">
