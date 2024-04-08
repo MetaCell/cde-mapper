@@ -18,7 +18,7 @@ import { vars } from '../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
 function TemplateStep() {
-    const [dropdowns, setDropdowns] = React.useState([1]);
+    const [dropdowns, setDropdowns] = React.useState([null]);
 
     const { datasetMapping, headerIndexes, collections, datasetMappingHeader } = useDataContext();
     const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields } = useServicesContext();
@@ -51,12 +51,12 @@ function TemplateStep() {
             const row = datasetMapping[variableName];
             if (isRowMapped(row, headerIndexes)) {
                 const option = mapRowToOption(row, datasetMappingHeader, headerIndexes);
-                acc[option.id] = option;
+                if (option.id !== undefined) {
+                    acc[option.id] = option;
+                }
             }
             return acc;
         }, {} as { [id: string]: Option });
-
-
         setSelectedOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
 
@@ -99,7 +99,6 @@ function TemplateStep() {
     );
 
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
-
         if (option && newIsSelectedState) {
             // Update optionsMap with the new selected option
             setSelectedOptionsMap(prevOptionsMap => ({
@@ -148,13 +147,13 @@ function TemplateStep() {
     };
 
     const addAnotherField = () => {
-        setDropdowns(prevDropdowns => {
-            return [...prevDropdowns, prevDropdowns.length + 1]
-        })
+        setDropdowns(prevState => {
+            return [...prevState, null];
+          });
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-    
+
     return (
         <>
             <ModalHeightWrapper height="15rem">
@@ -169,7 +168,7 @@ function TemplateStep() {
                             <Typography variant='caption' sx={{ color: gray500 }}>CDE / Data Dictionary field</Typography>
                         </Box>
                         {
-                            dropdowns.map((dropdownIndex) => (
+                            dropdowns.map((value, dropdownIndex) => (
                                 <Fragment key={dropdownIndex}>
                                     <CustomEntitiesDropdown
                                         placeholder={"Choose CDE or Data Dictionary fields... "}
@@ -177,13 +176,13 @@ function TemplateStep() {
                                             searchPlaceholder: searchText,
                                             noResultReason: "We couldn’t find any results.",
                                             onSearch: searchInCollections,
-                                            onSelection: (option, newIsSelectedState) => handleSelection("", option, newIsSelectedState),
+                                            onSelection: (option, newIsSelectedState) => handleSelection(Object.keys(selectedOptionsMap)[dropdownIndex], option, newIsSelectedState),
                                             collections: selectableCollections,
                                             onCollectionSelect: handleCollectionSelect,
-                                            value: null,
+                                            value: selectedOptionsMap[dropdownIndex] || null,
                                         }}
-                                        variableName={""}
-                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation("", option, newIsSelectedState)}
+                                        variableName={Object.keys(selectedOptionsMap)[dropdownIndex]}
+                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(Object.keys(selectedOptionsMap)[dropdownIndex], option, newIsSelectedState)}
                                     />
                                     {hasPairingSuggestions("") && (
                                         <Box
