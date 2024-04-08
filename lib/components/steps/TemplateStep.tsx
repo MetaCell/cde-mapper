@@ -17,8 +17,8 @@ import { PlusIcon, PairIcon } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
-function TemplateStep() {
-    const [dropdowns, setDropdowns] = React.useState([null]);
+function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
+    const [dropdowns, setDropdowns] = React.useState<string[]>(['']);
 
     const { datasetMapping, headerIndexes, collections, datasetMappingHeader } = useDataContext();
     const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields } = useServicesContext();
@@ -98,6 +98,16 @@ function TemplateStep() {
         [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
+    const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, index: number) => {
+        const variableName = getAbbreviationFromOption(option, headerIndexes)
+        setDropdowns(prevState => {
+            const newArray = [...prevState];
+            newArray[index] = variableName;
+            return newArray;
+        });
+        handleSelection(variableName, option, newIsSelectedState);
+    };
+    
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
         if (option && newIsSelectedState) {
             // Update optionsMap with the new selected option
@@ -148,14 +158,14 @@ function TemplateStep() {
 
     const addAnotherField = () => {
         setDropdowns(prevState => {
-            return [...prevState, null];
-          });
+            return [...prevState, ''];
+        });
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
-        <>
+        <Box display="flex" flexDirection="column" justifyContent="space-between" height={1}>
             <ModalHeightWrapper height="15rem">
                 <Box p={1.5} display="flex" flexDirection="column" gap={6}>
                     <Stack>
@@ -176,15 +186,15 @@ function TemplateStep() {
                                             searchPlaceholder: searchText,
                                             noResultReason: "We couldn’t find any results.",
                                             onSearch: searchInCollections,
-                                            onSelection: (option, newIsSelectedState) => handleSelection(Object.keys(selectedOptionsMap)[dropdownIndex], option, newIsSelectedState),
+                                            onSelection: (option, newIsSelectedState) => beforeHandleSelection(option, newIsSelectedState, dropdownIndex),
                                             collections: selectableCollections,
                                             onCollectionSelect: handleCollectionSelect,
-                                            value: selectedOptionsMap[dropdownIndex] || null,
+                                            value: selectedOptionsMap[Object.keys(selectedOptionsMap)[dropdownIndex]] || null,
                                         }}
-                                        variableName={Object.keys(selectedOptionsMap)[dropdownIndex]}
-                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(Object.keys(selectedOptionsMap)[dropdownIndex], option, newIsSelectedState)}
+                                        variableName={value}
+                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(value, option, newIsSelectedState)}
                                     />
-                                    {hasPairingSuggestions("") && (
+                                    {hasPairingSuggestions(value) && (
                                         <Box
                                             display="flex"
                                             sx={{
@@ -249,7 +259,11 @@ function TemplateStep() {
                     </Stack>
                 </Box>
             </ModalHeightWrapper>
-        </>
+            <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '1px solid #ECEDEE' }}>
+                <Button variant='text' onClick={onCloseModal}>Cancel</Button>
+                <Button variant='contained'>Create template</Button>
+            </Box>
+        </Box>
     );
 }
 

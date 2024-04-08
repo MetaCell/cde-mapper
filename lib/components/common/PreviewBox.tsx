@@ -1,8 +1,7 @@
-import {Box, Typography, Chip, Button} from "@mui/material";
+import {Box, Typography, Chip} from "@mui/material";
 import {useDataContext} from "../../contexts/data/DataContext.ts";
 import {ArrowDropDown, BulletIcon} from "../../icons";
 import {StyledTable} from "./StyledTable";
-import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {useServicesContext} from "../../contexts/services/ServicesContext.ts";
 
 interface PreviewBoxProps {
@@ -12,7 +11,6 @@ interface PreviewBoxProps {
 
 const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
     const {datasetSample} = useDataContext();
-    const {step, setStep} = useUIContext();
     const {
         getTotalRowsCount,
         getUnmappedRowsCount,
@@ -72,13 +70,6 @@ const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
                     <StyledTable sample={datasetSample} tableCellMinWidth='10rem' headers={headers} />
                 </Box>
             )}
-            {
-                step === -1 &&
-                <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{borderTop: '2px solid #ECEDEE'}}>
-                    <Button variant='text' onClick={() => setStep(0)}>Cancel</Button>
-                    <Button variant='contained'>Create template</Button>
-                </Box>
-            }
         </Box>
     )
 }
