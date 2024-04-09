@@ -148,7 +148,8 @@ const Tour = (props: TourProps) => {
                     borderRadius: '0.5rem'
                 },
                 overlay: {
-                    background: tutorialOverlayColor
+                    background: tutorialOverlayColor,
+                    height: '100%'
                 },
                 beaconOuter: {
                     filter: 'none',
