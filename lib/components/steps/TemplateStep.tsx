@@ -20,7 +20,7 @@ const { gray100, gray500, gray600 } = vars
 function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     const [dropdowns, setDropdowns] = React.useState<string[]>(['']);
 
-    const { datasetMapping, headerIndexes, collections, datasetMappingHeader } = useDataContext();
+    const { datasetMapping, headerIndexes, collections, datasetMappingHeader, setDatasetMapping } = useDataContext();
     const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
@@ -98,6 +98,13 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
+    const updateDatasetMapping = (variableName: string) => {
+        setDatasetMapping(prevState => ({
+            ...prevState,
+            [variableName]: []
+        }));
+    }
+
     const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, index: number) => {
         const variableName = getAbbreviationFromOption(option, headerIndexes)
         setDropdowns(prevState => {
@@ -105,6 +112,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             newArray[index] = variableName;
             return newArray;
         });
+        updateDatasetMapping(variableName);
         handleSelection(variableName, option, newIsSelectedState);
     };
     
@@ -161,6 +169,9 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             return [...prevState, ''];
         });
     };
+    console.log("datasetMapping in template: ", datasetMapping)
+    console.log("dropdowns: ", dropdowns)
+    console.log("selectedOptionsMap: ", selectedOptionsMap)
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
