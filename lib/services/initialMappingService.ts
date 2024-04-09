@@ -81,10 +81,9 @@ export const getTemplateDatasetMapping = (headerIndexes: HeaderIndexes, headerIn
     }
 
     // Initialize empty arrays for each key
-    // DEFAULT_HEADERS.forEach(key => {
-    //     datasetMapping[key] = [];
-    // });
-    console.log("datasetMapping: ", datasetMapping)
+    DEFAULT_HEADERS.forEach(key => {
+        datasetMapping[key] = [];
+    });
 
     return [datasetMapping, datasetMappingHeader];
 }

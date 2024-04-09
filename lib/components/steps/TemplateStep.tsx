@@ -98,11 +98,31 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
-    const updateDatasetMapping = (variableName: string) => {
-        setDatasetMapping(prevState => ({
-            ...prevState,
-            [variableName]: []
-        }));
+    const appendEmptyStrings = (prevState: { [key: string]: any[] }) => {
+        const newState: { [key: string]: any[] } = {};
+        Object.keys(prevState).forEach(key => {
+          if (key !== "Variable Name") {
+            newState[key] = prevState[key].concat([""]);
+          }
+        });
+        return newState;
+      };
+
+    const updateDatasetMapping = async (variableName: string) => {
+        const index = datasetMapping["Variable Name"].indexOf(variableName);
+
+        if (index !== -1) {
+            setDatasetMapping(prevState => ({
+                ...prevState,
+                "Variable Name": prevState["Variable Name"].map((value, i) => (i === index ? variableName : value)),
+            }));
+        } else {
+            setDatasetMapping(prevState => ({
+                ...prevState,
+                "Variable Name": prevState["Variable Name"].concat([variableName]),
+                ...appendEmptyStrings(prevState)
+            }));
+        }
     }
 
     const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, index: number) => {
@@ -112,10 +132,10 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             newArray[index] = variableName;
             return newArray;
         });
-        updateDatasetMapping(variableName);
+        updateDatasetMapping(variableName)
         handleSelection(variableName, option, newIsSelectedState);
     };
-    
+
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
         if (option && newIsSelectedState) {
             // Update optionsMap with the new selected option
