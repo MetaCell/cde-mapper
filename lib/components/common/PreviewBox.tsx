@@ -25,7 +25,7 @@ const PreviewBox = ({togglePreview, onToggle}: PreviewBoxProps) => {
         <Box className="preview__toggle" sx={{
             position: 'absolute',
             background: '#fff',
-            zIndex: 9999999999,
+            zIndex: 10,
             bottom: 0,
             left: 0,
             width: '100%',

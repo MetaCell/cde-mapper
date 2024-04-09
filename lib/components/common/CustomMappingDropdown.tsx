@@ -43,7 +43,7 @@ const transition = {
 
 const styles = {
     root: {
-        zIndex: '1000000000',
+        zIndex: '10',
         gap: '0.5rem',
         minHeight: '2.25rem',
         boxSizing: 'border-box',
