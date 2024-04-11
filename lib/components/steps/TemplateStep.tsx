@@ -11,17 +11,20 @@ import { usePairingSuggestions } from '../../hooks/usePairingSuggestions.ts';
 import { PairingTooltip } from './mapping/PairingTooltip.tsx';
 import { PairingSuggestion } from './mapping/PairingSuggestion.tsx';
 import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../helpers/optionsHelpers.ts';
-import { mapRowToOption } from '../../helpers/mappers.ts';
-import { isRowMapped } from '../../helpers/rowHelpers.ts';
 import { PlusIcon, PairIcon } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
 function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
-    const [dropdowns, setDropdowns] = React.useState<string[]>(['']);
+    const [visibleRows, setVisibleRows] = React.useState<Option[]>([{
+        id: '',
+        label: '',
+        group: '',
+        content: []
+    }]);
 
-    const { datasetMapping, headerIndexes, collections, datasetMappingHeader, setDatasetMapping } = useDataContext();
-    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields } = useServicesContext();
+    const { headerIndexes, collections } = useDataContext();
+    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
 
@@ -45,21 +48,6 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
 
         setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
-
-    useEffect(() => {
-        const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
-            const row = datasetMapping[variableName];
-            if (isRowMapped(row, headerIndexes)) {
-                const option = mapRowToOption(row, datasetMappingHeader, headerIndexes);
-                if (option.id !== undefined) {
-                    acc[option.id] = option;
-                }
-            }
-            return acc;
-        }, {} as { [id: string]: Option });
-        setSelectedOptionsMap(initialSearchResults);
-    }, [datasetMapping, datasetMappingHeader, headerIndexes]);
-
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
         setSelectableCollections(prevCollections =>
@@ -98,45 +86,17 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
-    const appendEmptyStrings = (prevState: { [key: string]: any[] }) => {
-        const newState: { [key: string]: any[] } = {};
-        Object.keys(prevState).forEach(key => {
-          if (key !== "Variable Name") {
-            newState[key] = prevState[key].concat([""]);
-          }
-        });
-        return newState;
-      };
-
-    const updateDatasetMapping = async (variableName: string) => {
-        const index = datasetMapping["Variable Name"].indexOf(variableName);
-
-        if (index !== -1) {
-            setDatasetMapping(prevState => ({
-                ...prevState,
-                "Variable Name": prevState["Variable Name"].map((value, i) => (i === index ? variableName : value)),
-            }));
-        } else {
-            setDatasetMapping(prevState => ({
-                ...prevState,
-                "Variable Name": prevState["Variable Name"].concat([variableName]),
-                ...appendEmptyStrings(prevState)
-            }));
-        }
-    }
-
-    const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, index: number) => {
+    const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, rowIndex: number) => {
         const variableName = getAbbreviationFromOption(option, headerIndexes)
-        setDropdowns(prevState => {
+        setVisibleRows(prevState => {
             const newArray = [...prevState];
-            newArray[index] = variableName;
+            newArray[rowIndex] = option;
             return newArray;
         });
-        updateDatasetMapping(variableName)
-        handleSelection(variableName, option, newIsSelectedState);
+        handleSelection(variableName, option, newIsSelectedState, rowIndex);
     };
 
-    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean, rowIndex: number) => {
         if (option && newIsSelectedState) {
             // Update optionsMap with the new selected option
             setSelectedOptionsMap(prevOptionsMap => ({
@@ -144,7 +104,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                 [option.id]: option,
             }));
 
-            updateDatasetMappingRow(variableName, option.content);
+            updateDatasetMappingRowTemplate(variableName, option.content, rowIndex);
 
             // Get all selected collections
             const selectedCollections = selectableCollections
@@ -162,7 +122,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
         } else if (option && !newIsSelectedState) {
             updateAvailableSuggestions(variableName, []);
-            updateDatasetMappingRow(variableName, []);
+            updateDatasetMappingRowTemplate(variableName, [], rowIndex);
 
         } else {
             console.error("No option provided");
@@ -176,22 +136,24 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         }
     };
 
-    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean, index: number) => {
         setCreatedCustomDictionaryFields(prev => ({
             ...prev,
             [option.id]: option,
         }));
-        await handleSelection(variableName, option, newIsSelectedState)
+        await handleSelection(variableName, option, newIsSelectedState, index)
     };
 
     const addAnotherField = () => {
-        setDropdowns(prevState => {
-            return [...prevState, ''];
+        setVisibleRows(prevState => {
+            return [...prevState, {
+                id: '',
+                label: '',
+                group: '',
+                content: []
+            }];
         });
     };
-    console.log("datasetMapping in template: ", datasetMapping)
-    console.log("dropdowns: ", dropdowns)
-    console.log("selectedOptionsMap: ", selectedOptionsMap)
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
@@ -209,23 +171,23 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                             <Typography variant='caption' sx={{ color: gray500 }}>CDE / Data Dictionary field</Typography>
                         </Box>
                         {
-                            dropdowns.map((value, dropdownIndex) => (
-                                <Fragment key={dropdownIndex}>
+                            visibleRows.map((row, rowIndex) => (
+                                <Fragment key={`${row.label + rowIndex}`}>
                                     <CustomEntitiesDropdown
                                         placeholder={"Choose CDE or Data Dictionary fields... "}
                                         options={{
                                             searchPlaceholder: searchText,
                                             noResultReason: "We couldn’t find any results.",
                                             onSearch: searchInCollections,
-                                            onSelection: (option, newIsSelectedState) => beforeHandleSelection(option, newIsSelectedState, dropdownIndex),
+                                            onSelection: (option, newIsSelectedState) => beforeHandleSelection(option, newIsSelectedState, rowIndex),
                                             collections: selectableCollections,
                                             onCollectionSelect: handleCollectionSelect,
-                                            value: selectedOptionsMap[Object.keys(selectedOptionsMap)[dropdownIndex]] || null,
+                                            value: selectedOptionsMap[row.id],
                                         }}
-                                        variableName={value}
-                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(value, option, newIsSelectedState)}
+                                        variableName={row.label}
+                                        onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(row.label, option, newIsSelectedState, rowIndex)}
                                     />
-                                    {hasPairingSuggestions(value) && (
+                                    {hasPairingSuggestions(row.label) && (
                                         <Box
                                             display="flex"
                                             sx={{
@@ -249,7 +211,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions("").map((suggestion) => {
+                                                        {getPairingSuggestions(row.label).map((suggestion) => {
                                                             const headerOptions = getUnmappedVariableNames().map((label, index) => ({
                                                                 label,
                                                                 index

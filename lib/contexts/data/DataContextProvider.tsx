@@ -56,7 +56,6 @@ export const DataContextProvider = ({
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
         let tmpIsDatasetInvalid = false;
-
         // try {
         //     validateDataset(datasetSample);
         // } catch (error) {
