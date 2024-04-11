@@ -1,32 +1,28 @@
 import { Chip, ChipProps } from "@mui/material";
-import { BulletIcon } from "../../../icons";
-import { getType } from "../../../helpers/rowHelpers.ts";
-import { EntityType } from "../../../models";
-import {useDataContext} from "../../../contexts/data/DataContext.ts";
+import { GlobeIcon, BooksIcon } from "../../icons/index.tsx";
+import { getType } from "../../helpers/rowHelpers.ts";
+import { EntityType } from "../../models.ts";
+import { useDataContext } from "../../contexts/data/DataContext.ts";
 
-const ChipComponent = ({ variableName }: { variableName: string }) => {
+const ColumnHeaderChipComponent = ({ variableName }: { variableName: string }) => {
     const { datasetMapping, headerIndexes } = useDataContext();
 
     const row = datasetMapping[variableName];
     const entityType = getType(row, headerIndexes);
 
-    let label: string;
     let color: ChipProps['color'];
     let iconColor: string;
 
     switch (entityType) {
         case EntityType.CDE:
-            label = "Mapped to CDE";
             color = "success";
-            iconColor = "#12B76A";
+            iconColor = "#027A48";
             break;
         case EntityType.CustomDictionaryField:
-            label = "Mapped to Custom Data Dictionary";
             color = "secondary";
-            iconColor = "#7A5AF8";
+            iconColor = "#5925DC";
             break;
         default:
-            label = "Unmapped";
             color = "default";
             iconColor = "#676C74";
             break;
@@ -34,12 +30,14 @@ const ChipComponent = ({ variableName }: { variableName: string }) => {
 
     return (
         <Chip
-            label={label}
+            label={variableName}
             size="small"
             color={color}
-            icon={<BulletIcon color={iconColor}/>}
+            icon={
+                entityType === EntityType.CDE ? <GlobeIcon color={iconColor} /> : <BooksIcon color={iconColor}/>
+            }
         />
     );
 };
 
-export default ChipComponent;
+export default ColumnHeaderChipComponent;
