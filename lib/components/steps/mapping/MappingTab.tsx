@@ -305,7 +305,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
 
     return (
         <Box className='mapping-step'>
-            <ModalHeightWrapper pb={10} height='15rem'>
+            <ModalHeightWrapper pb={togglePreview ? 50 : 10} height='15rem'>
                 <MappingSearch onChange={handleFiltering} onAfterChange={handleTourNextStepClick}/>
 
                 <Box px={1.5}>
