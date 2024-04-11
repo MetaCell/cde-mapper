@@ -24,6 +24,7 @@ const styles = {
         marginLeft: 'auto',
         transition: 'all ease-in-out .3s',
         background: baseWhite,
+        overflowY: 'auto',
         boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)',
     },
 

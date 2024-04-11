@@ -7,8 +7,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Chip from '@mui/material/Chip';
-import { TargetIcon, GlobeIcon } from '../../icons';
+import ColumnHeaderChipComponent from './ColumnHeaderChipComponent';
+import { TargetIcon } from '../../icons';
 import { useServicesContext } from '../../contexts/services/ServicesContext';
 import { vars } from '../../theme/variables';
 
@@ -58,20 +58,15 @@ export const StyledTable = (props: { sample: string[][], tableCellMinWidth: stri
                                 border: '0 !important', 
                                 padding: '0.5rem !important',
                                 '& svg': {
-                                    marginLeft: 0
-                                }
+                                    marginLeft: 0,
+                                    width: '1rem',
+                                    height: '1rem'
+                                },
+                                '& .MuiChip-label': { fontSize: '0.875rem', maxWidth: '6.813rem' }
                             }}}>
                             <Box sx={{ height: '2rem' }}>
                                 {isColumnMapped(header) ? (
-                                    <Chip
-                                        color="success"
-                                        icon={<GlobeIcon color={"#027A48"} style={{ width: 16, height: 16 }} />}
-                                        label={header}
-                                        size="medium"
-                                        sx={{
-                                            '& .MuiChip-label': { fontSize: '0.875rem', maxWidth: '6.813rem' }
-                                        }}
-                                    />
+                                    <ColumnHeaderChipComponent variableName={header}/>
                                 ) : (
                                     <Typography sx={{
                                         color: '#A9ACB2',

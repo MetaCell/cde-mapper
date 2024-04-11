@@ -2,11 +2,11 @@ import React, {useContext, useEffect, useState} from 'react';
 import {nanoid} from 'nanoid';
 import {InputAdornment, ListSubheader, Popper, Tooltip} from "@mui/material";
 import {TextField, Box, Typography, Button, Chip} from '@mui/material';
-import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon} from "../../icons";
+import {AddIcon, CheckIcon, ChevronDown, GlobeIcon, MagnifyGlassIcon, BooksIcon} from "../../icons";
 import HoveredOptionContent from "./HoveredOptionContent.tsx";
 import {vars} from '../../theme/variables.ts';
 import SearchCollectionSelector from "../steps/mapping/SearchCollectionSelector.tsx";
-import {Option, OptionDetail, SelectableCollection} from "../../models.ts";
+import {Option, OptionDetail, SelectableCollection, EntityType} from "../../models.ts";
 import CircularProgress from "@mui/material/CircularProgress";
 import CreateCustomDictionaryFieldBody from "./CreateCustomDictionaryFieldBody.tsx";
 import {
@@ -19,6 +19,7 @@ import NoResultField from "./NoResultField.tsx";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
 import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
+import { getType } from '../../helpers/rowHelpers.ts';
 
 const {
     buttonOutlinedBorderColor,
@@ -43,7 +44,7 @@ const transition = {
 
 const styles = {
     root: {
-        zIndex: '1000000000',
+        zIndex: '10',
         gap: '0.5rem',
         minHeight: '2.25rem',
         boxSizing: 'border-box',
@@ -226,9 +227,11 @@ export default function CustomEntitiesDropdown({
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
+    const {datasetMappingHeader, headerIndexes, datasetMapping} = useContext(DataContext);
     const {setErrorMessage} = useUIContext();
 
+    const row = datasetMapping[variableName];
+    const entityType = getType(row, headerIndexes);
 
     const getCustomDictionaryFieldOption = () => {
         const customDictionaryFieldId = nanoid();
@@ -384,7 +387,7 @@ export default function CustomEntitiesDropdown({
                                     },
                                 }}
                             >
-                                <GlobeIcon/>
+                                {entityType === EntityType.CDE ? <GlobeIcon/> : <BooksIcon/>}
                                 <Typography variant='body1'>{value?.label}</Typography>
                             </Box>
                         ))}
