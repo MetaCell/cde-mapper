@@ -49,10 +49,14 @@ document.getElementById('additionalDatasetMappingFilesInput').addEventListener('
 
 document.getElementById('createTemplateButton').addEventListener('click', function (event) {
     event.preventDefault();
-    createAndInit(cdeFile, additionalCdeFiles, datasetFile);
+    if(!datasetFile){
+        createAndInit();
+    }
 })
 
 function updateSubmitButtonState() {
     const submitButton = document.getElementById('submitButton');
     submitButton.disabled = !datasetFile;
+    const createTemplateButton = document.getElementById('createTemplateButton')
+    createTemplateButton.disabled = datasetFile;
 }

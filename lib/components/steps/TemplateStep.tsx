@@ -6,10 +6,11 @@ import { SelectableCollection, Option } from '../../models.ts';
 import { useDataContext } from '../../contexts/data/DataContext.ts';
 import { useServicesContext } from '../../contexts/services/ServicesContext.ts';
 import { getCustomDictionaryFieldSelectableCollection } from '../../services/customDictionaryFieldService.ts';
-import { CUSTOM_DICTIONARY_FIELD_COLLECTION_ID } from '../../settings.ts';
+import { CUSTOM_DICTIONARY_FIELD_COLLECTION_ID, VARIABLE_NAME_UI } from '../../settings.ts';
 import { usePairingSuggestions } from '../../hooks/usePairingSuggestions.ts';
 import { PairingTooltip } from './mapping/PairingTooltip.tsx';
 import { PairingSuggestion } from './mapping/PairingSuggestion.tsx';
+import { getType } from '../../helpers/rowHelpers.ts';
 import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../helpers/optionsHelpers.ts';
 import { PlusIcon, PairIcon } from '../../icons/index.tsx';
 import { vars } from '../../theme/variables.ts';
@@ -23,8 +24,8 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         content: []
     }]);
 
-    const { headerIndexes, collections } = useDataContext();
-    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate } = useServicesContext();
+    const { headerIndexes, collections, datasetMapping } = useDataContext();
+    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
 
@@ -144,6 +145,12 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         await handleSelection(variableName, option, newIsSelectedState, index)
     };
 
+    const getEntityType = () => {
+        const row = datasetMapping[VARIABLE_NAME_UI];
+        const entityType = getType(row, headerIndexes);
+        return entityType;
+    }
+
     const addAnotherField = () => {
         setVisibleRows(prevState => {
             return [...prevState, {
@@ -183,6 +190,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                             collections: selectableCollections,
                                             onCollectionSelect: handleCollectionSelect,
                                             value: selectedOptionsMap[row.id],
+                                            entityType: getEntityType()
                                         }}
                                         variableName={row.label}
                                         onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(row.label, option, newIsSelectedState, rowIndex)}
@@ -254,7 +262,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             </ModalHeightWrapper>
             <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '1px solid #ECEDEE' }}>
                 <Button variant='text' onClick={onCloseModal}>Cancel</Button>
-                <Button variant='contained'>Create template</Button>
+                <Button variant='contained' onClick={onClose}>Create template</Button>
             </Box>
         </Box>
     );

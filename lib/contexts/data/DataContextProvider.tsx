@@ -51,19 +51,24 @@ export const DataContextProvider = ({
             ...providedHeaderIndexes
         };
     }, [providedHeaderIndexes, rawDatasetMapping]);
-
-
+    
+    const isTemplateFlow = () => {
+        if(datasetSample.length !== 0){
+            validateDataset(datasetSample)
+        }
+    };
+    
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
         let tmpIsDatasetInvalid = false;
-        // try {
-        //     validateDataset(datasetSample);
-        // } catch (error) {
-        //     const message = error instanceof Error ? error.message : 'An unknown error occurred';
-        //     const errorMessage = `Invalid dataset: ${message}`;
-        //     console.error(errorMessage);
-        //     tmpIsDatasetInvalid = true;
-        // }
+        try {
+            isTemplateFlow();
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'An unknown error occurred';
+            const errorMessage = `Invalid dataset: ${message}`;
+            console.error(errorMessage);
+            tmpIsDatasetInvalid = true;
+        }
 
         return tmpIsDatasetInvalid;
     }, [datasetSample]);

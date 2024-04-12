@@ -19,7 +19,6 @@ import NoResultField from "./NoResultField.tsx";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
 import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
 import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
-import { getType } from '../../helpers/rowHelpers.ts';
 
 const {
     buttonOutlinedBorderColor,
@@ -183,6 +182,7 @@ interface CustomEntitiesDropdownProps {
         onCollectionSelect: (collection: SelectableCollection) => void;
         onDropdownToggle?: () => void;
         dropdownClassname?: string;
+        entityType: string;
     };
     variableName: string
     onCustomDictionaryFieldCreation: (option: Option, newIsSelectedState: boolean) => void;
@@ -209,7 +209,8 @@ export default function CustomEntitiesDropdown({
                                                        collections,
                                                        onCollectionSelect,
                                                        onDropdownToggle = noop,
-                                                       dropdownClassname
+                                                       dropdownClassname,
+                                                       entityType
                                                    },
                                                    variableName,
                                                    onCustomDictionaryFieldCreation,
@@ -227,11 +228,8 @@ export default function CustomEntitiesDropdown({
     const [searchInput, setSearchInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const {datasetMappingHeader, headerIndexes, datasetMapping} = useContext(DataContext);
+    const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
     const {setErrorMessage} = useUIContext();
-
-    const row = datasetMapping[variableName];
-    const entityType = getType(row, headerIndexes);
 
     const getCustomDictionaryFieldOption = () => {
         const customDictionaryFieldId = nanoid();
