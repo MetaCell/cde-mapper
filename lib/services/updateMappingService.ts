@@ -76,7 +76,7 @@ export const _updateRow = (
 };
 
 const updateDatasetMapping = (datasetMapping: DatasetMapping, variableName: string, index: number): DatasetMapping => {
-    let updatedMapping = { ...datasetMapping };
+    const updatedMapping = { ...datasetMapping };
 
     updatedMapping[VARIABLE_NAME_UI][index] = variableName;
     Object.keys(updatedMapping).forEach(key => {

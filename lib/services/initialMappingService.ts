@@ -46,7 +46,7 @@ export const getDatasetMapping = (datasetMappingRows: string[][] | undefined, he
 };
 
 const getMappingValues = (headerIndexes: HeaderIndexes, headersIndexesMapping: HeaderIndexesMapping) => {
-    const mappingValues: { [key: string]: any } = {};
+    const mappingValues: { [key: string]: string } = {};
 
     for (const key in headerIndexes) {
         const mappingKey = headersIndexesMapping[key as keyof HeaderIndexesMapping];
@@ -63,7 +63,7 @@ export const getTemplateDatasetMapping = (headerIndexes: HeaderIndexes, headerIn
 
     const mappingValues = getMappingValues(headerIndexes, headerIndexesMapping)
 
-    let datasetMappingHeader: string[] = DEFAULT_HEADERS
+    const datasetMappingHeader: string[] = DEFAULT_HEADERS
 
     for (const [key, index] of Object.entries(headerIndexes)) {
         // Check if the index is valid

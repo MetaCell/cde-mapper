@@ -1,6 +1,6 @@
 import {PropsWithChildren, useMemo, useState} from 'react';
 import {Collection, DataInitParams, DatasetMapping} from "../../models.ts";
-import {validateDataset, validateDatasetMapping,} from "../../services/validatorsService.ts";
+import {validateDatasetMapping, isTemplateFlow} from "../../services/validatorsService.ts";
 import {getDatasetMapping, getTemplateDatasetMapping} from "../../services/initialMappingService.ts";
 import ErrorPage from "../../components/ErrorPage.tsx";
 import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX, VARIABLE_NAME_UI, ABBREVIATION, TITLE, INTERLEX_ID, CDE_LEVEL} from "../../settings.ts";
@@ -52,17 +52,11 @@ export const DataContextProvider = ({
         };
     }, [providedHeaderIndexes, rawDatasetMapping]);
     
-    const isTemplateFlow = () => {
-        if(datasetSample.length !== 0){
-            validateDataset(datasetSample)
-        }
-    };
-    
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
         let tmpIsDatasetInvalid = false;
         try {
-            isTemplateFlow();
+            isTemplateFlow(datasetSample);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'An unknown error occurred';
             const errorMessage = `Invalid dataset: ${message}`;
