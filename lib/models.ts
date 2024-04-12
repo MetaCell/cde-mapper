@@ -28,6 +28,14 @@ export interface HeaderIndexes {
     cdeLevel: number;
 }
 
+export interface HeaderIndexesMapping {
+    variableName: string;
+    preciseAbbreviation: string;
+    title: string;
+    id: string;
+    cdeLevel: string;
+}
+
 export interface Collection {
     id: string;
     name: string;

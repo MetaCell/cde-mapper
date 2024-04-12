@@ -106,6 +106,37 @@ export function mapAndInit(datasetMappingFile, additionalDatasetMappingsFiles, d
     startProcessing();
 }
 
+export function createAndInit() {
+    let datasetMappings = [];
+    let additionalDatasetMappings = [];
+    let datasetSample = [];
+
+    const processDatasetFile = () => {
+        init({
+            datasetMapping: datasetMappings,
+            additionalDatasetMappings: additionalDatasetMappings,
+            datasetSample: datasetSample,
+            collections: getCollections(),
+            config: {width: '60%', height: '80%'},
+            name: 'TestLabName',
+            callback: (datasetMapping, datasetMappingHeader) => downloadDatasetMappingAndDatasetAsCSV(datasetMapping, datasetMappingHeader),
+            headerIndexes: headersIndexes,
+            emailTemplate: {
+                email: 'support@interlex.org',
+                title: 'CDE Mapper collection not found',
+                description: 'This is an email coming from the cde mapper application to flag that a certain collection is missing.'
+            }
+        });
+    };
+
+    const startProcessing = async () => {
+        processDatasetFile();
+    };
+
+    startProcessing();
+}
+
+
 function getCollections() {
     return [
         {
@@ -166,6 +197,17 @@ async function queryInterlex(query) {
     return data;
 }
 
+function triggerCSVDownload(csv, fileName) {
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
 function downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader) {
     // Prepare data in the format that Papa Parse expects
@@ -184,13 +226,31 @@ function downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader) {
     });
 
     // Trigger download
-    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "datasetMapping.csv");
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    triggerCSVDownload(csv, "datasetMapping.csv")
+}
+
+function downloadDatasetMappingAndDatasetAsCSV(datasetMapping, datasetMappingHeader) {
+    // Prepare data in the format that Papa Parse expects
+    const data = Object.values(datasetMapping).map(row => {
+        const rowData = {};
+        datasetMappingHeader.forEach((header, index) => {
+            rowData[header] = row[index] || '';
+        });
+        return rowData;
+    });
+
+    // eslint-disable-next-line no-undef
+    const datasetMappingCSV = Papa.unparse({
+        fields: datasetMappingHeader,
+        data: data,
+    });
+
+    const datasetCSV = Papa.unparse({
+        fields: datasetMappingHeader,
+        data: [datasetMapping["Variable Name"]],
+    })
+
+    // Trigger download
+    triggerCSVDownload(datasetMappingCSV, "datasetMapping.csv")
+    triggerCSVDownload(datasetCSV, "dataset.csv")
 }

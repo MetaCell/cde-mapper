@@ -40,7 +40,7 @@ const CdeModal: FC = () => {
                 return <MappingStep/>;
             // Add cases for other steps
             default:
-                return <TemplateStep/>
+                return <TemplateStep onCloseModal={onClose}/>
         }
     };
     

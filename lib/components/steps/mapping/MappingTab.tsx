@@ -296,6 +296,12 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }
     }, [currentFilterStrategy, sortRows])
 
+    const getEntityType = (variableName: string) => {
+        const row = datasetMapping[variableName];
+        const entityType = getType(row, headerIndexes);
+        return entityType;
+    }
+
     const onPreviewBoxToggle = () => {
         setTogglePreview(!togglePreview)
         handleTourNextStepClick();
@@ -359,6 +365,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                 value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)],
                                                 onDropdownToggle: handleTourNextStepClick,
                                                 dropdownClassname: "cde-field__popper",
+                                                entityType: getEntityType(variableName)
                                             }}
                                             variableName={variableName}
                                             onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(variableName, option, newIsSelectedState)}
