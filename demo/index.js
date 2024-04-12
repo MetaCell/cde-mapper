@@ -1,4 +1,4 @@
-import {mapAndInit} from "./integration.js";
+import {mapAndInit, createAndInit} from "./integration.js";
 
 let cdeFile = null;
 let datasetFile = null;
@@ -47,7 +47,16 @@ document.getElementById('additionalDatasetMappingFilesInput').addEventListener('
     }
 });
 
+document.getElementById('createTemplateButton').addEventListener('click', function (event) {
+    event.preventDefault();
+    if(!datasetFile){
+        createAndInit();
+    }
+})
+
 function updateSubmitButtonState() {
     const submitButton = document.getElementById('submitButton');
     submitButton.disabled = !datasetFile;
+    const createTemplateButton = document.getElementById('createTemplateButton')
+    createTemplateButton.disabled = datasetFile;
 }

@@ -1,9 +1,9 @@
 import {PropsWithChildren, useMemo, useState} from 'react';
 import {Collection, DataInitParams, DatasetMapping} from "../../models.ts";
-import {validateDataset, validateDatasetMapping,} from "../../services/validatorsService.ts";
-import {getDatasetMapping} from "../../services/initialMappingService.ts";
+import {validateDatasetMapping, isTemplateFlow} from "../../services/validatorsService.ts";
+import {getDatasetMapping, getTemplateDatasetMapping} from "../../services/initialMappingService.ts";
 import ErrorPage from "../../components/ErrorPage.tsx";
-import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX} from "../../settings.ts";
+import {ABBREVIATION_INDEX, CDE_LEVEL_INDEX, ID_INDEX, TITLE_INDEX, VARIABLE_NAME_INDEX, VARIABLE_NAME_UI, ABBREVIATION, TITLE, INTERLEX_ID, CDE_LEVEL} from "../../settings.ts";
 import {DataContext} from './DataContext.ts';
 import {computeSuggestions} from "../../services/suggestionsService.ts";
 import {
@@ -18,6 +18,14 @@ const defaultHeaderIndexes = {
     id: ID_INDEX,
     cdeLevel: CDE_LEVEL_INDEX,
 };
+
+const headerIndexesMapping = {
+    variableName: VARIABLE_NAME_UI,
+    preciseAbbreviation: ABBREVIATION,
+    title:TITLE,
+    id: INTERLEX_ID, 
+    cdeLevel: CDE_LEVEL
+}
 
 export const DataContextProvider = ({
                                         datasetSample,
@@ -43,14 +51,12 @@ export const DataContextProvider = ({
             ...providedHeaderIndexes
         };
     }, [providedHeaderIndexes, rawDatasetMapping]);
-
-
+    
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
         let tmpIsDatasetInvalid = false;
-
         try {
-            validateDataset(datasetSample);
+            isTemplateFlow(datasetSample);
         } catch (error) {
             const message = error instanceof Error ? error.message : 'An unknown error occurred';
             const errorMessage = `Invalid dataset: ${message}`;
@@ -72,7 +78,8 @@ export const DataContextProvider = ({
             return [{}, [], true]
         }
         const datasetHeader = datasetSample[0]
-        const [tmpDatasetMapping, tmpDatasetMappingHeader] = getDatasetMapping(rawDatasetMapping, headerIndexes, datasetHeader);
+        const isDatasetSampleEmpty = datasetSample.length === 0
+        const [tmpDatasetMapping, tmpDatasetMappingHeader] = isDatasetSampleEmpty ? getTemplateDatasetMapping(headerIndexes, headerIndexesMapping) : getDatasetMapping(rawDatasetMapping, headerIndexes, datasetHeader);
 
         return [tmpDatasetMapping, tmpDatasetMappingHeader, false];
     }, [rawDatasetMapping, headerIndexes, datasetSample]);

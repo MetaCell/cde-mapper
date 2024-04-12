@@ -3,7 +3,7 @@ import {useDataContext} from "../data/DataContext.ts";
 import {Option, OptionDetail, ServiceInitParams} from "../../models.ts";
 import {ServicesContext} from "./ServicesContext.ts";
 import {isRowMapped} from "../../helpers/rowHelpers.ts";
-import {_updateRow} from "../../services/updateMappingService.ts";
+import {_updateRow, _updateRowTemplate} from "../../services/updateMappingService.ts";
 import {
     searchCurrentCustomDictionaryFields,
     searchPreviousCustomDictionaryFields
@@ -39,7 +39,19 @@ export const ServicesContextProvider = ({
                 headerIndexes
             );
         };
-
+        const updateDatasetMappingRowTemplate = (key: string, newData: OptionDetail[], rowIndex: number) => {
+            _updateRowTemplate(
+                key,
+                newData,
+                datasetMapping,
+                datasetMappingHeader,
+                setDatasetMapping,
+                setDatasetMappingHeader,
+                headerIndexes,
+                rowIndex
+            );
+        };
+        
         const getUnmappedVariableNames = () => {
             return Object.keys(datasetMapping).filter(key => !isRowMapped(datasetMapping[key], headerIndexes));
         };
@@ -59,7 +71,8 @@ export const ServicesContextProvider = ({
             getUnmappedVariableNames,
             updateDatasetMappingRow,
             isColumnMapped,
-            onClose
+            onClose,
+            updateDatasetMappingRowTemplate
         };
     }, [datasetMapping, callback, datasetMappingHeader, headerIndexes, setDatasetMapping, setDatasetMappingHeader,]);
 

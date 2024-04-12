@@ -16,6 +16,7 @@ export const ServicesContext = createContext<{
     isColumnMapped: (column: string) => boolean;
     searchCustomDictionaryFields: (querystring: string, createdCustomDictionaryFields: { [id: string]: Option }) => Option[]
     onClose: () => void;
+    updateDatasetMappingRowTemplate: (key: string, newData: OptionDetail[], rowIndex: number) => void;
 }>({
     getTotalRowsCount: () => 0,
     getMappedRowsCount: () => 0,
@@ -29,6 +30,7 @@ export const ServicesContext = createContext<{
     searchCustomDictionaryFields: () => [],
     onClose: () => {
     },
+    updateDatasetMappingRowTemplate: () => {}
 });
 
 

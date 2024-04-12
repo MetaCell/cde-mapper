@@ -37,3 +37,9 @@ export const validateDatasetMapping = (datasetMapping: string[][] | undefined, v
 export function isCustomDictionaryValid(option: Option, headerIndexes: HeaderIndexes): boolean {
     return option.content[headerIndexes.preciseAbbreviation]?.value != '' && option.content[headerIndexes.title]?.value != ''
 }
+
+export const isTemplateFlow = (dataset: string[][]) => {
+    if(dataset.length !== 0){
+        validateDataset(dataset)
+    }
+};
