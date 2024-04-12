@@ -111,10 +111,11 @@ const styles = {
 
 interface MappingProps {
     defaultCollection: string;
+    numberOfUnmappedRows: number;
 }
 
 
-const MappingTab = ({defaultCollection}: MappingProps) => {
+const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
     const {updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields} = useServicesContext();
@@ -372,9 +373,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                         />
                                     </Box>
 
-                                    {hasPairingSuggestions(variableName) && (
+                                    {hasPairingSuggestions(variableName) && numberOfUnmappedRows!==0 && (
                                         <Box sx={styles.row}>
-                                            <Accordion>
+                                            <Accordion defaultExpanded>
                                                 <AccordionSummary>
                                                     <PairIcon/>
                                                     <Typography sx={{

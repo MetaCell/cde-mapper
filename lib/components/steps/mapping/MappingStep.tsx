@@ -104,7 +104,7 @@ function MappingStep() {
             case TabsEnum.Suggestions:
                 return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
             case TabsEnum.Mapping:
-                return <MappingTab defaultCollection={defaultCollection}/>;
+                return <MappingTab defaultCollection={defaultCollection} numberOfUnmappedRows={getUnmappedRowsCount()}/>;
             default:
                 return <div>Unknown step</div>;
         }
