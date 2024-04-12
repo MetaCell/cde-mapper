@@ -13,6 +13,10 @@ interface SearchCollectionSelectorProps {
 export default function SearchCollectionSelector(props: SearchCollectionSelectorProps) {
     const [toggleMenu, setToggleMenu] = useState(false);
 
+    const selectedCollectionNames = props.collections
+        .filter(collection => collection.selected)
+        .map(collection => collection.name);
+
     return <Box>
         <ListSubheader
             component="div"
@@ -33,7 +37,7 @@ export default function SearchCollectionSelector(props: SearchCollectionSelector
                     lineHeight: "1.125rem",
                 }}
             >
-                {props.collections.find(collection => collection.selected)?.name || 'Select a Collection'}
+                {selectedCollectionNames.length > 0 ? selectedCollectionNames.join(', ') : 'Select a Collection'}
             </Typography>
             <DownIcon/>
             {toggleMenu && (

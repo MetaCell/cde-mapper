@@ -21,20 +21,24 @@ interface HoveredOptionContentProps {
 interface DefaultBodyProps {
     entity: Option;
 }
-const DefaultBody: React.FC<DefaultBodyProps> = ({ entity }) => {
+
+const DefaultBody: React.FC<DefaultBodyProps> = ({entity}) => {
     return (
         <Stack spacing={2} flexGrow={1}>
-            {entity?.content?.map((detail, i) => (
-                <Stack spacing={1} sx={{ mt: i !== 0 ? 3 : 0 }} key={detail.title}>
-                    <Typography variant="body1">
-                        {detail.title}
-                    </Typography>
-                    <Typography variant="body2">{detail.value}</Typography>
-                </Stack>
-            ))}
+            {entity?.content
+                ?.filter((detail) => detail !== null && detail.value !== '')
+                .map((detail, i) => (
+                    <Stack spacing={1} sx={{mt: i !== 0 ? 3 : 0}} key={detail.title}>
+                        <Typography variant="body1">
+                            {detail.title}
+                        </Typography>
+                        <Typography variant="body2">{detail.value}</Typography>
+                    </Stack>
+                ))}
         </Stack>
     );
 };
+
 
 const HoveredOptionContent: React.FC<HoveredOptionContentProps> = ({
                                                                        entity,
@@ -94,7 +98,7 @@ const HoveredOptionContent: React.FC<HoveredOptionContentProps> = ({
             }}
         >
             {HeaderComponent && <HeaderComponent entity={entity}/>}
-            {BodyComponent ? <BodyComponent entity={entity}/> : <DefaultBody entity={entity} />}
+            {BodyComponent ? <BodyComponent entity={entity}/> : <DefaultBody entity={entity}/>}
             {FooterComponent && <FooterComponent entity={entity}/>}
         </Box>
     );

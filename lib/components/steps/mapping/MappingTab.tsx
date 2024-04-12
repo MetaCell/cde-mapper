@@ -4,14 +4,13 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
-    Chip, ChipProps,
     TextField,
-    Typography
+    Typography,
+    IconButton
 } from "@mui/material"
 import ModalHeightWrapper from "../../common/ModalHeightWrapper.tsx"
 import {
     ArrowIcon,
-    BulletIcon,
     PairIcon,
     SortIcon
 } from "../../../icons";
@@ -21,16 +20,26 @@ import MappingSearch from "./MappingSearch.tsx";
 import {useDataContext} from "../../../contexts/data/DataContext.ts";
 import {PairingTooltip} from "./PairingTooltip.tsx";
 import {PairingSuggestion} from "./PairingSuggestion.tsx";
-import {EntityType, Option, SelectableCollection, FiltersState} from "../../../models.ts";
-import {getId, getType, isRowMapped} from "../../../helpers/getters.ts";
+import {Option, SelectableCollection, FiltersState} from "../../../models.ts";
+import {getId, getType, isRowMapped} from "../../../helpers/rowHelpers.ts";
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {useUIContext} from "../../../contexts/ui/UIContext.ts";
+import Tour from "../../common/Tour.tsx";
+import { tutorial, TourSteps } from "../../common/tutorial.tsx";
 import {mapRowToOption} from "../../../helpers/mappers.ts";
+import {VariableNameFilter, CdeSortingFilter, StatusFilter, SortingStrategy} from "../../../sortingStrategies.ts";
 import {usePairingSuggestions} from "../../../hooks/usePairingSuggestions.ts";
 import {
     getAbbreviationFromOption,
     getDescriptionFromOption,
     optionDetailsToCdeDetails
-} from "../../../helpers/optionsHelper.ts";
+} from "../../../helpers/optionsHelpers.ts";
+
+import ChipComponent from "./ChipComponent.tsx";
+import {CUSTOM_DICTIONARY_FIELD_COLLECTION_ID} from "../../../settings.ts";
+import {
+    getCustomDictionaryFieldSelectableCollection,
+} from "../../../services/customDictionaryFieldService.ts";
 
 const styles = {
     root: {
@@ -89,6 +98,13 @@ const styles = {
         '& svg': {
             cursor: 'pointer',
         }
+    },
+    sortButton: {
+        padding: '0.25rem',
+        borderRadius: '0.25rem',
+        '&:hover': {
+            backgroundColor: '#ECEDEE'
+        }
     }
 }
 
@@ -101,17 +117,21 @@ interface MappingProps {
 const MappingTab = ({defaultCollection}: MappingProps) => {
 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
-    const {updateDatasetMappingRow, getUnmappedVariableNames} = useServicesContext();
+    const {updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields} = useServicesContext();
     const {
         updateAvailableSuggestions,
         getPairingSuggestions,
         hasPairingSuggestions,
         markSuggestionAsProcessed,
     } = usePairingSuggestions();
-
+    const {isTourOpen} = useUIContext();
+    const [stepIndex, setStepIndex] = useState(0);
+    const [togglePreview, setTogglePreview] = useState(false);
     const [visibleRows, setVisibleRows] = useState<string[]>([]);
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
-    const [optionsMap, setOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [currentFilterStrategy, setCurrentFilterStrategy] = useState<SortingStrategy>();
+    const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
+    const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
 
 
     useEffect(() => {
@@ -121,9 +141,11 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             selected: key === defaultCollection
         }));
 
-        setSelectableCollections(initialSelectedCollections);
+        setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
 
+    const handleTourNextStepClick = useCallback(() => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1), [isTourOpen, setStepIndex])
+    
     useEffect(() => {
         const initialSearchResults = Object.keys(datasetMapping).reduce((acc, variableName) => {
             const row = datasetMapping[variableName];
@@ -135,8 +157,9 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         }, {} as { [id: string]: Option });
 
 
-        setOptionsMap(initialSearchResults);
+        setSelectedOptionsMap(initialSearchResults);
     }, [datasetMapping, datasetMappingHeader, headerIndexes]);
+
 
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
@@ -152,25 +175,19 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         );
     };
 
-
     const searchInCollections = useCallback(
         async (queryString: string): Promise<Option[]> => {
             const selectedCollections = selectableCollections
                 .filter(collection => collection.selected)
-                .map(collection => collections[collection.id]);
 
             try {
                 const fetchPromises = selectedCollections.map(async (collection) => {
-                    const searchResults = await collection.fetch(queryString);
+                    if (collection.id === CUSTOM_DICTIONARY_FIELD_COLLECTION_ID) {
+                        return searchCustomDictionaryFields(queryString, createdCustomDictionaryFields)
+                    } else {
+                        return await collections[collection.id].fetch(queryString);
+                    }
 
-                    const searchResultsDictionary = searchResults.reduce((acc, option) => {
-                        acc[option.id] = option;
-                        return acc;
-                    }, {} as { [id: string]: Option });
-
-                    setOptionsMap(prev => ({...prev, ...searchResultsDictionary}));
-
-                    return searchResults;
                 });
                 const results = await Promise.all(fetchPromises);
                 return results.flat();
@@ -179,23 +196,29 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 return [];
             }
         },
-        [selectableCollections, collections]
+        [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
-    const handleSelection = async (variableName: string, optionId: string, newIsSelectedState: boolean) => {
-        const option = optionsMap[optionId];
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+
         if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
             updateDatasetMappingRow(variableName, option.content);
 
             // Get all selected collections
             const selectedCollections = selectableCollections
                 .filter(collection => collection.selected)
-                .map(collection => collections[collection.id]);
 
             // Fetch pairing suggestions from all selected collections
             let aggregatedPairingSuggestions: Option[] = [];
-            for (const collection of selectedCollections) {
-                if (collection.getPairingSuggestions) {
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
                     const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
                     aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
                 }
@@ -206,7 +229,7 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
             updateDatasetMappingRow(variableName, []);
 
         } else {
-            console.error("Option not found: " + optionId);
+            console.error("No option provided");
         }
     };
 
@@ -238,73 +261,82 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
         setVisibleRows(filteredData);
     }, [datasetMapping, headerIndexes]);
 
+    const onCustomDictionaryFieldCreation = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+        setCreatedCustomDictionaryFields(prev => ({
+            ...prev,
+            [option.id]: option,
+        }));
+        await handleSelection(variableName, option, newIsSelectedState)
+    }
 
-    const getChipComponent = (key: string) => {
-        const row = datasetMapping[key];
-        const entityType = getType(row, headerIndexes);
-
-        let label: string;
-        let color: ChipProps['color'];
-        let iconColor: string;
-
-        switch (entityType) {
-            case EntityType.CDE:
-                label = "Mapped to CDE";
-                color = "success";
-                iconColor = "#12B76A";
-                break;
-            case EntityType.CustomDictionaryField:
-                label = "Mapped to Custom Data Dictionary";
-                color = "success";
-                iconColor = "#346DDB";
-                break;
-            default:
-                label = "Unmapped";
-                color = "default";
-                iconColor = "#676C74";
-                break;
+    const isSameStrategyType = (filter: SortingStrategy, newFilter: SortingStrategy) => {
+        if (!filter || !newFilter) {
+            return false;
         }
+        return filter.constructor === newFilter.constructor;
+    }
 
-        return (
-            <Chip
-                label={label}
-                size="small"
-                color={color}
-                icon={<BulletIcon color={iconColor}/>}
-            />
-        );
-    };
+    const sortRows = useCallback((fitlerStrategy: SortingStrategy) => {
+        const result = fitlerStrategy.doSort(visibleRows, datasetMapping, headerIndexes);
+        setVisibleRows([...result]);
+    }, [datasetMapping, headerIndexes, visibleRows])
+
+    const handleSortingStrategy = (newCurrentSortingStrategy: SortingStrategy) => {
+        if (currentFilterStrategy && isSameStrategyType(currentFilterStrategy, newCurrentSortingStrategy)) {
+            currentFilterStrategy.toggleSortOrder();
+            sortRows(currentFilterStrategy);
+        } else {
+            setCurrentFilterStrategy(newCurrentSortingStrategy)
+        }
+    }
+
+    useEffect(() => {
+        if(currentFilterStrategy){
+            sortRows(currentFilterStrategy);
+        }
+    }, [currentFilterStrategy, sortRows])
+
+    const onPreviewBoxToggle = () => {
+        setTogglePreview(!togglePreview)
+        handleTourNextStepClick();
+    }
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
 
     return (
-        <>
-            <ModalHeightWrapper pb={10} height='15rem'>
-                <MappingSearch onChange={handleFiltering}/>
+        <Box className='mapping-step'>
+            <ModalHeightWrapper pb={togglePreview ? 50 : 10} height='15rem'>
+                <MappingSearch onChange={handleFiltering} onAfterChange={handleTourNextStepClick}/>
 
                 <Box px={1.5}>
                     <Box sx={styles.root}>
                         <Box sx={styles.head}>
                             <Box sx={styles.col}>
-                                <SortIcon/>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new StatusFilter())}>
+                                    <SortIcon className="mapping__sort-icon" direction={currentFilterStrategy instanceof StatusFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}>
                                 <Typography>Column headers from dataset</Typography>
-                                <SortIcon/>
+                                <IconButton onClick={() => handleSortingStrategy(new VariableNameFilter())} sx={styles.sortButton}>
+                                    <SortIcon direction={currentFilterStrategy instanceof VariableNameFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                             <Box sx={styles.col}/>
                             <Box sx={styles.col}>
                                 <Typography>CDEs/ Data Dictionary fields</Typography>
-                                <SortIcon/>
+                                <IconButton sx={styles.sortButton} onClick={() => handleSortingStrategy(new CdeSortingFilter)}>
+                                    <SortIcon direction={currentFilterStrategy instanceof CdeSortingFilter ? currentFilterStrategy.sortState : 0}/>
+                                </IconButton>
                             </Box>
                         </Box>
                         <Box sx={styles.wrap}>
                             {visibleRows.map((variableName, index) => (
-                                <Box key={index} sx={styles.row}>
-                                    <Box sx={styles.col}>
-                                        {getChipComponent(variableName)}
+                                <Box key={index} sx={styles.row} id={variableName}>
+                                    <Box sx={styles.col} className="mapping-chip">
+                                        <ChipComponent variableName={variableName}/>
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="mapping__column-header">
                                         <TextField
                                             disabled
                                             fullWidth
@@ -314,18 +346,23 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                     <Box sx={styles.col}>
                                         <ArrowIcon/>
                                     </Box>
-                                    <Box sx={styles.col}>
+                                    <Box sx={styles.col} className="cde-fields__item-first">
                                         <CustomEntitiesDropdown
                                             placeholder={"Choose CDE or Data Dictionary fields... "}
                                             options={{
                                                 searchPlaceholder: searchText,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
-                                                onSelection: (optionId, newIsSelectedState) => handleSelection(variableName, optionId, newIsSelectedState),
+                                                onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
-                                                value: optionsMap[getId(datasetMapping[variableName], headerIndexes)]
-                                            }}/>
+                                                value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)],
+                                                onDropdownToggle: handleTourNextStepClick,
+                                                dropdownClassname: "cde-field__popper",
+                                            }}
+                                            variableName={variableName}
+                                            onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(variableName, option, newIsSelectedState)}
+                                        />
                                     </Box>
 
                                     {hasPairingSuggestions(variableName) && (
@@ -350,8 +387,8 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                                                             }));
 
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                            const abbreviation = getAbbreviationFromOption(suggestion.content);
-                                                            const description = getDescriptionFromOption(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                            const description = getDescriptionFromOption(suggestion);
 
                                                             return (
                                                                 <PairingSuggestion
@@ -376,8 +413,13 @@ const MappingTab = ({defaultCollection}: MappingProps) => {
                 </Box>
             </ModalHeightWrapper>
 
-            <PreviewBox/>
-        </>
+            <PreviewBox togglePreview={togglePreview} onToggle={onPreviewBoxToggle}/>
+            <Tour
+                steps={tutorial[TourSteps.Mapping]}
+                stepIndex={stepIndex}
+                setStepIndex={setStepIndex}
+            />
+        </Box>
     )
 }
 

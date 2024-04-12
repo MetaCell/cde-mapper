@@ -18,6 +18,7 @@ export const getType = (row: string[], headerMapping: HeaderIndexes): EntityType
     }
 };
 
-export const isRowMapped = (row: string[], headerIndexes: HeaderIndexes) => getId(row, headerIndexes) != ''
-export const _isRowCDE = (row: string[], headerIndexes: HeaderIndexes) => row[headerIndexes.cdeLevel] != CUSTOM_DATA_FIELD_CDE_LEVEL
+export const isRowMapped = (row: string[], headerIndexes: HeaderIndexes) : boolean => getId(row, headerIndexes) != ''
+const _isRowCDE = (row: string[], headerIndexes: HeaderIndexes) : boolean => row[headerIndexes.cdeLevel] != CUSTOM_DATA_FIELD_CDE_LEVEL
+export const isRowCustomDictionaryField = (row: string[], headerIndexes: HeaderIndexes) : boolean => row[headerIndexes.cdeLevel] === CUSTOM_DATA_FIELD_CDE_LEVEL
 

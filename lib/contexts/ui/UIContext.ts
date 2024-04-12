@@ -9,6 +9,8 @@ export const UIContext = createContext<{
     errorMessage: string | null;
     setErrorMessage: (errorMessage: string | null) => void;
     handleClose: () => void;
+    isTourOpen: boolean;
+    setIsTourOpen: (isTourOpen: boolean) => void;
 }>({
 
     step: 0,
@@ -22,6 +24,9 @@ export const UIContext = createContext<{
     },
     handleClose: () => {
     },
+    isTourOpen: false,
+    setIsTourOpen: () => {
+    }
 });
 
 export const useUIContext = () => useContext(UIContext);

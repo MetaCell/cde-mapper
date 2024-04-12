@@ -5,6 +5,7 @@ import SuggestionsStep from '../suggestions/SuggestionsStep.tsx';
 import MappingTab from './MappingTab.tsx';
 import {vars} from '../../../theme/variables.ts';
 import {useServicesContext} from "../../../contexts/services/ServicesContext.ts";
+import {useDataContext} from "../../../contexts/data/DataContext.ts";
 
 const {
     baseWhite,
@@ -28,7 +29,8 @@ const tabsArr = [
     {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
-        description: 'suggestions are based on what was previously mapped before.'
+        description: 'suggestions are based on what was previously mapped before.',
+        className: 'suggestions-tab'
     },
     {
         label: 'Map the rest of the dataset',
@@ -51,7 +53,7 @@ interface CustomTabPanelProps extends BoxProps {
 }
 
 
-const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, ...other}) => {
+const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index, ...other }) => {
     return (
         <Box
             height={1}
@@ -68,8 +70,15 @@ const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, 
 
 
 function MappingStep() {
+    const {
+        collections,
+    } = useDataContext();
+
+    const collectionKeys = Object.keys(collections);
+    const [defaultCollection, setDefaultCollection] = React.useState(collectionKeys.length > 0 ? collectionKeys[0] : '');
+
     const [tabIndex, setTabIndex] = React.useState(0);
-    const [defaultCollection, setDefaultCollection] = React.useState("");
+
     const {
         getTotalRowsCount,
         getUnmappedRowsCount,
@@ -88,6 +97,7 @@ function MappingStep() {
         switch (tabIndex) {
             case TabsEnum.Collection:
                 return <CollectionsTab
+                    defaultCollection={defaultCollection}
                     setDefaultCollection={setDefaultCollection}
                     changeToNextTab={changeToNextTab}
                 />
@@ -129,17 +139,17 @@ function MappingStep() {
                                 </>
                             }
                         >
-                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} />
+                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} className={`${tab?.className}`} />
                         </Tooltip>
                     ))}
                 </Tabs>
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {tabIndex === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)}>
+                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : tabIndex === TabsEnum.Mapping && (<>
-                        <Typography sx={{
+                        <Typography className='mapping-header__indicator' sx={{
                             color: gray500,
                             fontSize: '0.75rem',
                             fontWeight: 500,
@@ -148,7 +158,7 @@ function MappingStep() {
                             {getUnmappedRowsCount()}/{getTotalRowsCount()} column headers still unmapped
                         </Typography>
 
-                        <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
+                            <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
 
                         <Button variant='contained' onClick={onClose}>
                             Save mapping
