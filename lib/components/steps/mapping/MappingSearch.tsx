@@ -32,6 +32,7 @@ export default function MappingSearch({onChange, onAfterChange = () => {}}: Mapp
             [EntityType.CustomDictionaryField]: false,
             [EntityType.Unknown]: false
         })
+        setSearchString('')
     };
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
