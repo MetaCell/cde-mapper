@@ -339,6 +339,11 @@ export default function CustomEntitiesDropdown({
         setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
     };
 
+    const getPreciseAbbreviation = (option: Option) => {
+        const selectedOptionTitle = getAbbreviationFromOption(option, headerIndexes)
+        return selectedOptionTitle.length > 100 ? selectedOptionTitle.slice(0, 100) + "..." : selectedOptionTitle;
+    };
+
     return (
         <>
             <Box
@@ -672,7 +677,20 @@ export default function CustomEntitiesDropdown({
 
                                             <Box>
                                                 <ul>
-                                                    {groupedOptions[group]
+                                                    {selectedOptions.map(option => (
+                                                    <li
+                                                        key={option.id}
+                                                        onMouseEnter={() => setHoveredOption(option)}
+                                                        onClick={() => handleOptionSelection(option)}
+                                                        className={'selected'}
+                                                    >
+                                                        <Typography sx={{width: 1, height: 1, padding: "0.625rem"}}>
+                                                            {getPreciseAbbreviation(option)}
+                                                        </Typography>
+                                                        <CheckIcon color="#070808"/>
+                                                    </li>
+                                                    ))}
+                                                    {groupedOptions[group].filter(option => !isOptionSelected(option))
                                                         .map((option: Option) => (
                                                             <li
                                                                 key={option.id}
