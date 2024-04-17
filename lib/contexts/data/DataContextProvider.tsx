@@ -88,21 +88,23 @@ export const DataContextProvider = ({
     const [datasetMapping, setDatasetMapping] = useState<DatasetMapping>(initialDatasetMapping);
     const [datasetMappingHeader, setDatasetMappingHeader] = useState<string[]>(initialDatasetMappingHeader);
 
-    const additionalDatasetMappings: DatasetMapping[] = rawAdditionalDatasetMappings.map((additionalMapping, index) => {
-        try {
-            validateDatasetMapping(additionalMapping, headerIndexes.variableName);
-        } catch (error) {
-            if (error instanceof Error) {
-                console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: ${error.message}`);
-            } else {
-                console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: Unknown error`);
+    const additionalDatasetMappings: DatasetMapping[] = useMemo(() => {
+        return rawAdditionalDatasetMappings.map((additionalMapping, index) => {
+            try {
+                validateDatasetMapping(additionalMapping, headerIndexes.variableName);
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: ${error.message}`);
+                } else {
+                    console.warn(`Skipping invalid additionalDatasetMapping at index ${index}: Unknown error`);
+                }
+                return null;
             }
-            return null;
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [mappedAdditionalMapping, _] = getDatasetMapping(additionalMapping, headerIndexes);
-        return mappedAdditionalMapping;
-    }).filter(mapping => mapping !== null) as DatasetMapping[];
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [mappedAdditionalMapping, _] = getDatasetMapping(additionalMapping, headerIndexes);
+            return mappedAdditionalMapping;
+        }).filter(mapping => mapping !== null) as DatasetMapping[];
+    }, [rawAdditionalDatasetMappings, headerIndexes]);
 
     const suggestions = useMemo(() => {
         return computeSuggestions(initialDatasetMapping, additionalDatasetMappings, headerIndexes);

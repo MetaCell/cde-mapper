@@ -46,7 +46,7 @@ function SuggestionsStep({changeToNextTab}: SuggestionsStepProps) {
     const [stepIndex, setStepIndex] = useState<number>(0);
 
     const [selectedSuggestion, setSelectedSuggestion] = useState<string[] | null>(null);
-    const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>(getColumnsWithSuggestions());
+    const [suggestionsToProcess, setSuggestionsToProcess] = useState<string[]>([]);
 
     const handleNext = useCallback(() => {
         setCurrentKeyIndex((prevIndex) => (prevIndex + 1) % suggestionsToProcess.length);
