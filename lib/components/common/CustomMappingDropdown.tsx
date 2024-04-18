@@ -255,6 +255,7 @@ export default function CustomEntitiesDropdown({
     };
 
     const [customDictionaryFieldOption, setCustomDictionaryFieldOption] = useState<Option>(getCustomDictionaryFieldOption());
+    const [focusedIndex, setFocusedIndex] = useState(-1);
 
 
     const handleCustomDictionaryOptionChange = (index: number, value: string) => {
@@ -264,6 +265,7 @@ export default function CustomEntitiesDropdown({
                 detailIndex === index ? {...detail, value} : detail
             ),
         }));
+        setFocusedIndex(index)
     };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -489,10 +491,11 @@ export default function CustomEntitiesDropdown({
                                     BodyComponent={({entity}) => (
                                         <CreateCustomDictionaryFieldBody
                                             entity={entity}
-                                            onBlur={handleCustomDictionaryOptionChange}
+                                            onInputChange={handleCustomDictionaryOptionChange}
                                             variableNameIndex={headerIndexes.variableName}
                                             idIndex={headerIndexes.id}
                                             cdeLevelIndex={headerIndexes.cdeLevel}
+                                            focusedIndex={focusedIndex}
                                         />
                                     )}
                                     HeaderComponent={() => (

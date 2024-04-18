@@ -7,16 +7,18 @@ interface CreateCustomDictionaryFieldBodyProps {
     variableNameIndex: number;
     idIndex: number;
     cdeLevelIndex: number;
-    onBlur: (index: number, value: string) => void;
+    onInputChange: (index: number, value: string) => void;
+    focusedIndex: number;
 }
 
 const CreateCustomDictionaryFieldBody: React.FC<CreateCustomDictionaryFieldBodyProps> = ({
-                                                                                             entity,
-                                                                                             variableNameIndex,
-                                                                                             idIndex,
-                                                                                             cdeLevelIndex,
-                                                                                             onBlur,
-                                                                                         }) => {
+    entity,
+    variableNameIndex,
+    idIndex,
+    cdeLevelIndex,
+    onInputChange,
+    focusedIndex
+}) => {
 
     // Local state to temporarily store input values
     const [tempValues, setTempValues] = useState(() =>
@@ -26,15 +28,11 @@ const CreateCustomDictionaryFieldBody: React.FC<CreateCustomDictionaryFieldBodyP
         }, {} as { [key: number]: string })
     );
 
+
     // Handler to update the tempValues state as the user types
     const handleTempInputChange = (index: number, value: string) => {
         setTempValues(prev => ({...prev, [index]: value}));
-    };
-
-    // Handler to commit changes when the TextField loses focus
-    const handleBlur = (index: number) => {
-        const value = tempValues[index];
-        onBlur(index, value);
+        onInputChange(index, value)
     };
 
     return (
@@ -66,8 +64,8 @@ const CreateCustomDictionaryFieldBody: React.FC<CreateCustomDictionaryFieldBodyP
                                 fullWidth
                                 placeholder="Insert here..."
                                 value={tempValues[index]}
+                                autoFocus={focusedIndex === index} // Set autoFocus based on focusedIndex
                                 onChange={e => handleTempInputChange(index, e.target.value)} // Update temp value on change
-                                onBlur={() => handleBlur(index)} // Commit changes on blur
                             />
                         </Stack>
                     );
