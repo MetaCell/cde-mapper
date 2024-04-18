@@ -1,0 +1,13 @@
+Subject,Species,Strain,Sex,Age,Group,StudyInjModelTyp,StudyOutcomeMeasureType,Type of actuator used for impact,Impactor tip diameter - measurement,roto time,Rotor rod - start speed,Rotor rod - final speed
+sub1,Mouse,C57BL/6J,Male,6 weeks,Sham,CCI,Behavior,pneumatic,3,1 week,10,10
+sub1,Mouse,C57BL/6J,Male,6 weeks,Sham,CCI,Behavior,pneumatic,3,1 week,11,10
+sub7,Mouse,C57BL/6J,Female,6 weeks,Sham,CCI,Behavior,pneumatic,3,1 week,9,12
+sub7,Mouse,C57BL/6J,Female,6 weeks,Sham,CCI,Behavior,pneumatic,3,1 week,10,12
+sub2,Mouse,C57BL/6J,Male,6 weeks,Naive,None,Behavior,pneumatic,3,1 week,11,13
+sub2,Mouse,C57BL/6J,Male,6 weeks,Naive,None,Behavior,pneumatic,3,1 week,12,14
+sub8,Mouse,C57BL/6J,Female,6 weeks,Naive,None,Behavior,pneumatic,3,1 week,10,12
+sub8,Mouse,C57BL/6J,Female,6 weeks,Naive,None,Behavior,pneumatic,3,1 week,11,11
+sub5,Mouse,C57BL/6J,Male,6 weeks,Injuried,CCI,Behavior,pneumatic,3,1 week,8,5
+sub5,Mouse,C57BL/6J,Male,6 weeks,Injuried,CCI,Behavior,pneumatic,3,1 week,6,6
+sub9,Mouse,C57BL/6J,Female,6 weeks,Injuried,CCI,Behavior,pneumatic,3,1 week,7,5
+sub9,Mouse,C57BL/6J,Female,6 weeks,Injuried,CCI,Behavior,pneumatic,3,1 week,5,4
