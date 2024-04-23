@@ -53,7 +53,7 @@ interface CustomTabPanelProps extends BoxProps {
 }
 
 
-const CustomTabPanel: React.FC<CustomTabPanelProps> = ({ children, value, index, ...other }) => {
+const CustomTabPanel: React.FC<CustomTabPanelProps> = ({children, value, index, ...other}) => {
     return (
         <Box
             height={1}
@@ -93,7 +93,7 @@ function MappingStep() {
         setTabIndex((prevValue) => (prevValue + 1) % tabsArr.length);
     };
 
-    const renderTabComponent = () => {
+    const renderTabComponent = React.useMemo(() => {
         switch (tabIndex) {
             case TabsEnum.Collection:
                 return <CollectionsTab
@@ -104,11 +104,12 @@ function MappingStep() {
             case TabsEnum.Suggestions:
                 return <SuggestionsStep changeToNextTab={changeToNextTab}/>;
             case TabsEnum.Mapping:
-                return <MappingTab defaultCollection={defaultCollection} numberOfUnmappedRows={getUnmappedRowsCount()}/>;
+                return <MappingTab defaultCollection={defaultCollection}
+                                   numberOfUnmappedRows={getUnmappedRowsCount()}/>;
             default:
                 return <div>Unknown step</div>;
         }
-    };
+    }, [defaultCollection, getUnmappedRowsCount, tabIndex]);
 
     return (
         <Fragment>
@@ -139,14 +140,16 @@ function MappingStep() {
                                 </>
                             }
                         >
-                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)} className={`${tab?.className}`} />
+                            <Tab disableRipple label={`${index + 1}. ${tab.label}`} {...a11yProps(index)}
+                                 className={`${tab?.className}`}/>
                         </Tooltip>
                     ))}
                 </Tabs>
 
                 <Box display='flex' gap='0.625rem' alignItems='center'>
                     {tabIndex === TabsEnum.Suggestions ? (
-                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)} className='suggestions__cancel-btn'>
+                        <Button variant='text' onClick={() => setTabIndex(TabsEnum.Mapping)}
+                                className='suggestions__cancel-btn'>
                             Continue without suggestions
                         </Button>) : tabIndex === TabsEnum.Mapping && (<>
                         <Typography className='mapping-header__indicator' sx={{
@@ -158,7 +161,7 @@ function MappingStep() {
                             {getUnmappedRowsCount()}/{getTotalRowsCount()} column headers still unmapped
                         </Typography>
 
-                            <Divider sx={{ height: '1.875rem', background: gray100, width: '0.0625rem' }} />
+                        <Divider sx={{height: '1.875rem', background: gray100, width: '0.0625rem'}}/>
 
                         <Button variant='contained' onClick={onClose}>
                             Save mapping
@@ -170,7 +173,7 @@ function MappingStep() {
                     key={index}
                     value={tabIndex}
                     index={index}>
-                    {renderTabComponent()}
+                    {renderTabComponent}
                 </CustomTabPanel>
             ))}
         </Fragment>
