@@ -271,7 +271,6 @@ describe('Control Panel Test', () => {
             const filePath = path.join(downloadPath, 'datasetMapping.csv');
 
             const data = [];
-            // Your existing code...
 
             await new Promise<void>((resolve, reject) => {
                 fs.createReadStream(filePath)
