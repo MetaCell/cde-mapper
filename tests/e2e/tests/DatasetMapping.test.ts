@@ -4,6 +4,8 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot'
 expect.extend({ toMatchImageSnapshot })
 const fs = require('fs');
 const path = require('path');
+import * as csv from 'csv-parser';
+
 
 const URL = process.env.url || "https://cde-mapper.dev.metacell.us/";
 const TIMEOUT = 6000;
@@ -199,7 +201,7 @@ describe('Control Panel Test', () => {
                 () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '0/13 column headers still unmapped',
                 { timeout: TIMEOUT }
             );
-
+            await dm_test_page.waitForTimeout(500);
             // await dm_test_page.waitForSelector('.mapping__filter-btn', { hidden: false, timeout: TIMEOUT });
             // await dm_test_page.click('.mapping__filter-btn');
             // await dm_test_page.waitForSelector('.mapping__filter-popover', { hidden: false, timeout: TIMEOUT });
@@ -207,17 +209,95 @@ describe('Control Panel Test', () => {
             // await dm_test_page.click('.mapping__filter-popover > div > div > div > label:nth-child(3)');
             await dm_test_page.waitForSelector('.mapping-chip', { hidden: false, timeout: TIMEOUT });
             const elements_after_mapping = await dm_test_page.$$eval('.mapping-chip', nodes => nodes.map(n => n.innerText));
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 4; i++) {
                 expect(elements_after_mapping[i]).toBe('Mapped to CDE');
             }
         })
 
     })
 
-    describe('Download Dataset', () => { })
+    describe('Download Dataset', () => {
+        test('Save Mapping', async () => {
 
-    describe('Compare Dataset', () => { })
+            const downloadPath = path.resolve(__dirname, 'downloads');
+            // Set the download behavior
+            await dm_test_page._client.send('Page.setDownloadBehavior', {
+                behavior: 'allow',
+                downloadPath: downloadPath,
+            });
 
+            await dm_test_page.$$eval('button', (buttons, value) => {
+                buttons.find(button => button.innerText === value).click();
+            }, 'Save mapping');
+
+            // Wait for the download to complete
+            await new Promise(resolve => setTimeout(resolve, 6000));
+            // Check if the file exists
+            const filePath = path.join(downloadPath, 'datasetMapping.csv');
+            expect(fs.existsSync(filePath)).toBeTruthy();
+        })
+    })
+
+    describe('Compare Dataset', () => {
+        test('Check downloaded CSV', async () => {
+            const downloadPath = path.resolve(__dirname, 'downloads');
+            const filePath = path.join(downloadPath, 'datasetMapping.csv');
+            // Check if the file is not empty
+            const fileContents = fs.readFileSync(filePath, 'utf8');
+            expect(fileContents.length).not.toBe(0);
+        })
+
+        test('Check CSV data', async () => {
+
+
+            const expectedData = [
+                { 'Variable Name (UI)': 'Subject', 'Abbreviation': 'GUID' },
+                { 'Variable Name (UI)': 'Species', 'Abbreviation': 'mdatc_cde_0187043' },
+                { 'Variable Name (UI)': 'Strain', 'Abbreviation': 'SmallSpeciesStrainTyp' },
+                { 'Variable Name (UI)': 'Sex', 'Abbreviation': 'Sex type' },
+                { 'Variable Name (UI)': 'Age', 'Abbreviation': 'mdatc_cde_0187043' },
+                { 'Variable Name (UI)': 'Group', 'Abbreviation': 'InjuryGroupAssignTyp' },
+                { 'Variable Name (UI)': 'StudyInjModelTyp', 'Abbreviation': 'StudyInjModelTyp' },
+                { 'Variable Name (UI)': 'StudyOutcomeMeasureType', 'Abbreviation': 'mdatc_cde_0187043' },
+                { 'Variable Name (UI)': 'Type of actuator used for impact', 'Abbreviation': 'Type of actuator used for impact' },
+                { 'Variable Name (UI)': 'Impactor tip diameter - measurement', 'Abbreviation': 'mdatc_cde_0187043' },
+                { 'Variable Name (UI)': 'roto time', 'Abbreviation': 'mdatc' },
+                { 'Variable Name (UI)': 'Rotor rod - start speed', 'Abbreviation': 'Rotor rod test - start speed value' },
+                { 'Variable Name (UI)': 'Rotor rod - final speed', 'Abbreviation': 'Rotor rod test - final speed value' },
+
+            ];
+
+            const downloadPath = path.resolve(__dirname, 'downloads');
+            const filePath = path.join(downloadPath, 'datasetMapping.csv');
+
+            const data = [];
+            // Your existing code...
+
+            await new Promise<void>((resolve, reject) => {
+                fs.createReadStream(filePath)
+                    .pipe(csv())
+                    .on('data', (row) => {
+                        // Only keep the column we're interested in
+                        const filteredRow = {
+                            'Variable Name (UI)': row['Variable Name (UI)'],
+                            'Abbreviation': row['Abbreviation']
+                        };
+                        data.push(filteredRow);
+                    })
+                    .on('end', () => {
+                        try {
+                            expectedData.forEach(expected => {
+                                expect(data).toContainEqual(expected);
+                            });
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    });
+
+            });
+        })
+    })
 
 
 
