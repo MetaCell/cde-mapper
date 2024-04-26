@@ -30,8 +30,8 @@ function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTa
     
     const updateHomeTourStep = () => isTourOpen && setStepIndex(prevStepIndex => prevStepIndex + 1);
 
-    const handleRadioChange = (value: string, selectedValue: string) => {
-        if(value !== selectedValue) {
+    const handleRadioChange = (value: string) => {
+        if(value !== selectedCollection) {
             setSelectedCollection(value);
         }
         updateHomeTourStep();
@@ -71,7 +71,7 @@ function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTa
                                     value={collections[key].name}
                                     isSuggested={collections[key].suggested || false}
                                     selectedValue={selectedCollection === key ? collections[key].name : ""}
-                                    onChange={handleRadioChange}
+                                    onChange={() => handleRadioChange(key)}
                                     onAfterChange={updateHomeTourStep}
                                 />
                             ))}

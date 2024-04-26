@@ -1,27 +1,27 @@
-export const getQueryByName = (queryString) => {
+export const getQueryByName = (queryString, customMustQueries = []) => {
+    let mustQueries = [...customMustQueries];
+
     if (queryString) {
+        mustQueries.push({
+            "query_string": {
+                "fields": ["label"],
+                "query": `${queryString}~`,
+                "type": "cross_fields",
+                "default_operator": "and",
+                "lenient": true,
+                "fuzziness": 2,
+                "fuzzy_max_expansions": 50,
+                "fuzzy_prefix_length": 0,
+                "fuzzy_transpositions": true
+            }
+        });
+
         return {
             "size": 20,
             "from": 0,
             "query": {
                 "bool": {
-                    "must": [
-                        {
-                            "query_string": {
-                                "fields": [
-                                    "label"
-                                ],
-                                "query": `${queryString}~`,
-                                "type": "cross_fields",
-                                "default_operator": "and",
-                                "lenient": "true",
-                                "fuzziness": 2,
-                                "fuzzy_max_expansions": 50,
-                                "fuzzy_prefix_length": 0,
-                                "fuzzy_transpositions": "true"
-                            }
-                        }
-                    ],
+                    "must": mustQueries,
                     "should": [
                         {
                             "match": {
@@ -43,16 +43,14 @@ export const getQueryByName = (queryString) => {
                     "filter": [
                         {
                             "terms": {
-                                "type.aggregate": [
-                                    "cde"
-                                ]
+                                "type.aggregate": ["cde"]
                             }
                         }
                     ]
                 }
             },
             "aggregations": {}
-        }
+        };
     }
 
     return {
@@ -60,22 +58,22 @@ export const getQueryByName = (queryString) => {
         "from": 0,
         "query": {
             "bool": {
+                "must": mustQueries,
                 "filter": [
                     {
                         "terms": {
-                            "type.aggregate": [
-                                "cde"
-                            ]
+                            "type.aggregate": ["cde"]
                         }
                     }
                 ]
             }
-        }
-    }
+        },
+        "aggregations": {}
+    };
 };
 
 
-export const getQueryById = (id) => {
+export const getQueryById = (id, customMustQueries = []) => {
     if (id) {
         return {
             "size": 1,
@@ -85,31 +83,27 @@ export const getQueryById = (id) => {
                     "must": [
                         {
                             "query_string": {
-                                "fields": [
-                                    "ilx"
-                                ],
+                                "fields": ["ilx"],
                                 "query": `${id}`
                             }
-                        }
+                        },
+                        ...customMustQueries
                     ],
-
                     "filter": [
                         {
                             "terms": {
-                                "type.aggregate": [
-                                    "cde"
-                                ]
+                                "type.aggregate": ["cde"]
                             }
                         }
                     ]
                 }
             },
             "aggregations": {}
-        }
+        };
     }
 };
 
-export const getRelatedQuery = (id) => {
+export const getRelatedQuery = (id, customMustQueries = []) => {
     if (id) {
         return {
             "from": 0,
@@ -121,7 +115,7 @@ export const getRelatedQuery = (id) => {
                                 "superclasses.ilx": {
                                     "value": `${id}`
                                 }
-                            }
+                            },
                         },
                         {
                             "term": {
@@ -129,11 +123,21 @@ export const getRelatedQuery = (id) => {
                                     "value": "cde"
                                 }
                             }
-                        }
+                        },
+                        ...customMustQueries
                     ]
                 }
             }
-        }
+        };
     }
 };
 
+export function createMustQueryById(id) {
+    return {
+        "term": {
+            "ancestors.ilx": {
+                "value": id
+            }
+        }
+    };
+}
