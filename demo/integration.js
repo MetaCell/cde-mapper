@@ -177,7 +177,7 @@ async function getPairingSuggestions(id) {
 
 async function queryInterlex(query) {
     const apiKey = import.meta.env.VITE_API_KEY;
-    const baseUrl = '/api/1/elastic/Interlex_pr/_search';
+    const baseUrl = 'https://api.scicrunch.io/elastic/v1/Interlex_pr/_search';
 
     const queryParameters = new URLSearchParams({
         key: apiKey,
