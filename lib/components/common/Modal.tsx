@@ -7,15 +7,13 @@ interface ModalProps extends Omit<DialogProps, 'children'> {
     open: boolean;
     onClose: () => void;
     children: ReactNode;
-    isInfoOpen: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
                                          maxWidth = "xs",
                                          open,
                                          onClose,
-                                         children,
-                                         isInfoOpen,
+                                         children
                                      }) => {
     return (
         <Dialog
@@ -29,8 +27,10 @@ const Modal: React.FC<ModalProps> = ({
                 },
                 '& .MuiDialog-paper': {
                     boxShadow: '0rem 0.125rem 0.25rem -0.125rem rgba(7, 8, 8, 0.06), 0rem 0.25rem 0.5rem -0.125rem rgba(7, 8, 8, 0.10)',
-                    overflow: isInfoOpen ? 'hidden' : 'auto',
-                    minHeight: 750
+                    // overflow: isInfoOpen ? 'hidden' : 'auto',
+                    overflow: 'hidden',
+                    minHeight: 750,
+                    background: '#fcfcfd'
                 }
             }}
         >

@@ -37,7 +37,7 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
     return (
         <>
             <Box display='flex' alignItems='center' flexDirection='column' px={3} py={6} sx={{
-                background: drodownDetailBg
+                background: drodownDetailBg, overflowY: 'auto'
             }}>
                 <Typography sx={{ marginBottom: '0.5rem' }} variant='h3'>
                     Create mapping(s) with selected dataset?
@@ -96,10 +96,9 @@ function Home(props: { homeStepIndex: number, setHomeStepIndex: React.Dispatch<R
                         <StyledTable sample={datasetSample} tableCellMinWidth='7.5rem' />
                     </TableContainer>
                 </Box>
-            </Box>
-
-            <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
-                <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className='mapping__start-btn'>Start mapping</Button>
+                <Box display='flex' flexDirection='column' alignItems='center' gap={1.5}>
+                    <Button variant='contained' onClick={() => setStep(STEPS.COLLECTION)} className='mapping__start-btn'>Start mapping</Button>
+                </Box>
             </Box>
             {
                 !isTourStartDialogVisible && <Tour

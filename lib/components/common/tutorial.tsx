@@ -27,13 +27,13 @@ export const tutorial: TutorialType = {
             title: 'Stats of your mapping',
             target: '.stats-content',
             hideBackButton: true,
-            disableBeacon: true,
+            disableBeacon: true
         },
         {
             content: 'This shows your selected dataset. Important thing to look out here is the column header because that’s what you’l be mapping.',
             title: 'Preview of your dataset',
             target: '.dataset-table',
-            hideBackButton: true,
+            hideBackButton: true
         },
         {
             content: 'Lost in what mapping is, how it works? Find out more by clicking this button.',
@@ -42,13 +42,13 @@ export const tutorial: TutorialType = {
             placement: 'right-end',
             hideBackButton: true,
             spotlightClicks: true,
-            hideFooter: true,
+            hideFooter: true
         },
         {
             content: 'This is a good place to refer to what you’re mapping, what CDEs are, how it works, etc.',
             title: 'Information on mappings',
             target: '.about-info__sidebar',
-            placement: 'right-start',
+            placement: 'right',
             hideBackButton: true,
             spotlightPadding: 0
         },
@@ -79,12 +79,14 @@ export const tutorial: TutorialType = {
             disableBeacon: true,
             spotlightClicks: true,
             hideFooter: true,
+            placement: 'top'
         },
         {
             title: 'Click to confirm your repository selection',
             content: 'Clicking this button will bring you to the next step of the process.',
             target: '.repository__select-btn',
-            spotlightClicks: true
+            spotlightClicks: true,
+            placement: 'top',
         }
     ],
     [TourSteps.Suggestions]: [
@@ -98,7 +100,7 @@ export const tutorial: TutorialType = {
         {
             title: 'Column header you’re mapping',
             content: 'This is the column header that you’ll be mapping.',
-            target: '.column-header',
+            target: '.column-header'
         },
         {
             title: 'CDE mapping suggestions',
@@ -113,8 +115,7 @@ export const tutorial: TutorialType = {
         {
             title: 'Most suitable mapping',
             content: 'Based on previous mappings, the first suggestion is the one that is the most suitable mapping. Browse other suggestions if you don’t think this is the most suitable.',
-            target: '.suggestion-details',
-            placement: 'bottom'
+            target: '.suggestion-details'
         },
         {
             target: '.suggestions__expand-btn',
@@ -129,14 +130,12 @@ export const tutorial: TutorialType = {
                 options: {
                     width: 450
                 }
-            },
-            placement: 'top-end'
+            }
         },
         {
             target: '.suggestions__navigation-block',
             title: 'Navigating through the different column headers with suggestions',
             content: 'To view all the other column headers that has suggestions, click the ‘<’ & ‘>’ buttons here. Here, you will also be able to see how many column headers contains suggestions.',
-            placement: 'top-start',
             styles: {
                 options: {
                     width: 450
@@ -158,7 +157,8 @@ export const tutorial: TutorialType = {
             title: 'No suggestions',
             spotlightClicks: true,
             disableBeacon: true,
-            hideFooter: true
+            hideFooter: true,
+            placement: 'auto'
         }
     ],
     [TourSteps.Mapping]: [
@@ -197,7 +197,7 @@ export const tutorial: TutorialType = {
             content: 'Filter through column headers and only showing those that are relevant to you.',
             title: 'Filter',
             target: '.mapping__filter-popover',
-            placement: 'right',
+            placement: 'auto',
             hideBackButton: true
         },
         {
@@ -281,7 +281,7 @@ export const tutorial: TutorialType = {
             title: 'Choose CDE or Data Dictionary field',
             content: '',
             target: '.cde-field__popper',
-            placement: 'bottom-start',
+            placement: 'auto',
             hideBackButton: true,
             showSkipButton: false
         }
