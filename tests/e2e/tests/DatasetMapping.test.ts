@@ -190,7 +190,6 @@ describe('CDE: Dataset Mapping Test', () => {
                 { timeout: TIMEOUT }
             );
             await dm_test_page.waitForSelector('#Species .cde-fields__item-first div', { hidden: false, timeout: TIMEOUT });
-            // await dm_test_page.click('#Species .cde-fields__item-first div');
             await dm_test_page.waitForTimeout(500);
             await dm_test_page.click('#Species .cde-fields__item-first div');
             await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
@@ -241,7 +240,6 @@ describe('CDE: Dataset Mapping Test', () => {
         test('Save Mapping', async () => {
             console.log('Saving mapping ...')
             const downloadPath = path.resolve(__dirname, 'downloads/DatasetMapping');
-            // Set the download behavior
             await dm_test_page._client.send('Page.setDownloadBehavior', {
                 behavior: 'allow',
                 downloadPath: downloadPath,
@@ -251,9 +249,7 @@ describe('CDE: Dataset Mapping Test', () => {
                 buttons.find(button => button.innerText === value).click();
             }, 'Save mapping');
 
-            // Wait for the download to complete
             await new Promise(resolve => setTimeout(resolve, 6000));
-            // Check if the file exists
             const filePath = path.join(downloadPath, 'datasetMapping.csv');
             expect(fs.existsSync(filePath)).toBeTruthy();
             console.log('Mapping saved successfully');
@@ -265,7 +261,6 @@ describe('CDE: Dataset Mapping Test', () => {
             console.log('Checking downloaded CSV ...')
             const downloadPath = path.resolve(__dirname, 'downloads/DatasetMapping');
             const filePath = path.join(downloadPath, 'datasetMapping.csv');
-            // Check if the file is not empty
             const fileContents = fs.readFileSync(filePath, 'utf8');
             expect(fileContents.length).not.toBe(0);
             console.log('Downloaded CSV checked successfully');
@@ -315,7 +310,6 @@ describe('CDE: Dataset Mapping Test', () => {
                 fs.createReadStream(filePath)
                     .pipe(csv())
                     .on('data', (row) => {
-                        // Only keep the column we're interested in
                         const filteredRow = {
                             'Variable Name (UI)': row['Variable Name (UI)'],
                             'Abbreviation': row['Abbreviation']

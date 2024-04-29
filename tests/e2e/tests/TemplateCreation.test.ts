@@ -65,6 +65,7 @@ describe('CDE: Template Creation Test', () => {
         });
 
         test('Open template page', async () => {
+            console.log('Opening the template page ...')
             await tc_test_page.waitForSelector('#createTemplateButton', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('#createTemplateButton');
             await tc_test_page.waitForSelector('h6.MuiTypography-root.MuiTypography-h6', { timeout: TIMEOUT, hidden: false });
@@ -72,6 +73,7 @@ describe('CDE: Template Creation Test', () => {
                 () => (document.querySelector('h6.MuiTypography-root.MuiTypography-h6') as HTMLElement).innerText === 'Create template',
                 { timeout: TIMEOUT }
             );
+            console.log('Template page opened successfully');
 
         });
 
@@ -80,14 +82,17 @@ describe('CDE: Template Creation Test', () => {
     describe('Create Template', () => {
 
         test('Choose CDE', async () => {
+            console.log('Choosing CDE ...')
             await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(2)', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('div > div.MuiStack-root > div.MuiBox-root:nth-child(2)');
             await tc_test_page.waitForSelector('.MuiBox-root li', { hidden: false, timeout: TIMEOUT })
             await tc_test_page.click('.MuiBox-root li');
+            console.log('CDE chosen successfully');
 
         })
 
         test('Add Dictionary field', async () => {
+            console.log('Adding Dictionary field ...')
             await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-colorPrimary:first-of-type', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-colorPrimary:first-of-type');
             await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(4)', { timeout: TIMEOUT, hidden: false });
@@ -102,101 +107,123 @@ describe('CDE: Template Creation Test', () => {
                 dic_field_selector,
                 11
             );
+            console.log('Dictionary field editor opened successfully');
         })
 
 
         test('Add Title', async () => {
+            console.log('Adding Title ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[1].click();
             await elements[1].type('Automated Testing Dataset');
+            console.log('Title added successfully');
         })
 
         test('Add Unit of Measure', async () => {
+            console.log('Adding Unit of Measure ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[2].click();
             await elements[2].type('percentage');
+            console.log('Unit of Measure added successfully');
 
         })
 
         test('Add Description', async () => {
+            console.log('Adding Description ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[3].click();
             await elements[3].type('description');
+            console.log('Description added successfully');
         })
 
         test('Add DataType', async () => {
+            console.log('Adding DataType ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[4].click();
             await elements[4].type('int');
+            console.log('DataType added successfully');
         })
 
         test('Add Multiple Values', async () => {
+            console.log('Adding Multiple Values ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[5].click();
             await elements[5].type('multiple values');
-
+            console.log('Multiple Values added successfully');
 
         })
 
         test('Add Permitted values', async () => {
+            console.log('Adding Permitted values ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[6].click();
             await elements[6].type('0-100');
+            console.log('Permitted values added successfully');
         })
 
         test('Add Minimum value', async () => {
+            console.log('Adding Minimum value ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[7].click();
             await elements[7].type('0');
+            console.log('Minimum value added successfully');
+
         })
 
         test('Add Maximum value', async () => {
+            console.log('Adding Maximum value ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[8].click();
             await elements[8].type('100');
+            console.log('Maximum value added successfully');
         })
 
         test('Add Comment', async () => {
+            console.log('Adding Comment ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[9].click();
             await elements[9].type('comment');
+            console.log('Comment added successfully');
         })
 
         test('Add Abbreviation', async () => {
-
+            console.log('Adding Abbreviation ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
             const elements = await tc_test_page.$$(dic_field_selector);
             await elements[0].click();
             await elements[0].type('Aut_Test_dataset');
+            console.log('Abbreviation added successfully');
         })
 
 
         test('Confirm custom dictionary', async () => {
-
+            console.log('Confirming custom dictionary ...')
             await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo');
+            console.log('Custom dictionary confirmed successfully');
         })
 
         test('Select custom dictionary', async () => {
+            console.log('Selecting custom dictionary ...')
             await tc_test_page.waitForSelector('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth');
             await tc_test_page.type('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', 'Aut_Test_dataset');
@@ -208,13 +235,7 @@ describe('CDE: Template Creation Test', () => {
                 selector,
                 'Aut_Test_dataset'
             );
-            // await tc_test_page.waitForTimeout('1000');
-            // await tc_test_page.waitForFunction(
-            //     (selector) => document.querySelectorAll(selector).length === 1,
-            //     { timeout: TIMEOUT },
-            //     selector
-            // );
-
+          
             await tc_test_page.waitForFunction(
                 (selector, delay) => {
                     return new Promise((resolve) => {
@@ -224,7 +245,7 @@ describe('CDE: Template Creation Test', () => {
                                 clearInterval(intervalId);
                                 resolve(true);
                             }
-                        }, 100); // check every 100ms
+                        }, 100);
 
                         setTimeout(() => {
                             clearInterval(intervalId);
@@ -233,14 +254,12 @@ describe('CDE: Template Creation Test', () => {
                 },
                 { timeout: TIMEOUT },
                 selector,
-                15000 // check for 10 seconds
+                15000 
             );
 
-            // const elements = await tc_test_page.$$('.MuiBox-root li');
-            // const targetElement = elements.find(element => element.textContent === 'Aut_Test_dataset');
-            // await targetElement.click();
             await tc_test_page.waitForSelector('.MuiBox-root li', { hidden: false, timeout: TIMEOUT })
             await tc_test_page.click('.MuiBox-root li');
+            console.log('Custom dictionary selected successfully');
         })
 
 
@@ -249,17 +268,19 @@ describe('CDE: Template Creation Test', () => {
     describe('Save Template', () => {
 
         test('Check fields', async () => {
+            console.log('Checking fields ...')
             await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(4)', { timeout: TIMEOUT, hidden: false });
             const selector = 'div > div.MuiStack-root > div.MuiBox-root:nth-child(4)';
             const elementText = await tc_test_page.$eval(selector, element => element.textContent);
             expect(elementText).toBe('Aut_Test_dataset');
+            console.log('Fields checked successfully');
 
         })
 
         test('Save/Create template', async () => {
+            console.log('Saving template ...')
             const downloadPath = path.resolve(__dirname, 'downloads/TemplateCreation');
-            // Set the download behavior
             await tc_test_page._client.send('Page.setDownloadBehavior', {
                 behavior: 'allow',
                 downloadPath: downloadPath,
@@ -268,23 +289,25 @@ describe('CDE: Template Creation Test', () => {
             await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorPrimary');
 
-            // Wait for the download to complete
             await new Promise(resolve => setTimeout(resolve, 6000));
-            // Check if the file exists
             const datasetPath = path.join(downloadPath, 'dataset.csv');
             const mappingPath = path.join(downloadPath, 'datasetMapping.csv');
 
             expect(fs.existsSync(datasetPath)).toBeTruthy();
             expect(fs.existsSync(mappingPath)).toBeTruthy();
+            console.log('Template saved successfully');
         })
     })
 
     describe('Check Template', () => {
 
-        test('Check CSV data', async () => { 
+        test('Check CSV data', async () => {
+            console.log('Checking CSV data ...')
 
+
+            console.log('CSV data checked successfully');
         })
-     })
+    })
 
 
 
