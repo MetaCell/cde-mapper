@@ -240,7 +240,7 @@ describe('CDE: Dataset Mapping Test', () => {
     describe('Download Dataset', () => {
         test('Save Mapping', async () => {
             console.log('Saving mapping ...')
-            const downloadPath = path.resolve(__dirname, 'downloads');
+            const downloadPath = path.resolve(__dirname, 'downloads/DatasetMapping');
             // Set the download behavior
             await dm_test_page._client.send('Page.setDownloadBehavior', {
                 behavior: 'allow',
@@ -263,7 +263,7 @@ describe('CDE: Dataset Mapping Test', () => {
     describe('Compare Dataset', () => {
         test('Check downloaded CSV', async () => {
             console.log('Checking downloaded CSV ...')
-            const downloadPath = path.resolve(__dirname, 'downloads');
+            const downloadPath = path.resolve(__dirname, 'downloads/DatasetMapping');
             const filePath = path.join(downloadPath, 'datasetMapping.csv');
             // Check if the file is not empty
             const fileContents = fs.readFileSync(filePath, 'utf8');
@@ -306,7 +306,7 @@ describe('CDE: Dataset Mapping Test', () => {
 
             ];
 
-            const downloadPath = path.resolve(__dirname, 'downloads');
+            const downloadPath = path.resolve(__dirname, 'downloads/DatasetMapping');
             const filePath = path.join(downloadPath, 'datasetMapping.csv');
 
             const data = [];
