@@ -109,7 +109,7 @@ describe('CDE: Dataset Mapping Test', () => {
             await dm_test_page.click('#submitButton')
             await dm_test_page.waitForSelector('.mapping__start-btn', { hidden: false, timeout: TIMEOUT });
             await dm_test_page.click('.mapping__start-btn');
-            await dm_test_page.waitForSelector('.repository__select-btn', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
             console.log('Files submitted successfully');
         })
 
@@ -119,10 +119,10 @@ describe('CDE: Dataset Mapping Test', () => {
     describe('Select Repo', () => {
         test('Select default repo', async () => {
             console.log('Selecting default repo ...')
-            await dm_test_page.waitForSelector('.repository__select-btn', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
             await dm_test_page.waitForSelector('button[title="Skip tutorial"]', { hidden: false, timeout: TIMEOUT })
             await dm_test_page.click('button[title="Skip tutorial"]')
-            await dm_test_page.click('.repository__select-btn');
+            await dm_test_page.click('.collection__select-btn');
             await dm_test_page.waitForSelector('.cde-suggestions__content', { hidden: false, timeout: TIMEOUT });
             console.log('Default repo selected successfully');
 

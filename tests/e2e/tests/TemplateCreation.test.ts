@@ -5,6 +5,7 @@ expect.extend({ toMatchImageSnapshot })
 const fs = require('fs');
 const path = require('path');
 import * as csv from 'csv-parser';
+import { createObjectCsvWriter } from 'csv-writer';
 
 
 const URL = process.env.url || "https://cde-mapper.dev.metacell.us/";
@@ -278,7 +279,7 @@ describe('CDE: Template Creation Test', () => {
                 selector,
                 'Aut_Test_dataset'
             );
-          
+
             await tc_test_page.waitForFunction(
                 (selector, delay) => {
                     return new Promise((resolve) => {
@@ -297,7 +298,7 @@ describe('CDE: Template Creation Test', () => {
                 },
                 { timeout: TIMEOUT },
                 selector,
-                15000 
+                15000
             );
 
             await tc_test_page.waitForSelector('.MuiBox-root li', { hidden: false, timeout: TIMEOUT })
@@ -342,17 +343,96 @@ describe('CDE: Template Creation Test', () => {
         })
     })
 
-    describe.skip('Check Template', () => {
+    describe('Check Template', () => {
 
         test('Check CSV data', async () => {
             console.log('Checking CSV data ...')
 
+            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(2)', { timeout: TIMEOUT, hidden: false });
+            const selectedcde = await tc_test_page.$eval('div > div.MuiStack-root > div.MuiBox-root:nth-child(2)', element => element.textContent);
 
-            console.log('CSV data checked successfully');
+
+            const downloadPath = path.resolve(__dirname, 'downloads/TemplateCreation');
+            const filePath = path.join(downloadPath, 'datasetMapping.csv');
+            const results = [];
+
+
+            const expectedDictionaryData = [
+                {
+                    'Variable Name': 'Aut_Test_dataset',
+                    'Abbreviation': 'Aut_Test_dataset',
+                    'Title': 'Automated Testing Dataset',
+                    'Unit of Measure': 'percentage',
+                    'Description': 'description',
+                    'DataType': 'int',
+                    'Multiple Values': 'multiple values',
+                    'Permitted Values': '0-100',
+                    'Minimum Value': '0',
+                    'Maximum Value': '100',
+                    'Comments': 'comment',
+                },
+
+            ];
+
+            const expectedchosenData = [
+                {
+                    'Variable Name': selectedcde,
+                    'Abbreviation': selectedcde,
+                },
+
+            ];
+
+            let firstRow;
+            let lastRow;
+            let isFirstRow = true;
+            return new Promise<void>((resolve, reject) => {
+                fs.createReadStream(filePath)
+                    .pipe(csv())
+                    .on('data', (data) => {
+                        const keys = Object.keys(data);
+                        delete data[keys[keys.length - 1]]; // delete last column
+                        delete data[keys[keys.length - 2]]; // delete second last column
+                        results.push(data);
+                        lastRow = data;
+                        if (isFirstRow) {
+                            firstRow = {
+                                [keys[0]]: data[keys[0]],
+                                [keys[1]]: data[keys[1]]
+                            };
+                            isFirstRow = false;
+                        }
+                    })
+                    .on('end', () => {
+                        const csvWriter = createObjectCsvWriter({
+                            path: filePath,
+                            header: Object.keys(results[0]).map(key => ({ id: key, title: key })),
+                        });
+
+                        csvWriter
+                            .writeRecords(results)
+                            .then(() => {
+                                try {
+                                    // Compare the first two elements of the first row with the expected data
+                                    expect(firstRow).toEqual({
+                                        [Object.keys(expectedchosenData[0])[0]]: expectedchosenData[0][Object.keys(expectedchosenData[0])[0]],
+                                        [Object.keys(expectedchosenData[0])[1]]: expectedchosenData[0][Object.keys(expectedchosenData[0])[1]]
+                                    });
+                                    // Compare the last row with the expected data
+                                    expect(lastRow).toEqual(expectedDictionaryData[0]);
+                                    resolve();
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            })
+
+                    });
+                console.log('CSV data checked successfully');
+
+            });
+
+
+
         })
+
     })
-
-
-
-
 });
