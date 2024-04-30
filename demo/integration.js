@@ -231,11 +231,11 @@ function downloadDatasetMappingAsCSV(datasetMapping, datasetMappingHeader) {
 
 function downloadDatasetMappingAndDatasetAsCSV(datasetMapping, datasetMappingHeader) {
     // Prepare data in the format that Papa Parse expects
-    const data = Object.values(datasetMapping).map(row => {
-        const rowData = {};
-        datasetMappingHeader.forEach((header, index) => {
-            rowData[header] = row[index] || '';
-        });
+    const data = Object.values(datasetMapping)[0].map((_, index) => {
+        let rowData = {};
+        Object.values(datasetMapping).forEach((row, i) => {
+            rowData[datasetMappingHeader[i]] = row[index]
+        })
         return rowData;
     });
 
@@ -246,7 +246,7 @@ function downloadDatasetMappingAndDatasetAsCSV(datasetMapping, datasetMappingHea
     });
 
     const datasetCSV = Papa.unparse({
-        fields: datasetMappingHeader,
+        // fields: datasetMappingHeader,
         data: [datasetMapping["Variable Name"]],
     })
 
