@@ -132,7 +132,7 @@ export const getRelatedQuery = (id, customMustQueries = []) => {
     }
 };
 
-export function createMustQueryById(id) {
+export function getCollectionFilter(id) {
     return {
         "term": {
             "ancestors.ilx": {

@@ -1,5 +1,5 @@
 import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
-import {createMustQueryById, getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
+import {getCollectionFilter, getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
 
 const headersIndexes = {
     variableName: 0,
@@ -154,8 +154,8 @@ function getCollections() {
     ]
 }
 
-async function fetchElasticSearchData(queryString, customMustQueries = []) {
-    const query = getQueryByName(queryString, customMustQueries);
+async function fetchElasticSearchData(queryString, filters = []) {
+    const query = getQueryByName(queryString, filters);
     const data = await queryInterlex(query);
     return mapElasticSearchHitsToOptions(data.hits.hits || [], headersIndexes);
 }
@@ -163,12 +163,12 @@ async function fetchElasticSearchData(queryString, customMustQueries = []) {
 
 function fetchElasticSearchDataWithModifier(ancestorId) {
     return async (queryString) => {
-        return fetchElasticSearchData(queryString, [createMustQueryById(ancestorId)]);
+        return fetchElasticSearchData(queryString, [getCollectionFilter(ancestorId)]);
     };
 }
 
-async function getPairingSuggestions(id, customMustQueries = []) {
-    const query = getQueryById(id, customMustQueries);
+async function getPairingSuggestions(id, filters = []) {
+    const query = getQueryById(id, filters);
     const initialData = await queryInterlex(query);
 
     if (initialData.hits.hits.length === 1 && initialData.hits.hits[0]._source.superclasses?.length) {
@@ -176,7 +176,7 @@ async function getPairingSuggestions(id, customMustQueries = []) {
 
         if (superclassId) {
             // Fetch related suggestions based on the superclass ID
-            const relatedQuery = getRelatedQuery(superclassId, customMustQueries);
+            const relatedQuery = getRelatedQuery(superclassId, filters);
             const relatedData = await queryInterlex(relatedQuery);
             return mapElasticSearchHitsToOptions(relatedData.hits.hits || [], headersIndexes);
         }
@@ -187,7 +187,7 @@ async function getPairingSuggestions(id, customMustQueries = []) {
 
 function getPairingSuggestionsWithModifier(ancestorId) {
     return async (id) => {
-        return await getPairingSuggestions(id, [createMustQueryById(ancestorId)]);
+        return await getPairingSuggestions(id, [getCollectionFilter(ancestorId)]);
     };
 }
 
