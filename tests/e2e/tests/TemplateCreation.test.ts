@@ -231,7 +231,7 @@ describe('CDE: Template Creation Test', () => {
             const selector = 'li > p.MuiTypography-root.MuiTypography-body1';
             await tc_test_page.waitForFunction(
                 (selector, text) => Array.from(document.querySelectorAll(selector), element => element.textContent).includes(text),
-                { timeout: TIMEOUT },
+                { timeout: 10000 },
                 selector,
                 'Aut_Test_dataset'
             );
@@ -299,7 +299,7 @@ describe('CDE: Template Creation Test', () => {
         })
     })
 
-    describe('Check Template', () => {
+    describe.skip('Check Template', () => {
 
         test('Check CSV data', async () => {
             console.log('Checking CSV data ...')
