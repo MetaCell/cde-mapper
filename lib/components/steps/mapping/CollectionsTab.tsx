@@ -58,13 +58,13 @@ function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTa
                     <Stack spacing={6} sx={{ width: 'max-content' }}>
                         <Stack spacing={1}>
                             <Typography variant='h3' textAlign="center">
-                                Select default repository
+                                Select default collection
                             </Typography>
                             <Typography variant='body2' textAlign="center">
                                 This can be changed at any time during the process.
                             </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={1.5} className='repository-cards'>
+                        <Stack direction="row" spacing={1.5} className='collection-cards'>
                             {collectionKeys.map(key => (
                                 <StyledCard
                                     key={key}
@@ -82,14 +82,14 @@ function CollectionsTab({defaultCollection, setDefaultCollection, changeToNextTa
                                     disableRipple
                                     variant="contained"
                                     onClick={() => handleConfirm()}
-                                    className='repository__select-btn'
+                                    className='collection__select-btn'
                                 >
-                                    Select repository
+                                    Select collection
                                 </Button>
                             </Box>
                             <Box sx={{ mt: 1.5 }}>
                                 <Link href={`mailto:${emailTemplate.email}?subject=${encodeURIComponent(emailTemplate.title) || ''}&body=${encodeURIComponent(emailTemplate.description) || ''}`}>
-                                    Can’t find the repository you’re looking for? Contact us
+                                    Can’t find the collection you’re looking for? Contact us
                                 </Link>
                             </Box>
                         </Stack>
