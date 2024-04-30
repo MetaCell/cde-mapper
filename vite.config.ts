@@ -23,12 +23,4 @@ export default defineConfig(({ mode }) => ({
         emptyOutDir: true,
         copyPublicDir: false,
     },
-    server: {
-        proxy: {
-            '/api': {
-                target: 'https://scicrunch.org',
-                changeOrigin: true,
-            },
-        },
-    },
 }));

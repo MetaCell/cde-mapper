@@ -15,7 +15,7 @@ interface StyledCardProps {
     value: string;
     isSuggested?: boolean;
     selectedValue: string;
-    onChange: (value: string, selectedValue: string) => void;
+    onChange: (value: string) => void;
     onAfterChange: () => void;
 }
 
@@ -28,7 +28,7 @@ const StyledCard: React.FC<StyledCardProps> = ({value, isSuggested, selectedValu
     }
 
     const handleRadioChange = () => {
-        onChange(value, selectedValue);
+        onChange(value);
     }
 
     return (

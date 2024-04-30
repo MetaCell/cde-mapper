@@ -1,5 +1,5 @@
 import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
-import {getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
+import {getCollectionFilter, getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
 
 const headersIndexes = {
     variableName: 0,
@@ -144,20 +144,31 @@ function getCollections() {
             name: "Interlex",
             fetch: fetchElasticSearchData,
             getPairingSuggestions: getPairingSuggestions,
+        },
+        {
+            id: 'precise',
+            name: "Precise",
+            fetch: fetchElasticSearchDataWithModifier("ilx_0793866"),
+            getPairingSuggestions: getPairingSuggestionsWithModifier("ilx_0793866"),
         }
     ]
 }
 
-
-async function fetchElasticSearchData(queryString) {
-    const query = getQueryByName(queryString)
+async function fetchElasticSearchData(queryString, filters = []) {
+    const query = getQueryByName(queryString, filters);
     const data = await queryInterlex(query);
-    return mapElasticSearchHitsToOptions(data.hits.hits || [], headersIndexes)
+    return mapElasticSearchHitsToOptions(data.hits.hits || [], headersIndexes);
 }
 
 
-async function getPairingSuggestions(id) {
-    const query = getQueryById(id)
+function fetchElasticSearchDataWithModifier(ancestorId) {
+    return async (queryString) => {
+        return fetchElasticSearchData(queryString, [getCollectionFilter(ancestorId)]);
+    };
+}
+
+async function getPairingSuggestions(id, filters = []) {
+    const query = getQueryById(id, filters);
     const initialData = await queryInterlex(query);
 
     if (initialData.hits.hits.length === 1 && initialData.hits.hits[0]._source.superclasses?.length) {
@@ -165,19 +176,25 @@ async function getPairingSuggestions(id) {
 
         if (superclassId) {
             // Fetch related suggestions based on the superclass ID
-            const relatedQuery = getRelatedQuery(superclassId);
+            const relatedQuery = getRelatedQuery(superclassId, filters);
             const relatedData = await queryInterlex(relatedQuery);
             return mapElasticSearchHitsToOptions(relatedData.hits.hits || [], headersIndexes);
         }
     }
 
-
-    return []
+    return [];
 }
+
+function getPairingSuggestionsWithModifier(ancestorId) {
+    return async (id) => {
+        return await getPairingSuggestions(id, [getCollectionFilter(ancestorId)]);
+    };
+}
+
 
 async function queryInterlex(query) {
     const apiKey = import.meta.env.VITE_API_KEY;
-    const baseUrl = '/api/1/elastic/Interlex_pr/_search';
+    const baseUrl = 'https://api.scicrunch.io/elastic/v1/Interlex_pr/_search';
 
     const queryParameters = new URLSearchParams({
         key: apiKey,
