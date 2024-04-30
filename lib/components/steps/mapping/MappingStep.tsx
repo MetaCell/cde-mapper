@@ -22,9 +22,9 @@ function a11yProps(index: number) {
 
 const tabsArr = [
     {
-        label: 'Select default repository',
-        heading: 'Select default repository',
-        description: 'Choose a default repository that best fit the dataset you have selected.'
+        label: 'Select default collection',
+        heading: 'Select default collection',
+        description: 'Choose a default collection that best fit the dataset you have selected.'
     },
     {
         label: 'Suggestions',

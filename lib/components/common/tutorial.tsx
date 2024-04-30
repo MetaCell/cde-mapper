@@ -73,18 +73,18 @@ export const tutorial: TutorialType = {
     ],
     [TourSteps.Collection]: [
         {
-            content: 'Select a repository that you will commonly use for your mappings. This can be change at any time during the process.',
-            title: 'Select default repository',
-            target: '.repository-cards',
+            content: 'Select a collection that you will commonly use for your mappings. This can be change at any time during the process.',
+            title: 'Select default collection',
+            target: '.collection-cards',
             disableBeacon: true,
             spotlightClicks: true,
             hideFooter: true,
             placement: 'top'
         },
         {
-            title: 'Click to confirm your repository selection',
+            title: 'Click to confirm your collection selection',
             content: 'Clicking this button will bring you to the next step of the process.',
-            target: '.repository__select-btn',
+            target: '.collection__select-btn',
             spotlightClicks: true,
             placement: 'top',
         }
