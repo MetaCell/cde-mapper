@@ -24,7 +24,6 @@ const styles = {
         marginLeft: 'auto',
         transition: 'all ease-in-out .3s',
         background: baseWhite,
-        overflowY: 'auto',
         boxShadow: '0rem 0.5rem 0.5rem -0.25rem rgba(16, 24, 40, 0.03), 0rem 1.25rem 1.5rem -0.25rem rgba(16, 24, 40, 0.08)',
     },
 
@@ -53,7 +52,7 @@ const styles = {
         flexDirection: 'column',
         gap: '1rem',
         height: 'calc(100% - 10.25rem)',
-        overflow: 'auto',
+        overflowY: 'auto',
         p: '1rem 1.5rem',
 
         '& .MuiButton-root': {
@@ -113,7 +112,7 @@ const Info = (props: { handleClose: () => void }) => {
     const {handleClose} = props
 
     const InfoContent = () => (
-        <Box>
+        <Box height={1}>
             <Box sx={styles.header}>
                 <IconButton onClick={handleClose} sx={{p: 1, borderRadius: 2, ml: 'auto'}} className="sidebar__close-button">
                     <CloseIcon/>

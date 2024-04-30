@@ -46,7 +46,7 @@ const CdeModal: FC = () => {
     
     return (
         <>
-            <Modal open={isModalOpen} onClose={onClose} maxWidth="xl" isInfoOpen={isInfoOpen}>
+            <Modal open={isModalOpen} onClose={onClose} maxWidth="xl">
                 <Header onClose={onClose} isInfoOpen={isInfoOpen} setIsInfoOpen={setIsInfoOpen} step={step} setIsTourOpen={setIsTourOpen} onAfterSidebarToggle={updateHomeTourStep}/>
                 {loadingMessage ? <CommonCircularProgress label='Processing data...'/> : renderStepComponent()}
             </Modal>

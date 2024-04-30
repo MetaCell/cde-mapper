@@ -106,6 +106,7 @@ interface TourProps {
     steps: Step[];
     stepIndex: number;
     setStepIndex: (stepIndex: number) => void;
+    dialogRef?: React.RefObject<HTMLDivElement> | null;
 }
 
 const Tour = (props: TourProps) => {
@@ -225,7 +226,7 @@ const Tour = (props: TourProps) => {
                     floater: {
                         filter: 'none',
                         willChange: 'unset !important'
-                    }
+                    },
                 }
             }}
         />
