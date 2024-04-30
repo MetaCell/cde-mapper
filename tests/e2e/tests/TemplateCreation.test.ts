@@ -115,9 +115,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Title ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[1].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[1].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[1].type('Automated Testing Dataset');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Title added successfully');
         })
 
@@ -125,9 +129,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Unit of Measure ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[2].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[2].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[2].type('percentage');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Unit of Measure added successfully');
 
         })
@@ -136,9 +144,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Description ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[3].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[3].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[3].type('description');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Description added successfully');
         })
 
@@ -146,9 +158,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding DataType ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[4].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[4].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[4].type('int');
+            await tc_test_page.waitForTimeout(1000);
             console.log('DataType added successfully');
         })
 
@@ -156,9 +172,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Multiple Values ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[5].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[5].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[5].type('multiple values');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Multiple Values added successfully');
 
         })
@@ -167,9 +187,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Permitted values ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[6].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[6].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[6].type('0-100');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Permitted values added successfully');
         })
 
@@ -177,9 +201,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Minimum value ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[7].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[7].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[7].type('0');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Minimum value added successfully');
 
         })
@@ -188,9 +216,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Maximum value ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[8].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[8].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[8].type('100');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Maximum value added successfully');
         })
 
@@ -198,9 +230,13 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Comment ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[9].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[9].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[9].type('comment');
+            await tc_test_page.waitForTimeout(1000);
             console.log('Comment added successfully');
         })
 
@@ -208,9 +244,15 @@ describe('CDE: Template Creation Test', () => {
             console.log('Adding Abbreviation ...')
             const dic_field_selector = '#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth';
             await tc_test_page.waitForSelector(dic_field_selector, { hidden: false, timeout: TIMEOUT });
-            const elements = await tc_test_page.$$(dic_field_selector);
+            let elements = await tc_test_page.$$(dic_field_selector);
             await elements[0].click();
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[0].click();
+            elements = await tc_test_page.$$(dic_field_selector);
             await elements[0].type('Aut_Test_dataset');
+            await tc_test_page.waitForTimeout(3000);
+            elements = await tc_test_page.$$(dic_field_selector);
+            await elements[1].click();
             console.log('Abbreviation added successfully');
         })
 
@@ -227,7 +269,8 @@ describe('CDE: Template Creation Test', () => {
             await tc_test_page.waitForSelector('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth');
             await tc_test_page.type('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', 'Aut_Test_dataset');
-
+            await tc_test_page.waitForTimeout(3000);
+            await tc_test_page.waitForSelector('li > p.MuiTypography-root.MuiTypography-body1', { timeout: TIMEOUT, hidden: false });
             const selector = 'li > p.MuiTypography-root.MuiTypography-body1';
             await tc_test_page.waitForFunction(
                 (selector, text) => Array.from(document.querySelectorAll(selector), element => element.textContent).includes(text),
