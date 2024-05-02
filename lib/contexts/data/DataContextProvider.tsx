@@ -46,7 +46,7 @@ export const DataContextProvider = ({
             ...defaultHeaderIndexes,
             ...providedHeaderIndexes
         };
-    }, [providedHeaderIndexes, rawDatasetMapping]);
+    }, [providedHeaderIndexes]);
     
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
