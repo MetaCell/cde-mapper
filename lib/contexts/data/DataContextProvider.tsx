@@ -31,7 +31,7 @@ export const DataContextProvider = ({
                                         datasetSample,
                                         datasetMapping: rawDatasetMapping,
                                         additionalDatasetMappings: rawAdditionalDatasetMappings = [],
-                                        headerIndexes: providedHeaderIndexes = defaultHeaderIndexes,
+                                        headerIndexes: providedHeaderIndexes,
                                         collections: rawCollections,
                                         config,
                                         name,
@@ -41,16 +41,12 @@ export const DataContextProvider = ({
 
     // Defines the mapping of the mandatory columns in the dataset mapping file
     const headerIndexes = useMemo(() => {
-        // If the dataset mapping is not provided or has no data we use the default header indexes
-        if (!rawDatasetMapping || rawDatasetMapping.length === 0) {
-            return defaultHeaderIndexes;
-        }
         // Merge providedHeaderIndexes with defaultHeaderIndexes if rawDatasetMapping is valid
         return {
             ...defaultHeaderIndexes,
             ...providedHeaderIndexes
         };
-    }, [providedHeaderIndexes, rawDatasetMapping]);
+    }, [providedHeaderIndexes]);
     
     // validate dataset sample
     const isDatasetInvalid = useMemo(() => {
