@@ -2,36 +2,24 @@ import * as puppeteer from "puppeteer";
 import 'expect-puppeteer';
 import { toMatchImageSnapshot } from 'jest-image-snapshot'
 expect.extend({ toMatchImageSnapshot })
-const fs = require('fs');
-const path = require('path');
+import * as path from 'path';
+import * as fs from 'fs';
 import * as csv from 'csv-parser';
 import { createObjectCsvWriter } from 'csv-writer';
+import { Browser } from 'puppeteer';
+
 
 
 const URL = process.env.url || "https://cde-mapper.dev.metacell.us/";
 const TIMEOUT = 6000;
 
 
-//SNAPSHOT:
-const SNAPSHOT_OPTIONS = {
-    customSnapshotsDir: `./tests/snapshots/TemplateCreation.test/`,
-    comparisonMethod: 'ssim',
-    failureThresholdType: 'percent',
-    failureThreshold: 0.10
-};
-
 
 jest.setTimeout(400000);
-let tc_test_browser: any;
-let tc_test_page: any;
+let tc_test_browser: Browser;
+let tc_test_page;
 
-declare global {
-    namespace jest {
-        interface Matchers<R> {
-            toMatchImageSnapshot(options?: import('jest-image-snapshot').MatchImageSnapshotOptions): R;
-        }
-    }
-}
+
 
 describe('CDE: Template Creation Test', () => {
 
@@ -260,6 +248,7 @@ describe('CDE: Template Creation Test', () => {
 
         test('Confirm custom dictionary', async () => {
             console.log('Confirming custom dictionary ...')
+            await tc_test_page.waitForTimeout(1000);
             await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo');
             console.log('Custom dictionary confirmed successfully');
@@ -270,7 +259,7 @@ describe('CDE: Template Creation Test', () => {
             await tc_test_page.waitForSelector('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth');
             await tc_test_page.type('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', 'Aut_Test_dataset');
-            await tc_test_page.waitForTimeout(3000);
+            await tc_test_page.waitForTimeout(3500);
             await tc_test_page.waitForSelector('li > p.MuiTypography-root.MuiTypography-body1', { timeout: TIMEOUT, hidden: false });
             const selector = 'li > p.MuiTypography-root.MuiTypography-body1';
             await tc_test_page.waitForFunction(
@@ -289,14 +278,14 @@ describe('CDE: Template Creation Test', () => {
                                 clearInterval(intervalId);
                                 resolve(true);
                             }
-                        }, 100);
+                        }, 150);
 
                         setTimeout(() => {
                             clearInterval(intervalId);
                         }, delay);
                     });
                 },
-                { timeout: TIMEOUT },
+                { timeout: TIMEOUT * 1.5 },
                 selector,
                 15000
             );

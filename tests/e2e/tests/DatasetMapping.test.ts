@@ -2,35 +2,21 @@ import * as puppeteer from "puppeteer";
 import 'expect-puppeteer';
 import { toMatchImageSnapshot } from 'jest-image-snapshot'
 expect.extend({ toMatchImageSnapshot })
-const fs = require('fs');
-const path = require('path');
+import * as path from 'path';
+import * as fs from 'fs';
 import * as csv from 'csv-parser';
+import { Browser } from 'puppeteer';
+
 
 
 const URL = process.env.url || "https://cde-mapper.dev.metacell.us/";
 const TIMEOUT = 6000;
 
 
-//SNAPSHOT:
-const SNAPSHOT_OPTIONS = {
-    customSnapshotsDir: `./tests/snapshots/DatasetMapping.test/`,
-    comparisonMethod: 'ssim',
-    failureThresholdType: 'percent',
-    failureThreshold: 0.10
-};
-
-
 jest.setTimeout(400000);
-let dm_test_browser: any;
-let dm_test_page: any;
+let dm_test_browser: Browser;
+let dm_test_page;
 
-declare global {
-    namespace jest {
-        interface Matchers<R> {
-            toMatchImageSnapshot(options?: import('jest-image-snapshot').MatchImageSnapshotOptions): R;
-        }
-    }
-}
 
 describe('CDE: Dataset Mapping Test', () => {
 
