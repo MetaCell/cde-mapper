@@ -1,0 +1,8 @@
+Variable Name (UI),Abbreviation,Title,Unit of Measure,Description,DataType,Multiple Values,Permitted Values,Minimum Value,Maximum Value,Comments,InterLex ID,CDE Level
+Subject,GUID,Unique identification of  each mouse ID,,Unique identification of  each mouse ID,Alphanumeric,FALSE,,sub1,sub9,,CDE:0369380,Core
+Age,Age,Age of the animal at the time of procedure,minutes; hours; days; weeks; months; years,"Age of the animal at the time of procedure in minutes, hours, days, weeks, months, or years.",Numeric,FALSE,,,,,CDE:0369385,Core
+Species,StudySpeciesTyp,Species of the mouse,,Species of the mouse,Alphanumeric,FALSE,,,,,CDE:0369381,Core
+Strain,SmallSpeciesStrainTyp,Strain of the mouse,,Strain of the mouse,Alphanumeric,FALSE,,,,,CDE:0369382,Core
+Sex,Sex type,Sex of the mouse,,Sex of the mouse,Alphanumeric,FALSE,Female; Male,,,,CDE:0369384,Meta
+Group,InjuryGroupAssignTyp,Injury group assignment type,,Type of injury group assignment for a study,Alphanumeric,FALSE,"Anesthesia controls;Injured;Naive;Sham Injured;Other, specify",,,,CDE:0369386,Core
+StudyInjModelTyp,StudyInjModelTyp,Traumatic Brain Injury (TBI) model type(s),,"Type of Traumatic Brain Injury (TBI) model(s) used to model the mechanism and outcomes of TBI in animal studies, as a part of the Study Metadata",Alphanumeric,TRUE,CCI; FPI; Blast; WD,,,,CDE:0369373,Meta
