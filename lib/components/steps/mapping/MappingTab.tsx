@@ -224,7 +224,9 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
                     aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
                 }
             }
-            updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
+            const mappedIds = Object.keys(selectedOptionsMap).map(item => item.toLowerCase().replace(':', '_'));
+            const filteredSuggestions = aggregatedPairingSuggestions.filter(suggestion => !mappedIds.includes(suggestion.id));
+            updateAvailableSuggestions(variableName, filteredSuggestions);
         } else if (option && !newIsSelectedState) {
             updateAvailableSuggestions(variableName, []);
             updateDatasetMappingRow(variableName, []);

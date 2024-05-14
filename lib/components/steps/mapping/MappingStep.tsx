@@ -22,15 +22,15 @@ function a11yProps(index: number) {
 
 const tabsArr = [
     {
-        label: 'Select default collection',
-        heading: 'Select default collection',
-        description: 'Choose a default collection that best fit the dataset you have selected.'
-    },
-    {
         label: 'Suggestions',
         heading: 'Accept or decline suggestions',
         description: 'suggestions are based on what was previously mapped before.',
         className: 'suggestions-tab'
+    },
+    {
+        label: 'Select default collection',
+        heading: 'Select default collection',
+        description: 'Choose a default collection that best fit the dataset you have selected.'
     },
     {
         label: 'Map the rest of the dataset',
@@ -40,8 +40,8 @@ const tabsArr = [
 ];
 
 enum TabsEnum {
-    Collection = 0,
-    Suggestions = 1,
+    Suggestions = 0,
+    Collection = 1,
     Mapping = 2,
 }
 
