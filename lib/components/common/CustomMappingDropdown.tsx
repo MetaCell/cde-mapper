@@ -17,7 +17,7 @@ import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHe
 import {DataContext} from "../../contexts/data/DataContext.ts";
 import NoResultField from "./NoResultField.tsx";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
-import {getAbbreviationFromOption, getTitleFromOption} from "../../helpers/optionsHelpers.ts";
+import {getTitleFromOption} from "../../helpers/optionsHelpers.ts";
 import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
@@ -332,7 +332,7 @@ export default function CustomEntitiesDropdown({
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
             if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
-                customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
+                customDictionaryFieldOption.label = getTitleFromOption(customDictionaryFieldOption, headerIndexes)
                 onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
                 setAnchorEl(null);
             }else{
