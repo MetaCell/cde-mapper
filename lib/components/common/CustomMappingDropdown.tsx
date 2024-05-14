@@ -17,7 +17,7 @@ import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHe
 import {DataContext} from "../../contexts/data/DataContext.ts";
 import NoResultField from "./NoResultField.tsx";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
-import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
+import {getTitleFromOption} from "../../helpers/optionsHelpers.ts";
 import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
@@ -173,6 +173,7 @@ interface CustomEntitiesDropdownProps {
     options: {
         errors?: string;
         searchPlaceholder?: string;
+        initialSearchInput?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
         onSelection: (option: Option, newIsSelectedState: boolean) => void;
@@ -201,6 +202,7 @@ export default function CustomEntitiesDropdown({
                                                    options: {
                                                        errors,
                                                        searchPlaceholder,
+                                                       initialSearchInput,
                                                        noResultReason,
                                                        onSearch,
                                                        onSelection,
@@ -225,7 +227,7 @@ export default function CustomEntitiesDropdown({
     const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
     const [searchResults, setSearchResults] = useState<Option[]>([]);
-    const [searchInput, setSearchInput] = useState('');
+    const [searchInput, setSearchInput] = useState(initialSearchInput || '');
     const [isLoading, setIsLoading] = useState(false);
 
     const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
@@ -313,6 +315,7 @@ export default function CustomEntitiesDropdown({
             setSelectedOptions(updatedSelectedOptions);
         } else {
             setSelectedOptions([...selectedOptions, option]);
+            setAnchorEl(null);
         }
         onSelection(option, !isOptionAlreadySelected)
     };
@@ -329,8 +332,9 @@ export default function CustomEntitiesDropdown({
     const onCustomDictionaryFieldClose = (isConfirm: boolean) => {
         if (isConfirm) {
             if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
-                customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
+                customDictionaryFieldOption.label = getTitleFromOption(customDictionaryFieldOption, headerIndexes)
                 onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
+                setAnchorEl(null);
             }else{
                 setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
             }
@@ -341,8 +345,8 @@ export default function CustomEntitiesDropdown({
         setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
     };
 
-    const getPreciseAbbreviation = (option: Option) => {
-        const selectedOptionTitle = getAbbreviationFromOption(option, headerIndexes)
+    const getSelectedOptionLabel = (option: Option) => {
+        const selectedOptionTitle = getTitleFromOption(option, headerIndexes)
         return selectedOptionTitle.length > 100 ? selectedOptionTitle.slice(0, 100) + "..." : selectedOptionTitle;
     };
 
@@ -545,6 +549,7 @@ export default function CustomEntitiesDropdown({
                             }
                         }}>
                             <TextField
+                                autoFocus
                                 fullWidth
                                 type="text"
                                 value={searchInput}
@@ -688,7 +693,7 @@ export default function CustomEntitiesDropdown({
                                                         className={'selected'}
                                                     >
                                                         <Typography sx={{width: 1, height: 1, padding: "0.625rem"}}>
-                                                            {getPreciseAbbreviation(option)}
+                                                            {getSelectedOptionLabel(option)}
                                                         </Typography>
                                                         <CheckIcon color="#070808"/>
                                                     </li>

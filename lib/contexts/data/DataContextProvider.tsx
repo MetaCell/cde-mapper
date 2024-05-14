@@ -108,8 +108,8 @@ export const DataContextProvider = ({
 
 
     const customDictionaryFields = useMemo(() => {
-        return getCustomDictionaryFields(additionalDatasetMappings, datasetMappingHeader, headerIndexes)
-    }, [additionalDatasetMappings, datasetMappingHeader, headerIndexes]);
+        return getCustomDictionaryFields(initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerIndexes)
+    }, [initialDatasetMapping, additionalDatasetMappings, datasetMappingHeader, headerIndexes]);
 
     const collectionsDictionary = useMemo(() => {
         return rawCollections.reduce((acc, collection, index) => {

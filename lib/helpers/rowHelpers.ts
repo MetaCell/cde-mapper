@@ -8,6 +8,10 @@ export const getPreciseAbbreviation = (data: string[], headerIndexes: HeaderInde
     return data[headerIndexes.preciseAbbreviation];
 };
 
+export const getTitle = (data: string[], headerIndexes: HeaderIndexes): string => {
+    return data[headerIndexes.title];
+};
+
 export const getType = (row: string[], headerMapping: HeaderIndexes): EntityType => {
     const isMapped = isRowMapped(row, headerMapping)
 
