@@ -358,6 +358,7 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
                                             placeholder={"Choose CDE or Data Dictionary fields... "}
                                             options={{
                                                 searchPlaceholder: searchText,
+                                                initialSearchInput: variableName,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
                                                 onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),

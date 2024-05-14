@@ -173,6 +173,7 @@ interface CustomEntitiesDropdownProps {
     options: {
         errors?: string;
         searchPlaceholder?: string;
+        initialSearchInput?: string;
         noResultReason?: string;
         onSearch: (searchValue: string) => Promise<Option[]>;
         onSelection: (option: Option, newIsSelectedState: boolean) => void;
@@ -201,6 +202,7 @@ export default function CustomEntitiesDropdown({
                                                    options: {
                                                        errors,
                                                        searchPlaceholder,
+                                                       initialSearchInput,
                                                        noResultReason,
                                                        onSearch,
                                                        onSelection,
@@ -225,7 +227,7 @@ export default function CustomEntitiesDropdown({
     const [hoveredOption, setHoveredOption] = useState<Option | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ? [value] : []);
     const [searchResults, setSearchResults] = useState<Option[]>([]);
-    const [searchInput, setSearchInput] = useState('');
+    const [searchInput, setSearchInput] = useState(initialSearchInput || '');
     const [isLoading, setIsLoading] = useState(false);
 
     const {datasetMappingHeader, headerIndexes} = useContext(DataContext);
@@ -545,6 +547,7 @@ export default function CustomEntitiesDropdown({
                             }
                         }}>
                             <TextField
+                                autoFocus
                                 fullWidth
                                 type="text"
                                 value={searchInput}
