@@ -1,4 +1,5 @@
 import {init, mapElasticSearchHitsToOptions} from './cde-mapper.js';
+// import {init, mapElasticSearchHitsToOptions} from '../lib/main.tsx';
 import {getCollectionFilter, getQueryById, getQueryByName, getRelatedQuery} from "./query.js";
 
 const headersIndexes = {
@@ -140,16 +141,16 @@ export function createAndInit() {
 function getCollections() {
     return [
         {
+            id: 'precise',
+            name: "PRECISE-TBI",
+            fetch: fetchElasticSearchDataWithModifier("ilx_0793866"),
+            getPairingSuggestions: getPairingSuggestionsWithModifier("ilx_0793866"),
+        },
+        {
             id: 'global',
             name: "Interlex",
             fetch: fetchElasticSearchData,
             getPairingSuggestions: getPairingSuggestions,
-        },
-        {
-            id: 'precise',
-            name: "Precise",
-            fetch: fetchElasticSearchDataWithModifier("ilx_0793866"),
-            getPairingSuggestions: getPairingSuggestionsWithModifier("ilx_0793866"),
         }
     ]
 }
