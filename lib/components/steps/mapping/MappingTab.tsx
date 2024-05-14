@@ -308,7 +308,8 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
         handleTourNextStepClick();
     }
 
-    const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+    const selectedCollections = selectableCollections.filter(collection => collection.selected)
+    const searchText = "Search in " + (selectedCollections.length === 1 ? `${selectedCollections[0].name} collection` : 'multiple collections');
 
     return (
         <Box className='mapping-step'>
