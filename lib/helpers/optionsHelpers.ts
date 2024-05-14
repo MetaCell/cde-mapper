@@ -21,6 +21,8 @@ const findDetailValue = (details: OptionDetail[], title: string): string => {
 };
 
 export const getAbbreviationFromOption = (option: Option, headerIndexes: HeaderIndexes): string => option.content[headerIndexes.preciseAbbreviation].value;
+export const getTitleFromOption = (option: Option, headerIndexes: HeaderIndexes): string => option.content[headerIndexes.title].value;
+
 export const getDescriptionFromOption = (option: Option): string => findDetailValue(option.content, DESCRIPTION);
 
 export const isCustomDictionaryField = (option: Option): boolean => option.group === CUSTOM_DICTIONARY_FIELD_OPTIONS_GROUP

@@ -17,7 +17,7 @@ import {CreateCustomDictionaryFieldHeader} from "./CreateCustomDictionaryFieldHe
 import {DataContext} from "../../contexts/data/DataContext.ts";
 import NoResultField from "./NoResultField.tsx";
 import {useUIContext} from "../../contexts/ui/UIContext.ts";
-import {getAbbreviationFromOption} from "../../helpers/optionsHelpers.ts";
+import {getAbbreviationFromOption, getTitleFromOption} from "../../helpers/optionsHelpers.ts";
 import { isCustomDictionaryValid } from '../../services/validatorsService.ts';
 
 const {
@@ -341,8 +341,8 @@ export default function CustomEntitiesDropdown({
         setCustomDictionaryFieldOption(getCustomDictionaryFieldOption())
     };
 
-    const getPreciseAbbreviation = (option: Option) => {
-        const selectedOptionTitle = getAbbreviationFromOption(option, headerIndexes)
+    const getSelectedOptionLabel = (option: Option) => {
+        const selectedOptionTitle = getTitleFromOption(option, headerIndexes)
         return selectedOptionTitle.length > 100 ? selectedOptionTitle.slice(0, 100) + "..." : selectedOptionTitle;
     };
 
@@ -688,7 +688,7 @@ export default function CustomEntitiesDropdown({
                                                         className={'selected'}
                                                     >
                                                         <Typography sx={{width: 1, height: 1, padding: "0.625rem"}}>
-                                                            {getPreciseAbbreviation(option)}
+                                                            {getSelectedOptionLabel(option)}
                                                         </Typography>
                                                         <CheckIcon color="#070808"/>
                                                     </li>

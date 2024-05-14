@@ -8,7 +8,7 @@ import {
     UNIT_OF_MEASURE, UNIT_OF_MEASURE_CDE_KEY, VARIABLE_NAME_UI
 } from "../settings.ts";
 import {HeaderIndexes, Option} from "../models.ts";
-import {getId, getPreciseAbbreviation} from "./rowHelpers.ts";
+import {getId, getTitle} from "./rowHelpers.ts";
 import {getOptionGroupFromRow} from "./optionsHelpers.ts";
 
 
@@ -43,8 +43,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: Header
     return hits.filter(hit => hit._source.ilx).map(hit => {
         const source = hit._source;
         const id = source.ilx;
-        const preciseAbbrev = source.synonyms.find(s => s.type === 'abbrev')?.literal ||
-            (source.label ? source.label.substring(0, 5) + "_" + id : id);
+        const preciseAbbrev = source.synonyms.find(s => s.type === 'abbrev')?.literal || ''
 
         // Pre-fill the details array with mandatory fields at specified indexes
         const maxIndex = Math.max(...Object.values(headerIndexes));
@@ -85,7 +84,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: Header
 
         return {
             id,
-            label: preciseAbbrev,
+            label: source.label || '',
             group: CDE_OPTIONS_GROUP,
             content: details,
         };
@@ -95,7 +94,7 @@ export function mapElasticSearchHitsToOptions(hits: Hit[], headerIndexes: Header
 
 export const mapRowToOption = (row: string[], header: string[], headerIndexes: HeaderIndexes): Option => {
     const id = getId(row, headerIndexes)
-    const label = getPreciseAbbreviation(row, headerIndexes) || id
+    const label = getTitle(row, headerIndexes) || id
 
     const content = row.map((value: string, i: number) => ({
         title: header[i],
