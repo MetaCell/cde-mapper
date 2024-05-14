@@ -1,19 +1,19 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { Box, Typography, Button, Stack, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import CustomEntitiesDropdown from '../common/CustomMappingDropdown.tsx';
-import ModalHeightWrapper from '../common/ModalHeightWrapper.tsx';
-import { SelectableCollection, Option } from '../../models.ts';
-import { useDataContext } from '../../contexts/data/DataContext.ts';
-import { useServicesContext } from '../../contexts/services/ServicesContext.ts';
-import { getCustomDictionaryFieldSelectableCollection } from '../../services/customDictionaryFieldService.ts';
-import { CUSTOM_DICTIONARY_FIELD_COLLECTION_ID, VARIABLE_NAME_UI } from '../../settings.ts';
-import { usePairingSuggestions } from '../../hooks/usePairingSuggestions.ts';
-import { PairingTooltip } from './mapping/PairingTooltip.tsx';
-import { PairingSuggestion } from './mapping/PairingSuggestion.tsx';
-import { getType } from '../../helpers/rowHelpers.ts';
-import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../helpers/optionsHelpers.ts';
-import { PlusIcon, PairIcon } from '../../icons/index.tsx';
-import { vars } from '../../theme/variables.ts';
+import CustomEntitiesDropdown from '../../common/CustomMappingDropdown.tsx';
+import ModalHeightWrapper from '../../common/ModalHeightWrapper.tsx';
+import { SelectableCollection, Option } from '../../../models.ts';
+import { useDataContext } from '../../../contexts/data/DataContext.ts';
+import { useServicesContext } from '../../../contexts/services/ServicesContext.ts';
+import { getCustomDictionaryFieldSelectableCollection } from '../../../services/customDictionaryFieldService.ts';
+import { CUSTOM_DICTIONARY_FIELD_COLLECTION_ID, VARIABLE_NAME_UI } from '../../../settings.ts';
+import { usePairingSuggestions } from '../../../hooks/usePairingSuggestions.ts';
+import { PairingTooltip } from '../mapping/PairingTooltip.tsx';
+import { PairingSuggestion } from './PairingSuggestion.tsx';
+import { getType } from '../../../helpers/rowHelpers.ts';
+import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../../helpers/optionsHelpers.ts';
+import { PlusIcon, PairIcon } from '../../../icons/index.tsx';
+import { vars } from '../../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
 function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
@@ -25,7 +25,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     }]);
 
     const { headerIndexes, collections, datasetMapping } = useDataContext();
-    const { updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
+    const { getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
 
@@ -130,10 +130,19 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         }
     };
 
-    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null, rowIndex: number) => {
         markSuggestionAsProcessed(variableName, suggestion.id);
         if (selectedColumn !== null) {
-            updateDatasetMappingRow(selectedColumn, suggestion.content);
+            setVisibleRows(prevState => {
+                const newArray = [...prevState];
+                newArray[rowIndex + 1] = suggestion;
+                return newArray;
+            });
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [suggestion.id]: suggestion,
+            }));
+            updateDatasetMappingRowTemplate(selectedColumn, suggestion.content, rowIndex + 1)
         }
     };
 
@@ -232,7 +241,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                             return (
                                                                 <PairingSuggestion
                                                                     key={suggestion.id}
-                                                                    onChange={(selectedColumn) => handlePairingSuggestion("", suggestion, selectedColumn)}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn, rowIndex)}
                                                                     headerOptions={headerOptions}
                                                                     label={abbreviation}
                                                                     description={description}
