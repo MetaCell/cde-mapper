@@ -315,6 +315,7 @@ export default function CustomEntitiesDropdown({
             setSelectedOptions(updatedSelectedOptions);
         } else {
             setSelectedOptions([...selectedOptions, option]);
+            setAnchorEl(null);
         }
         onSelection(option, !isOptionAlreadySelected)
     };
@@ -333,6 +334,7 @@ export default function CustomEntitiesDropdown({
             if(isCustomDictionaryValid(customDictionaryFieldOption, headerIndexes)){
                 customDictionaryFieldOption.label = getAbbreviationFromOption(customDictionaryFieldOption, headerIndexes)
                 onCustomDictionaryFieldCreation(customDictionaryFieldOption, true);
+                setAnchorEl(null);
             }else{
                 setErrorMessage("Missing at least one mandatory property (title or abbreviation) ")
             }
