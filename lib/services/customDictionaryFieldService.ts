@@ -30,6 +30,7 @@ export function searchPreviousCustomDictionaryFields(queryString: string, custom
 
 
 export const getCustomDictionaryFields = (
+    initialDatasetMapping: DatasetMapping,
     additionalDatasetMappings: DatasetMapping[],
     datasetMappingHeader: string[],
     headerIndexes: HeaderIndexes
@@ -37,8 +38,8 @@ export const getCustomDictionaryFields = (
 
     const customDictionaryFields: Option[] = []
 
-
-    additionalDatasetMappings.forEach((datasetMapping: DatasetMapping) => {
+    const datasetMappings = [initialDatasetMapping, ...additionalDatasetMappings]
+    datasetMappings.forEach((datasetMapping: DatasetMapping) => {
         Object.values(datasetMapping).forEach((row: string[]) => {
             if (isRowCustomDictionaryField(row, headerIndexes)) {
                 customDictionaryFields.push(mapRowToOption(row, datasetMappingHeader, headerIndexes))
