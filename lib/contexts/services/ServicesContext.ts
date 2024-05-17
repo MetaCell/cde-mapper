@@ -12,11 +12,10 @@ export const ServicesContext = createContext<{
     getSuggestionsCount: () => number;
     getColumnsWithSuggestions: () => string[];
     getSuggestionsForColumn: (column: string) => string[][];
-    updateDatasetMappingRow: (key: string, newData: OptionDetail[]) => void;
+    updateDatasetMappingRow: (key: string, newData: OptionDetail[], rowIndex?: number) => void;
     isColumnMapped: (column: string) => boolean;
     searchCustomDictionaryFields: (querystring: string, createdCustomDictionaryFields: { [id: string]: Option }) => Option[]
     onClose: () => void;
-    updateDatasetMappingRowTemplate: (key: string, newData: OptionDetail[], rowIndex: number) => void;
 }>({
     getTotalRowsCount: () => 0,
     getMappedRowsCount: () => 0,
@@ -29,8 +28,7 @@ export const ServicesContext = createContext<{
     isColumnMapped: () => false,
     searchCustomDictionaryFields: () => [],
     onClose: () => {
-    },
-    updateDatasetMappingRowTemplate: () => {}
+    }
 });
 
 
