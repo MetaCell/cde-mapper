@@ -11,7 +11,6 @@ import { usePairingSuggestions } from '../../../hooks/usePairingSuggestions.ts';
 import { PairingTooltip } from '../mapping/PairingTooltip.tsx';
 import { PairingSuggestion } from './PairingSuggestion.tsx';
 import { getType } from '../../../helpers/rowHelpers.ts';
-import { useHandleSelection } from '../../../helpers/utils.ts';
 import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../../helpers/optionsHelpers.ts';
 import { PlusIcon, PairIcon } from '../../../icons/index.tsx';
 import { vars } from '../../../theme/variables.ts';
@@ -26,17 +25,16 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     }]);
 
     const { headerIndexes, collections, datasetMapping } = useDataContext();
-    const { getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRow, onClose } = useServicesContext();
+    const { getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
 
     const {
+        updateAvailableSuggestions,
         getPairingSuggestions,
         hasPairingSuggestions,
         markSuggestionAsProcessed,
     } = usePairingSuggestions();
-
-    const { handleSelection } = useHandleSelection();
 
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
@@ -96,7 +94,40 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             newArray[rowIndex] = option;
             return newArray;
         });
-        handleSelection(variableName, option, newIsSelectedState, collections, selectedOptionsMap, selectableCollections, setSelectedOptionsMap, rowIndex);
+        handleSelection(variableName, option, newIsSelectedState, rowIndex);
+    };
+
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean, rowIndex: number) => {
+        if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
+            updateDatasetMappingRowTemplate(variableName, option.content, rowIndex);
+
+            // Get all selected collections
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+
+            // Fetch pairing suggestions from all selected collections
+            let aggregatedPairingSuggestions: Option[] = [];
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
+                    const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
+                    aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
+                }
+            }
+            updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
+        } else if (option && !newIsSelectedState) {
+            updateAvailableSuggestions(variableName, []);
+            updateDatasetMappingRowTemplate(variableName, [], rowIndex);
+
+        } else {
+            console.error("No option provided");
+        }
     };
 
     const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null, rowIndex: number) => {
@@ -111,7 +142,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                 ...prevOptionsMap,
                 [suggestion.id]: suggestion,
             }));
-            updateDatasetMappingRow(selectedColumn, suggestion.content, rowIndex + 1)
+            updateDatasetMappingRowTemplate(selectedColumn, suggestion.content, rowIndex + 1)
         }
     };
 
@@ -120,7 +151,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             ...prev,
             [option.id]: option,
         }));
-        await handleSelection(variableName, option, newIsSelectedState,collections, selectedOptionsMap, selectableCollections, setSelectedOptionsMap, index)
+        await handleSelection(variableName, option, newIsSelectedState, index)
     };
 
     const getEntityType = () => {

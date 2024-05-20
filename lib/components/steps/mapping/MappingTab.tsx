@@ -34,7 +34,7 @@ import {
     getDescriptionFromOption,
     optionDetailsToCdeDetails
 } from "../../../helpers/optionsHelpers.ts";
-import {useHandleSelection} from "../../../helpers/utils.ts";
+
 import ChipComponent from "./ChipComponent.tsx";
 import {CUSTOM_DICTIONARY_FIELD_COLLECTION_ID} from "../../../settings.ts";
 import {
@@ -120,11 +120,11 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
     const {datasetMapping, headerIndexes, collections, datasetMappingHeader} = useDataContext();
     const {updateDatasetMappingRow, getUnmappedVariableNames, searchCustomDictionaryFields} = useServicesContext();
     const {
+        updateAvailableSuggestions,
         getPairingSuggestions,
         hasPairingSuggestions,
         markSuggestionAsProcessed,
     } = usePairingSuggestions();
-    const {handleSelection} = useHandleSelection();
     const {isTourOpen} = useUIContext();
     const [stepIndex, setStepIndex] = useState(0);
     const [togglePreview, setTogglePreview] = useState(false);
@@ -200,8 +200,40 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
         [selectableCollections, collections, createdCustomDictionaryFields, searchCustomDictionaryFields]
     );
 
-    const beforeHandleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
-        handleSelection(variableName, option, newIsSelectedState, collections, selectedOptionsMap, selectableCollections, setSelectedOptionsMap);
+    const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean) => {
+
+        if (option && newIsSelectedState) {
+            // Update optionsMap with the new selected option
+            setSelectedOptionsMap(prevOptionsMap => ({
+                ...prevOptionsMap,
+                [option.id]: option,
+            }));
+
+            updateDatasetMappingRow(variableName, option.content);
+
+            // Get all selected collections
+            const selectedCollections = selectableCollections
+                .filter(collection => collection.selected)
+
+            // Fetch pairing suggestions from all selected collections
+            let aggregatedPairingSuggestions: Option[] = [];
+            for (const selectableCollection of selectedCollections) {
+                const collection = collections[selectableCollection.id]
+                if (collection && collection.getPairingSuggestions) {
+                    const pairingSuggestions: Option[] = await collection.getPairingSuggestions(option.id);
+                    aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
+                }
+            }
+            const mappedIds = Object.keys(selectedOptionsMap).map(item => item.toLowerCase().replace(':', '_'));
+            const filteredSuggestions = aggregatedPairingSuggestions.filter(suggestion => !mappedIds.includes(suggestion.id));
+            updateAvailableSuggestions(variableName, filteredSuggestions);
+        } else if (option && !newIsSelectedState) {
+            updateAvailableSuggestions(variableName, []);
+            updateDatasetMappingRow(variableName, []);
+
+        } else {
+            console.error("No option provided");
+        }
     };
 
     const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
@@ -237,7 +269,7 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
             ...prev,
             [option.id]: option,
         }));
-        await handleSelection(variableName, option, newIsSelectedState, collections, selectedOptionsMap, selectableCollections, setSelectedOptionsMap)
+        await handleSelection(variableName, option, newIsSelectedState)
     }
 
     const isSameStrategyType = (filter: SortingStrategy, newFilter: SortingStrategy) => {
@@ -332,7 +364,7 @@ const MappingTab = ({defaultCollection, numberOfUnmappedRows}: MappingProps) => 
                                                 initialSearchInput: variableName,
                                                 noResultReason: "We couldn’t find any results.",
                                                 onSearch: searchInCollections,
-                                                onSelection: (option, newIsSelectedState) => beforeHandleSelection(variableName, option, newIsSelectedState),
+                                                onSelection: (option, newIsSelectedState) => handleSelection(variableName, option, newIsSelectedState),
                                                 collections: selectableCollections,
                                                 onCollectionSelect: handleCollectionSelect,
                                                 value: selectedOptionsMap[getId(datasetMapping[variableName], headerIndexes)],

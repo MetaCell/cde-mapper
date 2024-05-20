@@ -3,7 +3,7 @@ import {useDataContext} from "../data/DataContext.ts";
 import {Option, OptionDetail, ServiceInitParams} from "../../models.ts";
 import {ServicesContext} from "./ServicesContext.ts";
 import {isRowMapped} from "../../helpers/rowHelpers.ts";
-import {_updateRow} from "../../services/updateMappingService.ts";
+import {_updateRow, _updateRowTemplate} from "../../services/updateMappingService.ts";
 import {
     searchCurrentCustomDictionaryFields,
     searchPreviousCustomDictionaryFields
@@ -28,8 +28,19 @@ export const ServicesContextProvider = ({
         const getTotalRowsCount = () => Object.keys(datasetMapping).length;
         const getMappedRowsCount = () => Object.values(datasetMapping).filter(row => isRowMapped(row, headerIndexes)).length;
         const getUnmappedRowsCount = () => getTotalRowsCount() - getMappedRowsCount();
-        const updateDatasetMappingRow = (key: string, newData: OptionDetail[], rowIndex?: number) => {
+        const updateDatasetMappingRow = (key: string, newData: OptionDetail[]) => {
             _updateRow(
+                key,
+                newData,
+                datasetMapping,
+                datasetMappingHeader,
+                setDatasetMapping,
+                setDatasetMappingHeader,
+                headerIndexes
+            );
+        };
+        const updateDatasetMappingRowTemplate = (key: string, newData: OptionDetail[], rowIndex: number) => {
+            _updateRowTemplate(
                 key,
                 newData,
                 datasetMapping,
@@ -61,6 +72,7 @@ export const ServicesContextProvider = ({
             updateDatasetMappingRow,
             isColumnMapped,
             onClose,
+            updateDatasetMappingRowTemplate
         };
     }, [datasetMapping, callback, datasetMappingHeader, headerIndexes, setDatasetMapping, setDatasetMappingHeader,]);
 
@@ -109,4 +121,3 @@ export const ServicesContextProvider = ({
         </ServicesContext.Provider>
     );
 };
-
