@@ -94,7 +94,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             newArray[rowIndex] = option;
             return newArray;
         });
-        handleSelection(variableName, option, newIsSelectedState, rowIndex);
+        handleSelection(variableName || option.label, option, newIsSelectedState, rowIndex);
     };
 
     const handleSelection = async (variableName: string, option: Option, newIsSelectedState: boolean, rowIndex: number) => {
@@ -120,7 +120,9 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                     aggregatedPairingSuggestions = [...aggregatedPairingSuggestions, ...pairingSuggestions];
                 }
             }
-            updateAvailableSuggestions(variableName, aggregatedPairingSuggestions);
+            const mappedIds = Object.keys(selectedOptionsMap).map(item => item.toLowerCase().replace(':', '_'));
+            const filteredSuggestions = aggregatedPairingSuggestions.filter(suggestion => !mappedIds.includes(suggestion.id));
+            updateAvailableSuggestions(variableName, filteredSuggestions);
         } else if (option && !newIsSelectedState) {
             updateAvailableSuggestions(variableName, []);
             updateDatasetMappingRowTemplate(variableName, [], rowIndex);
@@ -130,19 +132,31 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         }
     };
 
-    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null, rowIndex: number) => {
+    const replaceOrAddSuggestion = (suggestion: Option, emptyObjectIndex: number | -1) => {
+        if (emptyObjectIndex !== -1) {
+            setVisibleRows(prevState => {
+                const updatedRows = [...prevState];
+                updatedRows[emptyObjectIndex] = suggestion;
+                return updatedRows;
+            });
+            return emptyObjectIndex;
+        } else {
+            setVisibleRows(prevState => [...prevState, suggestion]);
+            return visibleRows.length; // newIndex
+        }
+    };
+
+    const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
         markSuggestionAsProcessed(variableName, suggestion.id);
         if (selectedColumn !== null) {
-            setVisibleRows(prevState => {
-                const newArray = [...prevState];
-                newArray[rowIndex + 1] = suggestion;
-                return newArray;
-            });
+            const emptyObjectIndex = visibleRows.findIndex(row => row.id === "" && row.label === "");
+            const newIndex = replaceOrAddSuggestion(suggestion, emptyObjectIndex);
+
             setSelectedOptionsMap(prevOptionsMap => ({
                 ...prevOptionsMap,
                 [suggestion.id]: suggestion,
             }));
-            updateDatasetMappingRowTemplate(selectedColumn, suggestion.content, rowIndex + 1)
+            updateDatasetMappingRowTemplate(selectedColumn || suggestion.label, suggestion.content, newIndex);
         }
     };
 
@@ -172,6 +186,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     };
 
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
+    const visibleRowIds = new Set(visibleRows.map(row => String(row.id)));
 
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between" height={1}>
@@ -228,12 +243,11 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                 </AccordionSummary>
                                                 <AccordionDetails>
                                                     <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions(row.label).map((suggestion) => {
+                                                        {getPairingSuggestions(row.label).filter(suggestion => !visibleRowIds.has(String(suggestion.id))).map((suggestion) => {
                                                             const headerOptions = getUnmappedVariableNames().map((label, index) => ({
                                                                 label,
                                                                 index
                                                             }));
-
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
                                                             const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
                                                             const description = getDescriptionFromOption(suggestion);
@@ -241,7 +255,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                             return (
                                                                 <PairingSuggestion
                                                                     key={suggestion.id}
-                                                                    onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn, rowIndex)}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn)}
                                                                     headerOptions={headerOptions}
                                                                     label={abbreviation}
                                                                     description={description}
