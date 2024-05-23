@@ -11,7 +11,7 @@ import { usePairingSuggestions } from '../../../hooks/usePairingSuggestions.ts';
 import { PairingTooltip } from '../mapping/PairingTooltip.tsx';
 import { PairingSuggestion } from './PairingSuggestion.tsx';
 import { getType } from '../../../helpers/rowHelpers.ts';
-import { optionDetailsToCdeDetails, getAbbreviationFromOption, getDescriptionFromOption } from '../../../helpers/optionsHelpers.ts';
+import { optionDetailsToCdeDetails, getAbbreviationFromOption, getTitleFromOption } from '../../../helpers/optionsHelpers.ts';
 import { PlusIcon, PairIcon } from '../../../icons/index.tsx';
 import { vars } from '../../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
@@ -250,7 +250,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                             }));
                                                             const rowContent = optionDetailsToCdeDetails(suggestion.content);
                                                             const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
-                                                            const description = getDescriptionFromOption(suggestion);
+                                                            const title = getTitleFromOption(suggestion, headerIndexes);
 
                                                             return (
                                                                 <PairingSuggestion
@@ -258,7 +258,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                                                     onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn)}
                                                                     headerOptions={headerOptions}
                                                                     label={abbreviation}
-                                                                    description={description}
+                                                                    title={title}
                                                                     rowContent={rowContent}
                                                                 />
                                                             );

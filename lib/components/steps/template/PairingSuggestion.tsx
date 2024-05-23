@@ -6,7 +6,7 @@ import CdeDetails, {CdeDetailItem} from "../../common/CdeDetails.tsx";
 interface PairingSuggestionProps {
     headerOptions: { index: number, label: string }[];
     label: string;
-    description: string;
+    title: string;
     rowContent: CdeDetailItem[];
     onChange: (selectedHeaderIndex: string | null) => void;
 }
@@ -14,11 +14,11 @@ interface PairingSuggestionProps {
 
 export function PairingSuggestion({
                                       label,
-                                      description,
+                                      title,
                                       rowContent,
                                       onChange,
                                   }: PairingSuggestionProps) {
-
+console.log("rowContetn: ", rowContent)
     return (
         <Box sx={{
             position: "relative",
@@ -81,7 +81,7 @@ export function PairingSuggestion({
                             lineHeight: "142.857%",
                             color: "#676C74"
                         }}>
-                            {description}
+                            {title}
                         </Typography>
                     </Box>
 
