@@ -18,7 +18,6 @@ export function PairingSuggestion({
                                       rowContent,
                                       onChange,
                                   }: PairingSuggestionProps) {
-console.log("rowContetn: ", rowContent)
     return (
         <Box sx={{
             position: "relative",
