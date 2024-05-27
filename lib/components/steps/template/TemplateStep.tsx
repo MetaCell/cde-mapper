@@ -23,7 +23,6 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         group: '',
         content: []
     }]);
-
     const { headerIndexes, collections, datasetMapping } = useDataContext();
     const { getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
     const collectionKeys = Object.keys(collections);
@@ -185,6 +184,12 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         });
     };
 
+    // Check if there is any element with an empty id and label in the visibleRows array
+    const hasEmptyElement = visibleRows.some(row => row.id === '' && row.label === '');
+
+    // Determine the index of the first visible row with pairing suggestions
+    const firstRowWithSuggestions = visibleRows.find(row => hasPairingSuggestions(row.label));
+
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
     const visibleRowIds = new Set(visibleRows.map(row => String(row.id)));
 
@@ -219,67 +224,69 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                         variableName={row.label}
                                         onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(row.label, option, newIsSelectedState, rowIndex)}
                                     />
-                                    {hasPairingSuggestions(row.label) && (
-                                        <Box
-                                            display="flex"
-                                            sx={{
-                                                boxSizing: 'border-box',
-                                                columnGap: '1.5rem',
-                                                flexWrap: 'wrap',
-                                                padding: '1.5rem 0',
-                                                borderBottom: '0.0625rem solid #ECEDEE',
-                                            }}
-                                        >
-                                            <Accordion>
-                                                <AccordionSummary>
-                                                    <PairIcon />
-                                                    <Typography sx={{
-                                                        fontSize: '0.75rem',
-                                                        color: '#4F5359',
-                                                        fontWeight: 500,
-                                                        lineHeight: '150%'
-                                                    }}>Pairing suggestions</Typography>
-                                                    <PairingTooltip />
-                                                </AccordionSummary>
-                                                <AccordionDetails>
-                                                    <Box pl='2.5625rem'>
-                                                        {getPairingSuggestions(row.label).filter(suggestion => !visibleRowIds.has(String(suggestion.id))).map((suggestion) => {
-                                                            const headerOptions = getUnmappedVariableNames().map((label, index) => ({
-                                                                label,
-                                                                index
-                                                            }));
-                                                            const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
-                                                            const title = getTitleFromOption(suggestion, headerIndexes);
-
-                                                            return (
-                                                                <PairingSuggestion
-                                                                    key={suggestion.id}
-                                                                    onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn)}
-                                                                    headerOptions={headerOptions}
-                                                                    label={abbreviation}
-                                                                    title={title}
-                                                                    rowContent={rowContent}
-                                                                />
-                                                            );
-                                                        })}
-                                                    </Box>
-                                                </AccordionDetails>
-                                            </Accordion>
-                                        </Box>
-                                    )}
                                 </Fragment>
                             ))
                         }
 
-                        <Button
-                            variant='text'
-                            startIcon={<PlusIcon />}
-                            sx={{ maxWidth: '10.875rem', '&:hover': { backgroundColor: 'transparent', color: gray500 } }}
-                            onClick={addAnotherField}
-                        >
-                            Add another field
-                        </Button>
+                        {!hasEmptyElement && firstRowWithSuggestions && (
+                            <Box
+                                display="flex"
+                                sx={{
+                                    boxSizing: 'border-box',
+                                    columnGap: '1.5rem',
+                                    flexWrap: 'wrap',
+                                    padding: '1.5rem 0',
+                                    borderBottom: '0.0625rem solid #ECEDEE',
+                                }}
+                            >
+                                <Accordion>
+                                    <AccordionSummary>
+                                        <PairIcon />
+                                        <Typography sx={{
+                                            fontSize: '0.75rem',
+                                            color: '#4F5359',
+                                            fontWeight: 500,
+                                            lineHeight: '150%'
+                                        }}>Pairing suggestions</Typography>
+                                        <PairingTooltip />
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Box pl='2.5625rem'>
+                                            {getPairingSuggestions(firstRowWithSuggestions.label).filter(suggestion => !visibleRowIds.has(String(suggestion.id))).map((suggestion) => {
+                                                const headerOptions = getUnmappedVariableNames().map((label, index) => ({
+                                                    label,
+                                                    index
+                                                }));
+                                                const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                const title = getTitleFromOption(suggestion, headerIndexes);
+
+                                                return (
+                                                    <PairingSuggestion
+                                                        key={suggestion.id}
+                                                        onChange={(selectedColumn) => handlePairingSuggestion(firstRowWithSuggestions.label, suggestion, selectedColumn)}
+                                                        headerOptions={headerOptions}
+                                                        label={abbreviation}
+                                                        title={title}
+                                                        rowContent={rowContent}
+                                                    />
+                                                );
+                                            })}
+                                        </Box>
+                                    </AccordionDetails>
+                                </Accordion>
+                            </Box>
+                        )}
+                        <Box width={1} justifyContent="start">
+                            <Button
+                                variant='text'
+                                startIcon={<PlusIcon />}
+                                sx={{ '&:hover': { backgroundColor: 'transparent', color: gray500 } }}
+                                onClick={addAnotherField}
+                            >
+                                Remove pairing suggestions and add another field
+                            </Button>
+                        </Box>
                     </Stack>
                 </Box>
             </ModalHeightWrapper>
