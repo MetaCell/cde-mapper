@@ -70,23 +70,36 @@ export const _updateRow = (
 
     // Update the datasetMapping with the new or updated row
     datasetMapping[variableName] = updatedRow;
-
     // Update state
     setDatasetMapping(prevState => ({ ...prevState, [variableName]: updatedRow }));
 };
 
 const updateDatasetMapping = (datasetMapping: DatasetMapping, variableName: string, index: number): DatasetMapping => {
     const updatedMapping = { ...datasetMapping };
-
     updatedMapping[VARIABLE_NAME_UI][index] = variableName;
+
     Object.keys(updatedMapping).forEach(key => {
-        if(key !== VARIABLE_NAME_UI && (updatedMapping[key][index] !== "" || updatedMapping[key][index]?.length !== 0)) {
+        if (key !== VARIABLE_NAME_UI && (updatedMapping[key][index] || updatedMapping[key][index] === "")) {
             updatedMapping[key][index] = "";
         }
-    })
+    });
 
     return updatedMapping;
-}
+};
+
+const filterEmptyRows = (datasetMapping: DatasetMapping): DatasetMapping => {
+    const indicesToKeep = datasetMapping[VARIABLE_NAME_UI]
+        .map((value, index) => value !== "" ? index : -1)
+        .filter(index => index !== -1);
+
+    const filteredMapping = Object.fromEntries(
+        Object.entries(datasetMapping).map(([key, values]) => [
+            key, indicesToKeep.map(index => values[index])
+        ])
+    );
+
+    return filteredMapping;
+};
 
 export const _updateRowTemplate = (
     variableName: string,
@@ -98,56 +111,52 @@ export const _updateRowTemplate = (
     headerIndexes: HeaderIndexes,
     rowIndex: number
 ) => {
-    const updatedDatasetMapping = updateDatasetMapping(datasetMapping, variableName, rowIndex)
-    const indexOfVariableName = rowIndex
+    let updatedMapping = { ...datasetMapping };
+
+    if (newRowContent.length === 0) {
+        Object.keys(updatedMapping).forEach(key => updatedMapping[key][rowIndex] = "");
+        updatedMapping = filterEmptyRows(updatedMapping);
+        setDatasetMapping(updatedMapping);
+        return;
+    }
+
+    updatedMapping = updateDatasetMapping(updatedMapping, variableName, rowIndex);
 
     let headersAddedCount = 0;
+    const newHeaders = [...datasetMappingHeader];
 
-    // Update values for mandatory properties using headerIndexes
     Object.values(headerIndexes).forEach((index) => {
-        // VariableName should not be modified
-        if (index === headerIndexes.variableName) return;
-
-        const detail = newRowContent[index];
-        if (detail) {
-            updatedDatasetMapping[detail.title][indexOfVariableName] = detail.value
+        if (index !== headerIndexes.variableName) {
+            const detail = newRowContent[index];
+            if (detail) updatedMapping[detail.title][rowIndex] = detail.value;
         }
     });
 
-    const mandatoryFieldIndexes = new Set(Object.values(headerIndexes))
+    const mandatoryIndexes = new Set(Object.values(headerIndexes));
 
     newRowContent.forEach((property, index) => {
-        // Determine if the current index is a mandatory field index
-        const isMandatoryField = mandatoryFieldIndexes.has(index);
-
-        if (!isMandatoryField && property !== null) {
-            // For non-mandatory fields, check if the datasetMappingHeader already includes this field
+        if (!mandatoryIndexes.has(index) && property) {
             const headerTitle = property.title;
             const headerIndex = datasetMappingHeader.indexOf(headerTitle);
 
-            if (headerIndex !== -1) {
-                // The header exists, update the value
-                updatedDatasetMapping[headerTitle][indexOfVariableName] = property.value
-            } else {
-                // The header doesn't exist, add new header and value
-                datasetMappingHeader.push(headerTitle);
-                // updatedRow.push(property.value);
+            if (headerIndex === -1) {
+                newHeaders.push(headerTitle);
                 headersAddedCount++;
+            } else {
+                updatedMapping[headerTitle][rowIndex] = property.value;
             }
         }
     });
 
-
-    // If new headers were added, ensure all rows in datasetMapping have the correct length
     if (headersAddedCount > 0) {
-        Object.keys(updatedDatasetMapping).forEach(variableName => {
-            updatedDatasetMapping[variableName] = updatedDatasetMapping[variableName].concat(Array(headersAddedCount).fill(''));
+        Object.keys(updatedMapping).forEach(key => {
+            updatedMapping[key] = [...updatedMapping[key], ...Array(headersAddedCount).fill('')];
         });
-        setDatasetMappingHeader([...datasetMappingHeader]);
+        setDatasetMappingHeader(newHeaders);
     }
 
-    // Update state
-    setDatasetMapping(updatedDatasetMapping);
+    updatedMapping = filterEmptyRows(updatedMapping);
+    setDatasetMapping(updatedMapping);
 };
 
 function isUnmapping(newRowContent: OptionDetail[]) {
