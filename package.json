@@ -1,7 +1,7 @@
 {
   "name": "cde-mapper",
   "private": false,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist/cde-mapper.js",
   "types": "dist/main.d.ts",
