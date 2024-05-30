@@ -16,6 +16,7 @@ import { PlusIcon, PairIcon } from '../../../icons/index.tsx';
 import { vars } from '../../../theme/variables.ts';
 const { gray100, gray500, gray600 } = vars
 
+
 function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     const [visibleRows, setVisibleRows] = React.useState<Option[]>([{
         id: '',
@@ -23,7 +24,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         group: '',
         content: []
     }]);
-    const { headerIndexes, collections, datasetMapping } = useDataContext();
+    const { headerIndexes, collections, datasetMapping, datasetMappingHeader } = useDataContext();
     const { getUnmappedVariableNames, searchCustomDictionaryFields, updateDatasetMappingRowTemplate, onClose } = useServicesContext();
     const collectionKeys = Object.keys(collections);
     const defaultCollection = collectionKeys.length > 0 ? collectionKeys[0] : '';
@@ -38,6 +39,8 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     const [selectableCollections, setSelectableCollections] = useState<SelectableCollection[]>([]);
     const [selectedOptionsMap, setSelectedOptionsMap] = useState<{ [id: string]: Option }>({});
     const [createdCustomDictionaryFields, setCreatedCustomDictionaryFields] = useState<{ [id: string]: Option }>({});
+    const [visiblePairingSuggestions, setVisiblePairingSuggestions] = useState<boolean[]>([false]);
+    const [acceptedSuggestions, setAcceptedSuggestions] = useState<string[]>([]);
 
     useEffect(() => {
         const initialSelectedCollections = Object.keys(collections).map(key => ({
@@ -48,6 +51,32 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
 
         setSelectableCollections([...initialSelectedCollections, getCustomDictionaryFieldSelectableCollection()]);
     }, [collections, defaultCollection]);
+
+    useEffect(() => {
+        const updateState = async () => {
+            setSelectedOptionsMap(prevSelectedOptionsMap => {
+                const updatedOptionsMap = Object.keys(prevSelectedOptionsMap).reduce((acc, key) => {
+                    const label = prevSelectedOptionsMap[key].label;
+                    const found = Object.values(datasetMapping).some(arr => arr.includes(label));
+                    if (found) {
+                        acc[key] = prevSelectedOptionsMap[key];
+                    }
+                    return acc;
+                }, {} as { [id: string]: Option });
+                return updatedOptionsMap;
+            });
+
+            setVisibleRows(prevVisibleRows => {
+                const labelsToRemove = Object.values(datasetMapping).reduce((acc, val) => acc.concat(val), []);
+                const updatedVisibleRows = prevVisibleRows.length > 1
+                    ? prevVisibleRows.filter(row => labelsToRemove.includes(row.label))
+                    : prevVisibleRows;
+                return updatedVisibleRows;
+            });
+        };
+
+        updateState();
+    }, [datasetMapping, datasetMappingHeader, headerIndexes]);
 
     const handleCollectionSelect = (selectedCollection: SelectableCollection) => {
         setSelectableCollections(prevCollections =>
@@ -87,12 +116,18 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     );
 
     const beforeHandleSelection = async (option: Option, newIsSelectedState: boolean, rowIndex: number) => {
-        const variableName = getAbbreviationFromOption(option, headerIndexes)
+        if (!option) {
+            console.error("No option provided");
+            return;
+        }
+        const variableName = getAbbreviationFromOption(option, headerIndexes);
         setVisibleRows(prevState => {
             const newArray = [...prevState];
             newArray[rowIndex] = option;
             return newArray;
         });
+        setVisiblePairingSuggestions(prevState => prevState.map((_, index) => index === rowIndex));
+        setAcceptedSuggestions(prevState => prevState.includes(option.id) ? prevState.filter(id => id !== option.id) : prevState);
         handleSelection(variableName || option.label, option, newIsSelectedState, rowIndex);
     };
 
@@ -120,10 +155,10 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                 }
             }
             const mappedIds = Object.keys(selectedOptionsMap).map(item => item.toLowerCase().replace(':', '_'));
-            const filteredSuggestions = aggregatedPairingSuggestions.filter(suggestion => !mappedIds.includes(suggestion.id));
+            const filteredSuggestions = aggregatedPairingSuggestions.filter(suggestion => !(mappedIds.includes(suggestion.id) || suggestion.id === option.id));
             updateAvailableSuggestions(variableName, filteredSuggestions);
         } else if (option && !newIsSelectedState) {
-            updateAvailableSuggestions(variableName, []);
+            // updateAvailableSuggestions(variableName, []);
             updateDatasetMappingRowTemplate(variableName, [], rowIndex);
 
         } else {
@@ -146,16 +181,20 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     };
 
     const handlePairingSuggestion = (variableName: string, suggestion: Option, selectedColumn: string | null) => {
-        markSuggestionAsProcessed(variableName, suggestion.id);
         if (selectedColumn !== null) {
             const emptyObjectIndex = visibleRows.findIndex(row => row.id === "" && row.label === "");
             const newIndex = replaceOrAddSuggestion(suggestion, emptyObjectIndex);
-
+            setAcceptedSuggestions((prevAcceptedSuggestion) => [...prevAcceptedSuggestion, suggestion.id]);
+            setVisiblePairingSuggestions(prevState => {
+                return [...prevState, false];
+            });
             setSelectedOptionsMap(prevOptionsMap => ({
                 ...prevOptionsMap,
                 [suggestion.id]: suggestion,
             }));
             updateDatasetMappingRowTemplate(selectedColumn || suggestion.label, suggestion.content, newIndex);
+        } else {
+            markSuggestionAsProcessed(variableName, suggestion.id);
         }
     };
 
@@ -182,17 +221,17 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                 content: []
             }];
         });
+        setVisiblePairingSuggestions(prevState => {
+            return [...prevState.map(() => false), false];
+        });
     };
 
-    // Check if there is any element with an empty id and label in the visibleRows array
-    const hasEmptyElement = visibleRows.some(row => row.id === '' && row.label === '');
-
-    // Determine the index of the first visible row with pairing suggestions
-    const firstRowWithSuggestions = visibleRows.find(row => hasPairingSuggestions(row.label));
-
     const searchText = "Search in " + (selectableCollections.length === 1 ? `${selectableCollections[0].name} collection` : 'multiple collections');
-    const visibleRowIds = new Set(visibleRows.map(row => String(row.id)));
-
+    const hasOneEmptyItem = (
+        visibleRows.reduce((count, row) => count + (row.id === '' && row.label === '' ? 1 : 0), 0) === 1 ||
+        Object.keys(selectedOptionsMap).length === 0
+    );
+    const hasNoItems = (visibleRows.length===1 && Object.keys(selectedOptionsMap).length === 0);
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between" height={1}>
             <ModalHeightWrapper height="15rem">
@@ -224,67 +263,67 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
                                         variableName={row.label}
                                         onCustomDictionaryFieldCreation={(option, newIsSelectedState) => onCustomDictionaryFieldCreation(row.label, option, newIsSelectedState, rowIndex)}
                                     />
+                                    {visiblePairingSuggestions[rowIndex] && hasPairingSuggestions(row.label) && selectedOptionsMap[row.id] && (
+                                        <Box
+                                            display="flex"
+                                            sx={{
+                                                boxSizing: 'border-box',
+                                                columnGap: '1.5rem',
+                                                flexWrap: 'wrap',
+                                                padding: '1.5rem 0',
+                                                borderBottom: '0.0625rem solid #ECEDEE',
+                                            }}
+                                        >
+                                            <Accordion>
+                                                <AccordionSummary>
+                                                    <PairIcon />
+                                                    <Typography sx={{
+                                                        fontSize: '0.75rem',
+                                                        color: '#4F5359',
+                                                        fontWeight: 500,
+                                                        lineHeight: '150%'
+                                                    }}>Pairing suggestions</Typography>
+                                                    <PairingTooltip />
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Box pl='2.5625rem'>
+                                                        {getPairingSuggestions(row.label).filter((suggestion) => !acceptedSuggestions.includes(suggestion.id)).map((suggestion) => {
+                                                            const headerOptions = getUnmappedVariableNames().map((label, index) => ({
+                                                                label,
+                                                                index
+                                                            }));
+                                                            const rowContent = optionDetailsToCdeDetails(suggestion.content);
+                                                            const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
+                                                            const title = getTitleFromOption(suggestion, headerIndexes);
+
+                                                            return (
+                                                                <PairingSuggestion
+                                                                    key={suggestion.id}
+                                                                    onChange={(selectedColumn) => handlePairingSuggestion(row.label, suggestion, selectedColumn)}
+                                                                    headerOptions={headerOptions}
+                                                                    label={abbreviation}
+                                                                    title={title}
+                                                                    rowContent={rowContent}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </Box>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        </Box>
+                                    )}
                                 </Fragment>
                             ))
                         }
-
-                        {!hasEmptyElement && firstRowWithSuggestions && (
-                            <Box
-                                display="flex"
-                                sx={{
-                                    boxSizing: 'border-box',
-                                    columnGap: '1.5rem',
-                                    flexWrap: 'wrap',
-                                    padding: '1.5rem 0',
-                                    borderBottom: '0.0625rem solid #ECEDEE',
-                                }}
-                            >
-                                <Accordion>
-                                    <AccordionSummary>
-                                        <PairIcon />
-                                        <Typography sx={{
-                                            fontSize: '0.75rem',
-                                            color: '#4F5359',
-                                            fontWeight: 500,
-                                            lineHeight: '150%'
-                                        }}>Pairing suggestions</Typography>
-                                        <PairingTooltip />
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Box pl='2.5625rem'>
-                                            {getPairingSuggestions(firstRowWithSuggestions.label).filter(suggestion => !visibleRowIds.has(String(suggestion.id))).map((suggestion) => {
-                                                const headerOptions = getUnmappedVariableNames().map((label, index) => ({
-                                                    label,
-                                                    index
-                                                }));
-                                                const rowContent = optionDetailsToCdeDetails(suggestion.content);
-                                                const abbreviation = getAbbreviationFromOption(suggestion, headerIndexes);
-                                                const title = getTitleFromOption(suggestion, headerIndexes);
-
-                                                return (
-                                                    <PairingSuggestion
-                                                        key={suggestion.id}
-                                                        onChange={(selectedColumn) => handlePairingSuggestion(firstRowWithSuggestions.label, suggestion, selectedColumn)}
-                                                        headerOptions={headerOptions}
-                                                        label={abbreviation}
-                                                        title={title}
-                                                        rowContent={rowContent}
-                                                    />
-                                                );
-                                            })}
-                                        </Box>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </Box>
-                        )}
                         <Box width={1} justifyContent="start">
                             <Button
                                 variant='text'
                                 startIcon={<PlusIcon />}
                                 sx={{ '&:hover': { backgroundColor: 'transparent', color: gray500 } }}
                                 onClick={addAnotherField}
+                                disabled={hasOneEmptyItem}
                             >
-                                Remove pairing suggestions and add another field
+                                Add another field
                             </Button>
                         </Box>
                     </Stack>
@@ -292,7 +331,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             </ModalHeightWrapper>
             <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '1px solid #ECEDEE' }}>
                 <Button variant='text' onClick={onCloseModal}>Cancel</Button>
-                <Button variant='contained' onClick={onClose}>Create template</Button>
+                <Button variant='contained' onClick={onClose} disabled={hasNoItems}>Create template</Button>
             </Box>
         </Box>
     );
