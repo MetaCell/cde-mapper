@@ -53,7 +53,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
     }, [collections, defaultCollection]);
 
     useEffect(() => {
-        const updateState = () => {
+        const updateState = async () => {
             setSelectedOptionsMap(prevSelectedOptionsMap => {
                 const updatedOptionsMap = Object.keys(prevSelectedOptionsMap).reduce((acc, key) => {
                     const label = prevSelectedOptionsMap[key].label;
@@ -231,7 +231,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
         visibleRows.reduce((count, row) => count + (row.id === '' && row.label === '' ? 1 : 0), 0) === 1 ||
         Object.keys(selectedOptionsMap).length === 0
     );
-
+    const hasNoItems = (visibleRows.length===1 && Object.keys(selectedOptionsMap).length === 0);
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between" height={1}>
             <ModalHeightWrapper height="15rem">
@@ -331,7 +331,7 @@ function TemplateStep({ onCloseModal }: { onCloseModal: () => void }) {
             </ModalHeightWrapper>
             <Box px={3} py={2} display="flex" justifyContent="end" gap={1} sx={{ borderTop: '1px solid #ECEDEE' }}>
                 <Button variant='text' onClick={onCloseModal}>Cancel</Button>
-                <Button variant='contained' onClick={onClose}>Create template</Button>
+                <Button variant='contained' onClick={onClose} disabled={hasNoItems}>Create template</Button>
             </Box>
         </Box>
     );
