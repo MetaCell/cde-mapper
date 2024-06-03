@@ -24,7 +24,7 @@ describe('CDE: Dataset Mapping Test', () => {
     beforeAll(async () => {
         dm_test_browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', "--ignore-certificate-errors"],
-            headless: false,
+            headless: true,
             devtools: false,
             defaultViewport: {
                 width: 1600,
