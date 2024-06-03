@@ -24,7 +24,7 @@ describe('CDE: Dataset Mapping Test', () => {
     beforeAll(async () => {
         dm_test_browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', "--ignore-certificate-errors"],
-            headless: true,
+            headless: false,
             devtools: false,
             defaultViewport: {
                 width: 1600,
@@ -95,25 +95,15 @@ describe('CDE: Dataset Mapping Test', () => {
             await dm_test_page.click('#submitButton')
             await dm_test_page.waitForSelector('.mapping__start-btn', { hidden: false, timeout: TIMEOUT });
             await dm_test_page.click('.mapping__start-btn');
-            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForSelector('button[title="Skip tutorial"]', { hidden: false, timeout: TIMEOUT })
+            await dm_test_page.click('button[title="Skip tutorial"]')
             console.log('Files submitted successfully');
         })
 
 
     })
 
-    describe('Select Repo', () => {
-        test('Select default repo', async () => {
-            console.log('Selecting default repo ...')
-            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
-            await dm_test_page.waitForSelector('button[title="Skip tutorial"]', { hidden: false, timeout: TIMEOUT })
-            await dm_test_page.click('button[title="Skip tutorial"]')
-            await dm_test_page.click('.collection__select-btn');
-            await dm_test_page.waitForSelector('.cde-suggestions__content', { hidden: false, timeout: TIMEOUT });
-            console.log('Default repo selected successfully');
 
-        })
-    })
 
     describe('Go through Suggestions', () => {
         test('Accept 1/3 suggestion', async () => {
@@ -138,11 +128,25 @@ describe('CDE: Dataset Mapping Test', () => {
             await dm_test_page.click('.suggestions__button-block > button:nth-child(1)');
             await dm_test_page.waitForSelector('.suggestions__button-block > button:nth-child(2)', { hidden: false, timeout: TIMEOUT });
             await dm_test_page.click('.suggestions__button-block > button:nth-child(2)');
-            await dm_test_page.waitForSelector('.mapping-step', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
             console.log('Suggestion 3 ignored successfully');
         })
 
     })
+    describe('Select Repo', () => {
+        test('Select default repo', async () => {
+            console.log('Selecting default repo ...')
+            // await dm_test_page.waitForSelector('button[title="Skip tutorial"]', { hidden: false, timeout: TIMEOUT })
+            // await dm_test_page.click('button[title="Skip tutorial"]')
+            await dm_test_page.waitForSelector('.collection__select-btn', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.click('.collection__select-btn');
+            await dm_test_page.waitForSelector('.mapping-step', { hidden: false, timeout: TIMEOUT });
+            console.log('Default repo selected successfully');
+
+        })
+    })
+
+
 
     describe('Map Dataset', () => {
 
@@ -169,7 +173,7 @@ describe('CDE: Dataset Mapping Test', () => {
         //     expect(elements_after_filter.length).toBe(5);
 
         // })
-        test('Map fields', async () => {
+        test('Map field 1', async () => {
             console.log('Mapping fields ...')
             await dm_test_page.waitForFunction(
                 () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '5/13 column headers still unmapped',
@@ -181,23 +185,76 @@ describe('CDE: Dataset Mapping Test', () => {
             await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
             await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
             await dm_test_page.click('.cde-field__popper li');
-
-            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
-            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
-            await dm_test_page.click('.cde-field__popper li');
-
-            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
-            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
-            await dm_test_page.click('.cde-field__popper li');
-
-            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
-            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
-            await dm_test_page.click('.cde-field__popper li');
-
-            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
-            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
-            await dm_test_page.click('.cde-field__popper li');
+           
             console.log('Species mapped successfully');
+        })
+
+        test('Map field 2', async () => {
+            console.log('Mapping fields ...')
+            await dm_test_page.waitForFunction(
+                () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '4/13 column headers still unmapped',
+                { timeout: TIMEOUT }
+            );
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.waitForSelector('#Age .cde-fields__item-first div', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.click('#Age .cde-fields__item-first div');
+            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
+            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.click('.cde-field__popper li');
+            console.log('Age mapped successfully');
+
+        })
+
+        test('Map field 3', async () => {
+            console.log('Mapping fields ...')
+            await dm_test_page.waitForFunction(
+                () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '3/13 column headers still unmapped',
+                { timeout: TIMEOUT }
+            );
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.waitForSelector('#StudyOutcomeMeasureType .cde-fields__item-first div', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.click('#StudyOutcomeMeasureType .cde-fields__item-first div');
+            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
+            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.click('.cde-field__popper li');
+            console.log('Study mapped successfully');
+
+        })
+
+        test('Map field 4', async () => {
+            console.log('Mapping fields ...')
+            await dm_test_page.waitForFunction(
+                () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '2/13 column headers still unmapped',
+                { timeout: TIMEOUT }
+            );
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.waitForSelector('div[id="Impactor tip diameter - measurement"] .cde-fields__item-first div', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.click('div[id="Impactor tip diameter - measurement"] .cde-fields__item-first div');
+            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
+            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.click('.cde-field__popper li');
+            console.log('Impactor mapped successfully');
+
+        })
+
+        test('Map field 5', async () => {
+            console.log('Mapping fields ...')
+            await dm_test_page.waitForFunction(
+                () => (document.querySelector('.mapping-header__indicator') as HTMLElement).innerText === '1/13 column headers still unmapped',
+                { timeout: TIMEOUT }
+            );
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.waitForSelector('div[id="roto time"] .cde-fields__item-first div', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.waitForTimeout(500);
+            await dm_test_page.click('div[id="roto time"] .cde-fields__item-first div');
+            await dm_test_page.waitForSelector('input[placeholder="Search in multiple collections"]', { hidden: false, timeout: TIMEOUT })
+            await dm_test_page.waitForSelector('.cde-field__popper li', { hidden: false, timeout: TIMEOUT });
+            await dm_test_page.click('.cde-field__popper li');
+            console.log('Roto time mapped successfully');
+
         })
 
         test('Check fields', async () => {
@@ -271,19 +328,19 @@ describe('CDE: Dataset Mapping Test', () => {
 
 
             const expectedData = [
-                { 'Variable Name (UI)': 'Subject', 'Abbreviation': 'GUID' },
-                { 'Variable Name (UI)': 'Species', 'Abbreviation': species_inner_text },
-                { 'Variable Name (UI)': 'Strain', 'Abbreviation': 'SmallSpeciesStrainTyp' },
-                { 'Variable Name (UI)': 'Sex', 'Abbreviation': 'Sex type' },
-                { 'Variable Name (UI)': 'Age', 'Abbreviation': age_inner_text },
-                { 'Variable Name (UI)': 'Group', 'Abbreviation': 'InjuryGroupAssignTyp' },
-                { 'Variable Name (UI)': 'StudyInjModelTyp', 'Abbreviation': 'StudyInjModelTyp' },
-                { 'Variable Name (UI)': 'StudyOutcomeMeasureType', 'Abbreviation': StudyOutcomeMeasureType_inner_text },
-                { 'Variable Name (UI)': 'Type of actuator used for impact', 'Abbreviation': 'Type of actuator used for impact' },
-                { 'Variable Name (UI)': 'Impactor tip diameter - measurement', 'Abbreviation': Impactor_tip_diameter_inner_text },
-                { 'Variable Name (UI)': 'roto time', 'Abbreviation': roto_time_inner_text },
-                { 'Variable Name (UI)': 'Rotor rod - start speed', 'Abbreviation': 'Rotor rod test - start speed value' },
-                { 'Variable Name (UI)': 'Rotor rod - final speed', 'Abbreviation': 'Rotor rod test - final speed value' },
+                { 'Variable Name (UI)': 'Subject', 'Title': 'Unique identification of  each mouse ID' },
+                { 'Variable Name (UI)': 'Species', 'Title': species_inner_text },
+                { 'Variable Name (UI)': 'Strain', 'Title': 'Strain of the mouse' },
+                { 'Variable Name (UI)': 'Sex', 'Title': 'Sex of the mouse' },
+                { 'Variable Name (UI)': 'Age', 'Title': age_inner_text },
+                { 'Variable Name (UI)': 'Group', 'Title': 'Injury group assignment type' },
+                { 'Variable Name (UI)': 'StudyInjModelTyp', 'Title': 'Traumatic Brain Injury (TBI) model type(s)' },
+                { 'Variable Name (UI)': 'StudyOutcomeMeasureType', 'Title': StudyOutcomeMeasureType_inner_text },
+                { 'Variable Name (UI)': 'Type of actuator used for impact', 'Title': 'Type of actuator used for impact' },
+                { 'Variable Name (UI)': 'Impactor tip diameter - measurement', 'Title': Impactor_tip_diameter_inner_text },
+                { 'Variable Name (UI)': 'roto time', 'Title': roto_time_inner_text },
+                { 'Variable Name (UI)': 'Rotor rod - start speed', 'Title': 'Rotor rod test - start speed value' },
+                { 'Variable Name (UI)': 'Rotor rod - final speed', 'Title': 'Rotor rod test - final speed value' },
 
             ];
 
@@ -298,7 +355,7 @@ describe('CDE: Dataset Mapping Test', () => {
                     .on('data', (row) => {
                         const filteredRow = {
                             'Variable Name (UI)': row['Variable Name (UI)'],
-                            'Abbreviation': row['Abbreviation']
+                            'Title': row['Title']
                         };
                         data.push(filteredRow);
                     })
