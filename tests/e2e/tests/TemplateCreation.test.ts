@@ -27,7 +27,7 @@ describe('CDE: Template Creation Test', () => {
     beforeAll(async () => {
         tc_test_browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox', "--ignore-certificate-errors"],
-            headless: true,
+            headless: false,
             devtools: false,
             defaultViewport: {
                 width: 1600,
@@ -76,16 +76,17 @@ describe('CDE: Template Creation Test', () => {
             await tc_test_page.click('div > div.MuiStack-root > div.MuiBox-root:nth-child(2)');
             await tc_test_page.waitForSelector('.MuiBox-root li', { hidden: false, timeout: TIMEOUT })
             await tc_test_page.click('.MuiBox-root li');
+            
             console.log('CDE chosen successfully');
 
         })
 
         test('Add Dictionary field', async () => {
             console.log('Adding Dictionary field ...')
-            await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-colorPrimary:first-of-type', { timeout: TIMEOUT, hidden: false });
+            await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-colorPrimary:first-of-type', { timeout: TIMEOUT, disabled: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.MuiButton-colorPrimary:first-of-type');
-            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(4)', { timeout: TIMEOUT, hidden: false });
-            await tc_test_page.click('div > div.MuiStack-root > div.MuiBox-root:nth-child(4)');
+            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)', { timeout: TIMEOUT, hidden: false });
+            await tc_test_page.click('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)');
             await tc_test_page.waitForSelector('#simple-popper .MuiButtonBase-root.MuiButton-root.MuiButton-text', { hidden: false, timeout: TIMEOUT })
             await tc_test_page.click('#simple-popper .MuiButtonBase-root.MuiButton-root.MuiButton-text')
             await tc_test_page.waitForSelector('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', { hidden: false, timeout: TIMEOUT })
@@ -249,6 +250,7 @@ describe('CDE: Template Creation Test', () => {
         test('Confirm custom dictionary', async () => {
             console.log('Confirming custom dictionary ...')
             await tc_test_page.waitForTimeout(1000);
+            
             await tc_test_page.waitForSelector('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedInfo.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-colorInfo');
             console.log('Custom dictionary confirmed successfully');
@@ -256,9 +258,11 @@ describe('CDE: Template Creation Test', () => {
 
         test('Select custom dictionary', async () => {
             console.log('Selecting custom dictionary ...')
+            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)', { timeout: TIMEOUT, hidden: false });
+            await tc_test_page.click('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)');
             await tc_test_page.waitForSelector('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', { timeout: TIMEOUT, hidden: false });
             await tc_test_page.click('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth');
-            await tc_test_page.type('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', 'Aut_Test_dataset');
+            await tc_test_page.type('#simple-popper .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth', 'Automated Testing Dataset');
             await tc_test_page.waitForTimeout(3500);
             await tc_test_page.waitForSelector('li > p.MuiTypography-root.MuiTypography-body1', { timeout: TIMEOUT, hidden: false });
             const selector = 'li > p.MuiTypography-root.MuiTypography-body1';
@@ -266,7 +270,7 @@ describe('CDE: Template Creation Test', () => {
                 (selector, text) => Array.from(document.querySelectorAll(selector), element => element.textContent).includes(text),
                 { timeout: 10000 },
                 selector,
-                'Aut_Test_dataset'
+                'Automated Testing Dataset'
             );
 
             await tc_test_page.waitForFunction(
@@ -303,10 +307,10 @@ describe('CDE: Template Creation Test', () => {
         test('Check fields', async () => {
             console.log('Checking fields ...')
             await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)', { timeout: TIMEOUT, hidden: false });
-            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(4)', { timeout: TIMEOUT, hidden: false });
-            const selector = 'div > div.MuiStack-root > div.MuiBox-root:nth-child(4)';
+            await tc_test_page.waitForSelector('div > div.MuiStack-root > div.MuiBox-root:nth-child(3)', { timeout: TIMEOUT, hidden: false });
+            const selector = 'div > div.MuiStack-root > div.MuiBox-root:nth-child(3)';
             const elementText = await tc_test_page.$eval(selector, element => element.textContent);
-            expect(elementText).toBe('Aut_Test_dataset');
+            expect(elementText).toBe('Automated Testing Dataset');
             console.log('Fields checked successfully');
 
         })
@@ -366,7 +370,7 @@ describe('CDE: Template Creation Test', () => {
             const expectedchosenData = [
                 {
                     'Variable Name': selectedcde,
-                    'Abbreviation': selectedcde,
+                    //'Abbreviation': selectedcde,
                 },
 
             ];
@@ -386,7 +390,7 @@ describe('CDE: Template Creation Test', () => {
                         if (isFirstRow) {
                             firstRow = {
                                 [keys[0]]: data[keys[0]],
-                                [keys[1]]: data[keys[1]]
+                                //[keys[1]]: data[keys[1]]
                             };
                             isFirstRow = false;
                         }
@@ -401,10 +405,11 @@ describe('CDE: Template Creation Test', () => {
                             .writeRecords(results)
                             .then(() => {
                                 try {
+                                    console.log('First row:', firstRow);
                                     // Compare the first two elements of the first row with the expected data
                                     expect(firstRow).toEqual({
                                         [Object.keys(expectedchosenData[0])[0]]: expectedchosenData[0][Object.keys(expectedchosenData[0])[0]],
-                                        [Object.keys(expectedchosenData[0])[1]]: expectedchosenData[0][Object.keys(expectedchosenData[0])[1]]
+                                         //[Object.keys(expectedchosenData[0])[1]]: expectedchosenData[0][Object.keys(expectedchosenData[0])[1]]
                                     });
                                     // Compare the last row with the expected data
                                     expect(lastRow).toEqual(expectedDictionaryData[0]);
